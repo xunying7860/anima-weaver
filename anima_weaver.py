@@ -142,6 +142,10 @@ class AnimaWeaver:
                     "STRING",
                     {"multiline": True, "default": ""},
                 ),
+                "强制详细自然语言": (
+                    "BOOLEAN",
+                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细"},
+                ),
 
                 # ── Raffle random parameters ──────────────────────
                 "随机种子": (
@@ -326,6 +330,10 @@ class AnimaWeaver:
 
         # ── 6. Generate NL part ──────────────────────────────────
         nl_prompt = self._get_nl(kwargs, tag_prompt, nl_source)
+
+        # ── 6b. Reorder background content to the end ───────────
+        tag_prompt = self._reorder_background_to_end(tag_prompt, is_tags=True)
+        nl_prompt = self._reorder_background_to_end(nl_prompt, is_tags=False)
 
         # ── 7. Assemble final prompt ─────────────────────────────
         # Use deduped tag_prompt (step 5 may have removed duplicates)
@@ -565,14 +573,15 @@ class AnimaWeaver:
                     )
                     api_key = kwargs.get("API密钥", "")
                     cloud_model = kwargs.get("云端模型名", "").strip()
+                    detailed_nl = bool(kwargs.get("强制详细自然语言", False))
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
-                        # 优先使用云端模型名，没有则用下拉框的模型
                         model_for_api = cloud_model or lm_model
                         nl = generate_nl_from_lm_studio(
                             tag_prompt, base_url,
                             api_key=api_key, model_name=model_for_api,
+                            detailed=detailed_nl,
                         )
                     else:
                         # 本地 LM Studio：先加载模型再调用 API
@@ -580,7 +589,8 @@ class AnimaWeaver:
                         if model_was_loaded:
                             nl = generate_nl_from_lm_studio(
                                 tag_prompt, base_url,
-                                model_name=lm_model,  # 传模型名，不走 "default"
+                                model_name=lm_model,
+                                detailed=detailed_nl,
                             )
 
                     if nl:
@@ -659,6 +669,30 @@ class AnimaWeaver:
 
         result = [t for t in all_tags if t not in to_remove]
         return ", ".join(result)
+
+    # ── Background reordering ─────────────────────────────────────
+
+    @staticmethod
+    def _reorder_background_to_end(text: str, is_tags: bool) -> str:
+        """Move background-related content to the very end."""
+        if not text.strip():
+            return text
+        bg_keywords = [
+            "background", "wall", "window", "door", "curtain", "floor",
+            "ceiling", "indoors", "outdoors", "indoor", "outdoor",
+            "behind", "scenery", "environment", "setting", "surrounding",
+        ]
+        if is_tags:
+            items = [t.strip() for t in text.split(",") if t.strip()]
+            bg = [i for i in items if any(kw in i.lower().replace(" ", "_") for kw in bg_keywords)]
+            other = [i for i in items if i not in bg]
+            return ", ".join(other + bg) if bg else text
+        else:
+            import re
+            ss = [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if s.strip()]
+            bg = [s for s in ss if any(kw in s.lower() for kw in bg_keywords)]
+            other = [s for s in ss if s not in bg]
+            return " ".join(other + bg) if bg else text
 
 
 # ── Helpers ────────────────────────────────────────────────────────
