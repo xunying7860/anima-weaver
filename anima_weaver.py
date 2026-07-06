@@ -331,13 +331,50 @@ class AnimaWeaver:
         # ── 6. Generate NL part ──────────────────────────────────
         nl_prompt = self._get_nl(kwargs, tag_prompt, nl_source)
 
-        # ── 6b. Reorder background content to the end ───────────
-        tag_prompt = self._reorder_background_to_end(tag_prompt, is_tags=True)
-        nl_prompt = self._reorder_background_to_end(nl_prompt, is_tags=False)
+        # ── 6b. Reorder ALL background content to absolute end ──
+        bg_keywords = [
+            "background", "wall", "window", "door", "curtain", "floor",
+            "ceiling", "indoors", "outdoors", "indoor", "outdoor",
+            "behind", "scenery", "environment", "setting", "surrounding",
+            "room", "classroom", "bedroom", "bathroom", "kitchen",
+            "street", "building", "house", "garden", "park",
+            "sunlight", "moonlight", "daylight", "night",
+            "void", "black", "white", "simple",
+        ]
 
-        # ── 7. Assemble final prompt ─────────────────────────────
-        # Use deduped tag_prompt (step 5 may have removed duplicates)
-        final = mix_by_ratio(tag_prompt, nl_prompt, tag_ratio)
+        # Split tags into bg / non-bg
+        tag_items = [t.strip() for t in tag_prompt.split(",") if t.strip()]
+        bg_tags = [t for t in tag_items if any(kw in t.lower().replace("_", " ") for kw in bg_keywords)]
+        non_bg_tags = [t for t in tag_items if t not in bg_tags]
+
+        # Split NL into bg / non-bg
+        import re
+        nl_sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', nl_prompt) if s.strip()]
+        bg_nl = [s for s in nl_sentences if any(kw in s.lower().replace("_", " ") for kw in bg_keywords)]
+        non_bg_nl = [s for s in nl_sentences if s not in bg_nl]
+
+        # ── 7. Assemble: non-bg mixed first, then all bg at end ──
+        main_part = mix_by_ratio(
+            ", ".join(non_bg_tags),
+            " ".join(non_bg_nl),
+            tag_ratio,
+        )
+        bg_tag_str = ", ".join(bg_tags)
+        bg_nl_str = " ".join(bg_nl)
+        if bg_tag_str and bg_nl_str:
+            bg_part = f"{bg_tag_str}, {bg_nl_str}"
+        elif bg_tag_str:
+            bg_part = bg_tag_str
+        elif bg_nl_str:
+            bg_part = bg_nl_str
+        else:
+            bg_part = ""
+
+        if bg_part:
+            final = (main_part + ", " + bg_part) if main_part else bg_part
+        else:
+            final = main_part
+
         debug_lines.append(
             f"Tag ratio: {tag_ratio}\n"
             f"Tags: {len(tag_prompt)} chars\n"
