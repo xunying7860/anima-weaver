@@ -327,6 +327,7 @@ def generate_nl_from_lm_studio(
     base_url: str = _DEFAULT_BASE_URL,
     api_key: str = "",
     model_name: str = "",
+    detailed: bool = False,
     timeout: int = 60,
 ) -> str:
     """
@@ -355,19 +356,38 @@ def generate_nl_from_lm_studio(
     if not tag_prompt.strip():
         return ""
 
-    system_msg = (
-        "You are an AI assistant that writes natural-language descriptions "
-        "for image generation prompts. Given a list of Danbooru-style tags, "
-        "write a concise, fluent English description (1-3 sentences) that "
-        "captures the scene. Do not repeat tags verbatim. Be coherent and vivid. "
-        "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
-    )
-
-    user_msg = (
-        "Write an English natural language description for these tags:\n\n"
-        f"{tag_prompt}\n\n"
-        "English only, 1-3 sentences:"
-    )
+    if detailed:
+        system_msg = (
+            "You are an AI assistant that writes highly detailed, cinematic "
+            "natural-language descriptions for image generation prompts. Given a list "
+            "of Danbooru-style tags, write a very detailed, vivid and immersive English "
+            "description (at least 10 sentences) that paints a complete picture of the "
+            "scene. Describe the subject's appearance, clothing, pose, expression, "
+            "lighting, background, atmosphere, and every visual detail in rich depth. "
+            "Do not repeat tags verbatim. "
+            "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
+        )
+        user_msg = (
+            "Write a very detailed English description (at least 10 sentences) "
+            "for these tags:\n\n"
+            f"{tag_prompt}\n\n"
+            "English only, at least 10 sentences:"
+        )
+        max_tokens = 1024
+    else:
+        system_msg = (
+            "You are an AI assistant that writes natural-language descriptions "
+            "for image generation prompts. Given a list of Danbooru-style tags, "
+            "write a concise, fluent English description (1-3 sentences) that "
+            "captures the scene. Do not repeat tags verbatim. Be coherent and vivid. "
+            "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
+        )
+        user_msg = (
+            "Write an English natural language description for these tags:\n\n"
+            f"{tag_prompt}\n\n"
+            "English only, 1-3 sentences:"
+        )
+        max_tokens = 256
 
     payload: dict[str, Any] = {
         "model": model_name or "default",
@@ -376,7 +396,7 @@ def generate_nl_from_lm_studio(
             {"role": "user", "content": user_msg},
         ],
         "temperature": 0.7,
-        "max_tokens": 256,
+        "max_tokens": max_tokens,
         "stream": False,
     }
 
@@ -394,6 +414,17 @@ def generate_nl_from_lm_studio(
             return ""
         message = choices[0].get("message", {})
         content = message.get("content", "").strip()
+        # Clean: remove dashes and em-dashes
+        content = content.replace("—", "").replace("–", "").replace("---", "").replace("--", "")
+        # Truncate detailed mode to 500 chars at sentence boundary
+        if detailed and len(content) > 500:
+            # Find the last sentence end within 500 chars
+            truncated = content[:500]
+            last_end = max(truncated.rfind(". "), truncated.rfind("! "), truncated.rfind("? "))
+            if last_end > 300:  # only truncate at a reasonable sentence boundary
+                content = content[:last_end + 1]
+            else:
+                content = truncated.rstrip(",; ") + "."
         return content
     except requests.RequestException:
         return ""
