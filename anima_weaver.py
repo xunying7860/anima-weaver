@@ -547,12 +547,15 @@ class AnimaWeaver:
                         kwargs.get("API地址", "http://localhost:1234/v1")
                     )
                     api_key = kwargs.get("API密钥", "")
+                    cloud_model = kwargs.get("云端模型名", "").strip()
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
+                        # 优先使用云端模型名，没有则用下拉框的模型
+                        model_for_api = cloud_model or lm_model
                         nl = generate_nl_from_lm_studio(
                             tag_prompt, base_url,
-                            api_key=api_key, model_name=lm_model,
+                            api_key=api_key, model_name=model_for_api,
                         )
                     else:
                         # 本地 LM Studio：先加载模型再调用 API

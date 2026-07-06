@@ -2,7 +2,7 @@
 
 一个 ComfyUI 自定义节点，基于 Anima 提示词规则框架 结构化组装 AI 图像生成提示词，支持标签/自然语言混合输出。
 
-**声明：** 本节点由 DeepSeek V4 Flash（深度求索）编写。
+**声明：** 本节点由 DeepSeek V4 Flash编写。
 
 ---
 
@@ -25,7 +25,6 @@
 
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
 - 可选：[LM Studio](https://lmstudio.ai/)（用于 NL 增强模式）
-- 数据文件（Raffle Danbooru taglist）已包含在节点包中，无需额外安装
 
 ### 步骤
 
@@ -147,7 +146,6 @@
 
 | 依赖 | 用途 | 必需 |
 |------|------|------|
-| Python `requests` | LM Studio API 调用 | 仅 NL 增强模式 |
 | [LM Studio](https://lmstudio.ai/) | 本地 LLM 推理服务 | 仅 NL 增强模式 |
 ---
 
@@ -170,8 +168,7 @@ python -c "from anima_weaver import AnimaWeaver; print('OK')"
 
 ## Credits
 
-- **节点编写：** DeepSeek V4 Flash（深度求索）
-- **Anima 提示词规则：** 基于 Anima3 模型提示词工程框架
+- **节点编写：** DeepSeek V4 Flash
 - **Danbooru 标签数据：** 来自 [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle)（rainlizard）
 - **ComfyUI 集成：** 标准 ComfyUI 自定义节点接口
 
