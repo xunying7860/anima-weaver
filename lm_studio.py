@@ -360,18 +360,18 @@ def generate_nl_from_lm_studio(
         system_msg = (
             "You are an AI assistant that writes highly detailed, cinematic "
             "natural-language descriptions for image generation prompts. Given a list "
-            "of Danbooru-style tags, write a very detailed, vivid and immersive English "
-            "description (at least 10 sentences) that paints a complete picture of the "
-            "scene. Describe the subject's appearance, clothing, pose, expression, "
-            "lighting, background, atmosphere, and every visual detail in rich depth. "
+            "of Danbooru-style tags, write a vivid and immersive English description "
+            "(about 7 sentences) that paints a complete picture of the scene. "
+            "Describe the subject's appearance, clothing, pose, expression, "
+            "lighting, background, atmosphere, and visual details. "
             "Do not repeat tags verbatim. "
             "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
-            "Write a very detailed English description (at least 10 sentences) "
+            "Write a detailed English description (about 7 sentences) "
             "for these tags:\n\n"
             f"{tag_prompt}\n\n"
-            "English only, at least 10 sentences:"
+            "English only, about 7 sentences:"
         )
         max_tokens = 1024
     else:
