@@ -149,7 +149,7 @@
 |------|------|------|
 | Python `requests` | LM Studio API 调用 | 仅 NL 增强模式 |
 | [LM Studio](https://lmstudio.ai/) | 本地 LLM 推理服务 | 仅 NL 增强模式 |
-| [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle) | taglist 数据源 | 可选（用于完整随机功能） |
+| 4 个 Raffle taglist 文件（各 10 万行） | 完整随机功能的数据源 | 可选（`categorized_tags.txt` 已打包，可提供基础随机） |
 
 ---
 
