@@ -338,8 +338,10 @@ class AnimaWeaver:
             "behind", "scenery", "environment", "setting", "surrounding",
             "room", "classroom", "bedroom", "bathroom", "kitchen",
             "street", "building", "house", "garden", "park",
-            "sunlight", "moonlight", "daylight", "night",
+            "sunlight", "moonlight", "daylight",
             "void", "black", "white", "simple",
+            # scene/location specific tags
+            "outdoors", "beach", "ocean", "sky", "forest", "mountain",
         ]
 
         # Split tags into bg / non-bg
