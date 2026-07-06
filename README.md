@@ -1,6 +1,6 @@
 # Anima Weaver — 提示词编织器
 
-一个 ComfyUI 自定义节点，基于 [Anima 提示词规则框架](https://github.com/) 结构化组装 AI 图像生成提示词，支持标签/自然语言混合输出。
+一个 ComfyUI 自定义节点，基于 Anima 提示词规则框架 结构化组装 AI 图像生成提示词，支持标签/自然语言混合输出。
 
 **声明：** 本节点由 DeepSeek V4 Flash（深度求索）编写。
 
