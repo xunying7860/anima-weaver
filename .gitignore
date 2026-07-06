@@ -1,0 +1,13 @@
+# 大型 taglist 文件（共约 212MB），需从 Raffle 安装复制
+tags/taglists-general.txt
+tags/taglists-questionable.txt
+tags/taglists-sensitive.txt
+tags/taglists-explicit.txt
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# ComfyUI 缓存
+.tracking
