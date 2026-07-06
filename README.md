@@ -25,7 +25,7 @@
 
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
 - 可选：[LM Studio](https://lmstudio.ai/)（用于 NL 增强模式）
-- 可选：[Raffle 节点](https://github.com/rainlizard/ComfyUI-Raffle)（获取 Danbooru taglist 数据）
+- 数据文件（Raffle Danbooru taglist）已包含在节点包中，无需额外安装
 
 ### 步骤
 
