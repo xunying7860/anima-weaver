@@ -22,7 +22,7 @@ import requests
 # ── Constants ──────────────────────────────────────────────────────
 
 _DEFAULT_BASE_URL = "http://localhost:1234/v1"
-_LMS_MAX_RETRIES = 3
+_LMS_MAX_RETRIES = 2
 _LMS_RETRY_DELAY_S = 2.0
 
 # ── lms.exe path resolution ───────────────────────────────────────
@@ -246,7 +246,11 @@ def get_loaded_models() -> list[str]:
             continue
         parts = line.split()
         if len(parts) >= 2:
-            loaded.append(parts[1])  # 第二列是模型名
+            name = parts[1]
+            # 去掉 LM Studio 可能追加的 :N 后缀（如 modelname:2）
+            if ":" in name:
+                name = name.split(":")[0]
+            loaded.append(name)
     return loaded
 
 
