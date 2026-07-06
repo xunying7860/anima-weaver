@@ -32,7 +32,7 @@
 1. 克隆或复制本仓库到 ComfyUI 的 `custom_nodes` 目录：
    ```bash
    cd ComfyUI/custom_nodes
-   git clone https://github.com/your-username/anima-weaver.git
+   git clone https://github.com/xunying7860/anima-weaver.git
    ```
 
 2. 安装依赖：
@@ -40,16 +40,7 @@
    pip install requests
    ```
 
-3. （可选）复制 Raffle 的 taglist 数据以获得完整随机功能：
-   ```bash
-   # 如果没有安装 Raffle，可从已有 Raffle 安装复制
-   cp Raffle/lists/taglists-*.txt anima-weaver/tags/
-   cp Raffle/lists/categorized_tags.txt anima-weaver/tags/
-   ```
-   > 注意：taglist 文件共约 212MB，未包含在 git 仓库中。
-   > 仅需 `categorized_tags.txt`（1.9MB）即可使用 basic 随机模式。
-
-4. 重启 ComfyUI。
+3. 重启 ComfyUI。
 
 ---
 
