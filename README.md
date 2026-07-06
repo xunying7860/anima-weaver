@@ -149,7 +149,7 @@
 | 模型 | 量化 | 体积 | 备注 |
 |------|------|------|------|
 | L3.2-Rogue-Creative-Uncensored-Abliterated-7B | Q6_K | 5.8GB | |
-| Yi-1.5-9B-Chat-abliterated | Q6_K | 6.8GB | Yi 1.5 |
+| Yi-1.5-9B-Chat-abliterated | Q6_K | 6.8GB | |
 | Huihui-Qwythos-9B-Claude-Mythos-5-1M-abliterated | Q6_K | 7.1GB | |
 | WizardLM-1.0-Uncensored-Llama2-13B | Q4_K_M | 7.4GB | |
 | Qwen2.5-14B-Instruct-abliterated | Q4_K_M | 8.4GB | |
