@@ -332,27 +332,24 @@ class AnimaWeaver:
         nl_prompt = self._get_nl(kwargs, tag_prompt, nl_source)
 
         # ── 6b. Reorder ALL background content to absolute end ──
-        bg_keywords = [
-            "background", "wall", "window", "door", "curtain", "floor",
-            "ceiling", "indoors", "outdoors", "indoor", "outdoor",
-            "behind", "scenery", "environment", "setting", "surrounding",
-            "room", "classroom", "bedroom", "bathroom", "kitchen",
-            "street", "building", "house", "garden", "park",
-            "sunlight", "moonlight", "daylight",
-            "void", "black", "white", "simple",
-            # scene/location specific tags
-            "outdoors", "beach", "ocean", "sky", "forest", "mountain",
+        bg_tag_keywords = ["background", "outdoors", "outdoor"]
+        bg_nl_keywords = [
+            "background", "against a", "against the", "set in", "set against",
+            "in the background", "in front of", "behind", "surrounded by",
+            "scene is set", "environment",
         ]
 
         # Split tags into bg / non-bg
         tag_items = [t.strip() for t in tag_prompt.split(",") if t.strip()]
-        bg_tags = [t for t in tag_items if any(kw in t.lower().replace("_", " ") for kw in bg_keywords)]
+        bg_tags = [t for t in tag_items
+                   if any(kw in t.lower().replace("_", " ") for kw in bg_tag_keywords)]
         non_bg_tags = [t for t in tag_items if t not in bg_tags]
 
         # Split NL into bg / non-bg
         import re
         nl_sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', nl_prompt) if s.strip()]
-        bg_nl = [s for s in nl_sentences if any(kw in s.lower().replace("_", " ") for kw in bg_keywords)]
+        bg_nl = [s for s in nl_sentences
+                 if any(kw in s.lower() for kw in bg_nl_keywords)]
         non_bg_nl = [s for s in nl_sentences if s not in bg_nl]
 
         # ── 7. Assemble: non-bg mixed first, then all bg at end ──
