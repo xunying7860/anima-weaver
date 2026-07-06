@@ -20,10 +20,10 @@ from typing import Any, Optional
 
 try:
     from .rules import check_conflicts, CONFLICT_PAIRS
-    from .assembly import assemble_prompt, SLOT_ORDER, SLOT_LIMITS
+    from .assembly import assemble_prompt, mix_by_ratio, SLOT_ORDER, SLOT_LIMITS
 except ImportError:
     from rules import check_conflicts, CONFLICT_PAIRS
-    from assembly import assemble_prompt, SLOT_ORDER, SLOT_LIMITS
+    from assembly import assemble_prompt, mix_by_ratio, SLOT_ORDER, SLOT_LIMITS
 
 
 # ── ComfyUI Node ────────────────────────────────────────────────────
@@ -303,21 +303,38 @@ class AnimaWeaver:
                 # Remove Raffle-sourced conflicting tags, keeping manual
                 tag_prompt = self._remove_conflicts(tag_prompt, conflicts, manual_slots)
                 debug_lines.append("  → Conflicting Raffle tags removed")
-            else:
+
+            # ── 5b. Deduplicate exact duplicate tags ──────────────
+            seen: set[str] = set()
+            deduped: list[str] = []
+            dupes_found = 0
+            for t in tag_prompt.split(","):
+                t_clean = t.strip().lower().replace(" ", "_")
+                if not t_clean:
+                    continue
+                if t_clean in seen:
+                    dupes_found += 1
+                    continue
+                seen.add(t_clean)
+                deduped.append(t.strip())
+            if dupes_found:
+                tag_prompt = ", ".join(deduped)
+                debug_lines.append(f"⚠ Removed {dupes_found} duplicate tag(s)")
+
+            if not conflicts and not dupes_found:
                 debug_lines.append("✓ No conflicts")
 
         # ── 6. Generate NL part ──────────────────────────────────
         nl_prompt = self._get_nl(kwargs, tag_prompt, nl_source)
 
         # ── 7. Assemble final prompt ─────────────────────────────
-        # conflict_check=False because we already checked above
-        final, assembly_debug = assemble_prompt(
-            merged,
-            nl_prompt,
-            tag_ratio,
-            conflict_check=False,
+        # Use deduped tag_prompt (step 5 may have removed duplicates)
+        final = mix_by_ratio(tag_prompt, nl_prompt, tag_ratio)
+        debug_lines.append(
+            f"Tag ratio: {tag_ratio}\n"
+            f"Tags: {len(tag_prompt)} chars\n"
+            f"NL:   {len(nl_prompt)} chars"
         )
-        debug_lines.append(assembly_debug)
 
         return (final, "\n".join(debug_lines))
 
