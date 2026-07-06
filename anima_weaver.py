@@ -359,16 +359,20 @@ class AnimaWeaver:
             " ".join(non_bg_nl),
             tag_ratio,
         )
+        # Build bg_part respecting tag_ratio:
+        #   ratio=1.0 → only bg tags
+        #   ratio=0.0 → only bg NL
+        #   otherwise → both
         bg_tag_str = ", ".join(bg_tags)
         bg_nl_str = " ".join(bg_nl)
-        if bg_tag_str and bg_nl_str:
-            bg_part = f"{bg_tag_str}, {bg_nl_str}"
-        elif bg_tag_str:
-            bg_part = bg_tag_str
-        elif bg_nl_str:
-            bg_part = bg_nl_str
-        else:
-            bg_part = ""
+
+        bg_parts = []
+        if bg_tag_str:
+            bg_parts.append(bg_tag_str)
+        if bg_nl_str and tag_ratio < 1.0:
+            bg_parts.append(bg_nl_str)
+
+        bg_part = ", ".join(bg_parts) if bg_parts else ""
 
         if bg_part:
             final = (main_part + ", " + bg_part) if main_part else bg_part
