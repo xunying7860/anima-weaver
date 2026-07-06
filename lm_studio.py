@@ -361,17 +361,17 @@ def generate_nl_from_lm_studio(
             "You are an AI assistant that writes highly detailed, cinematic "
             "natural-language descriptions for image generation prompts. Given a list "
             "of Danbooru-style tags, write a vivid and immersive English description "
-            "(about 7 sentences) that paints a complete picture of the scene. "
-            "Describe the subject's appearance, clothing, pose, expression, "
-            "lighting, background, atmosphere, and visual details. "
+            "(about 6 sentences) that paints a complete picture of the scene. "
+            "Describe the subject first (appearance, clothing, pose, expression), "
+            "then describe the background and environment at the very end. "
             "Do not repeat tags verbatim. "
             "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
-            "Write a detailed English description (about 7 sentences) "
-            "for these tags:\n\n"
+            "Write a detailed English description (about 6 sentences) "
+            "for these tags. Put background/environment description at the end:\n\n"
             f"{tag_prompt}\n\n"
-            "English only, about 7 sentences:"
+            "English only, about 6 sentences, background at the end:"
         )
         max_tokens = 1024
     else:
@@ -416,10 +416,10 @@ def generate_nl_from_lm_studio(
         content = message.get("content", "").strip()
         # Clean: remove dashes and em-dashes
         content = content.replace("—", "").replace("–", "").replace("---", "").replace("--", "")
-        # Truncate detailed mode to 500 chars at sentence boundary
-        if detailed and len(content) > 500:
-            # Find the last sentence end within 500 chars
-            truncated = content[:500]
+        # Truncate detailed mode to 800 chars at sentence boundary
+        if detailed and len(content) > 800:
+            # Find the last sentence end within 800 chars
+            truncated = content[:800]
             last_end = max(truncated.rfind(". "), truncated.rfind("! "), truncated.rfind("? "))
             if last_end > 300:  # only truncate at a reasonable sentence boundary
                 content = content[:last_end + 1]
