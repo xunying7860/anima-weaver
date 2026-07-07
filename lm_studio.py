@@ -464,6 +464,7 @@ def generate_nl_from_lm_studio(
                 "that captures", "a list of",
                 "let's think", "let's consider", "let me look at",
                 "next, i", "so i need", "so i have",
+                "a single female", "check if",
             ]):
                 continue
             # Skip lines that start with backtick-quoted tags (echoing input)
