@@ -25,6 +25,31 @@ except ImportError:
     from rules import check_conflicts, CONFLICT_PAIRS
     from assembly import assemble_prompt, mix_by_ratio, SLOT_ORDER, SLOT_LIMITS
 
+# ── Artist index (lazy loaded) ────────────────────────────────────────
+
+_ARTIST_LIST: list[str] | None = None
+_ARTIST_FILE = r"F:\工作流\Anima\Anima-Style-Explorer-main\Anima2B_Artist_Index_59k.txt"
+
+def _load_artists() -> list[str]:
+    global _ARTIST_LIST
+    if _ARTIST_LIST is not None:
+        return _ARTIST_LIST
+    artists: list[str] = []
+    try:
+        with open(_ARTIST_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or line.startswith("This"):
+                    continue
+                if line.startswith("@"):
+                    artists.append(line)
+        _ARTIST_LIST = artists
+        print(f"Anima Weaver: loaded {len(artists)} artists")
+    except Exception as e:
+        print(f"Anima Weaver: failed to load artist index: {e}")
+        _ARTIST_LIST = artists
+    return _ARTIST_LIST
+
 
 # ── ComfyUI Node ────────────────────────────────────────────────────
 
@@ -36,8 +61,8 @@ class AnimaWeaver:
     natural-language description into a single weighted prompt.
     """
 
-    # ── Class-level cache ─────────────────────────────────────────
-    _raffle_tag_data: Optional[dict[str, Any]] = None
+    # 类级别缓存
+    _raffle_tag_data = None  # 缓存已加载的 taglist
 
     # ── Input schema ──────────────────────────────────────────────
 
@@ -144,7 +169,17 @@ class AnimaWeaver:
                 ),
                 "强制详细自然语言": (
                     "BOOLEAN",
-                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细"},
+                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 1024 tokens）"},
+                ),
+
+                # ── Artist ──────────────────────────────────────────
+                "随机抽取画师": (
+                    "BOOLEAN",
+                    {"default": False, "tooltip": "从 Anima2B 画师索引中随机抽取 1 个画师标签，放在提示词最末尾"},
+                ),
+                "画师种子": (
+                    "INT",
+                    {"default": 0, "min": 0, "max": 0x7FFFFFFF},
                 ),
 
                 # ── Raffle random parameters ──────────────────────
@@ -377,6 +412,20 @@ class AnimaWeaver:
             final = (main_part + ", " + bg_part) if main_part else bg_part
         else:
             final = main_part
+
+        # ── 8. Random artist pick (placed at absolute end) ──────
+        pick_artist = kwargs.get("随机抽取画师", False)
+        if pick_artist:
+            artists = _load_artists()
+            if artists:
+                artist_seed = int(kwargs.get("画师种子", 0))
+                rng_artist = random.Random(artist_seed)
+                chosen = rng_artist.choice(artists)
+                if final:
+                    final = final.rstrip(", ") + ", " + chosen
+                else:
+                    final = chosen
+                debug_lines.append(f"Artist: {chosen}")
 
         debug_lines.append(
             f"Tag ratio: {tag_ratio}\n"
