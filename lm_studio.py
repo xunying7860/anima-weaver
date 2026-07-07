@@ -379,7 +379,7 @@ def generate_nl_from_lm_studio(
         if aspect_ratio:
             user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
         user_msg += "English only, at least 6 sentences, background at the end:"
-        max_tokens = 1536
+        max_tokens = 1024
     else:
         system_msg = (
             "You are an AI assistant that writes natural-language descriptions "
@@ -397,7 +397,7 @@ def generate_nl_from_lm_studio(
         if aspect_ratio:
             user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
         user_msg += "English only, 1-3 sentences:"
-        max_tokens = 1024
+        max_tokens = 512
 
     payload: dict[str, Any] = {
         "model": model_name or "default",
