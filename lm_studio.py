@@ -439,41 +439,52 @@ def generate_nl_from_lm_studio(
         # Clean: remove dashes and em-dashes
         content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
         # Safety: strip any leaked reasoning / instruction echo
-        # Find the first line that looks like actual description text.
-        desc_starters = ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")
-        # Also match any line that looks like a real sentence: capital letter, 5+ words, ends with period,
-        # and is not a numbered instruction header.
+        # Some models (especially reasoning models) output analysis steps like
+        # "1. **Identify** — The subject stands..." or "2. **Analyze the Tags:**\n  * tag1: desc"
+        # Extract actual description content by:
+        #   a) finding content after em-dashes on analysis lines
+        #   b) finding content after colons on bullet-point analysis
+        #   c) finding the first line that looks like a real description sentence
         lines = content.split("\n")
-        desc_start = -1
-        for i, line in enumerate(lines):
+        desc_parts: list[str] = []
+        for line in lines:
             line = line.strip()
             if not line:
                 continue
+            # Case a: "1. **Title** — description text here..."
+            if " — " in line:
+                _, after = line.split(" — ", 1)
+                after = after.strip().lstrip(",:; ")
+                if after and len(after) > 15 and not after.startswith(("describes", "description")):
+                    desc_parts.append(after)
+                continue
+            # Case b: "* tagged item: description" or "N. Title: description"
+            if (": " in line and not line.startswith("http") and
+                any(line.lstrip().startswith(p) for p in ("* ", "- ", "1.", "2.", "3.", "4.", "5.", "6.", "1,", "2,", "3,"))):
+                _, after = line.split(": ", 1)
+                after = after.strip().lstrip(",:; ")
+                if after and len(after) > 15 and not after.startswith(("Write", "The goal", "Task:", "Constraint")):
+                    desc_parts.append(after)
+                continue
+            # Case c: regular line that looks like description
             stripped = line.lstrip(' \t*"-\u2014\u2013')
             lower = stripped.lower()
-            # Direct match via starters
-            if any(lower.startswith(s) for s in desc_starters):
-                desc_start = i
-                break
-            # Sentence heuristic: starts with uppercase, 5+ words, ends with .!?
-            words = stripped.split()
-            if (len(words) >= 5
-                and stripped[0].isupper()
-                and stripped[-1] in ".!?"
-                and not any(stripped.startswith(f"{n}.") for n in "0123456789")
-                and not stripped.startswith("*")
-                and not stripped.startswith("-")):
-                desc_start = i
-                break
-        if desc_start > 0:
-            content = "\n".join(lines[desc_start:]).strip()
-        elif desc_start == -1:
-            # No description found, keep all non-empty lines (fallback)
+            if any(lower.startswith(s) for s in ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")):
+                desc_parts.append(line)
+            elif (len(stripped.split()) >= 5 and stripped[0].isupper() and stripped[-1] in ".!?"
+                  and not any(stripped.startswith(f"{n}.") for n in "0123456789")
+                  and not stripped.startswith("*") and not stripped.startswith("-")):
+                desc_parts.append(line)
+
+        if desc_parts:
+            content = " ".join(desc_parts)
+        else:
+            # Fallback: keep non-empty lines
             non_empty = [l for l in lines if l.strip()]
             if non_empty:
                 content = "\n".join(non_empty)
         # Clean up any leading non-alpha chars
-        content = content.lstrip(",:; \t\n\r -*\"")
+        content = content.lstrip(",:; \t\n\r -*\"\u2014\u2013")
         # Truncate detailed mode to 800 chars at sentence boundary
         if detailed and len(content) > 800:
             # Find the last sentence end within 800 chars
