@@ -684,7 +684,7 @@ class AnimaWeaver:
                             api_key=api_key, model_name=model_for_api,
                             detailed=detailed_nl,
                             aspect_ratio=aspect_ratio,
-                            timeout=120,
+                            timeout=180,
                         )
                     else:
                         # 本地 LM Studio：先加载模型再调用 API
@@ -695,7 +695,7 @@ class AnimaWeaver:
                                 model_name=lm_model,
                                 detailed=detailed_nl,
                                 aspect_ratio=aspect_ratio,
-                                timeout=120,
+                                timeout=180,
                             )
 
                     if nl:
