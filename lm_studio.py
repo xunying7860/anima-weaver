@@ -454,9 +454,26 @@ def generate_nl_from_lm_studio(
                 "the prompt", "the user wants", "the user asked", "the task",
                 "i need to", "i should", "i must", "this is a", "this sets",
                 "sets the tone", "focus on", "introduce the", "core identity",
-                "these are key", "weave these",
+                "these are key", "weave these", "thinking about",
+                "first draft", "first, i", "first, i should",
+                "alright", "the tags are", "singular", "the goal is", "let's tackle",
+                "reviewing against", "let me draft", "let me start",
             ]):
                 continue
+            # Skip lines that start with backtick-quoted tags (echoing input)
+            if line.startswith("`") and "`" in line[1:]:
+                continue
+            # Handle "Let me draft: ..." / "Let me start: ..." → extract after colon
+            lower_line = line.lower()
+            if any(lower_line.startswith(p) for p in ("let me draft", "let me start", "reviewing against")):
+                if ":" in line:
+                    _, after = line.split(":", 1)
+                    after = after.strip().strip(' "\'')
+                    if after and len(after) > 10:
+                        desc_parts.append(after)
+                    continue
+                else:
+                    continue
             # a) "1. **Title** — description text"
             if " — " in line:
                 _, after = line.split(" — ", 1)
