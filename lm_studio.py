@@ -329,7 +329,7 @@ def generate_nl_from_lm_studio(
     model_name: str = "",
     detailed: bool = False,
     aspect_ratio: str = "",
-    timeout: int = 60,
+    timeout: int = 120,
 ) -> str:
     """
     Use the LM Studio (or compatible OpenAI) chat completions endpoint
