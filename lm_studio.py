@@ -362,7 +362,7 @@ def generate_nl_from_lm_studio(
             "You are an AI assistant that writes highly detailed, cinematic "
             "natural-language descriptions for image generation prompts. Given a list "
             "of Danbooru-style tags, write a very detailed, vivid and immersive English "
-            "description (at least 10 sentences) that paints a complete picture of the "
+            "description (at least 6 sentences) that paints a complete picture of the "
             "scene. Describe the subject's appearance, clothing, pose, expression, "
             "lighting, background, atmosphere, and every visual detail in rich depth. "
             "Do not repeat tags verbatim. "
@@ -372,14 +372,14 @@ def generate_nl_from_lm_studio(
             "You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
-            "Write a very detailed English description (at least 10 sentences) "
+            "Write a very detailed English description (at least 6 sentences) "
             "for these tags. Put background/environment description at the end:\n\n"
             f"{tag_prompt}\n\n"
         )
         if aspect_ratio:
             user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
-        user_msg += "English only, at least 10 sentences, background at the end:"
-        max_tokens = 1024
+        user_msg += "English only, at least 6 sentences, background at the end:"
+        max_tokens = 1536
     else:
         system_msg = (
             "You are an AI assistant that writes natural-language descriptions "
@@ -397,7 +397,7 @@ def generate_nl_from_lm_studio(
         if aspect_ratio:
             user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
         user_msg += "English only, 1-3 sentences:"
-        max_tokens = 256
+        max_tokens = 1024
 
     payload: dict[str, Any] = {
         "model": model_name or "default",
@@ -424,6 +424,9 @@ def generate_nl_from_lm_studio(
             return ""
         message = choices[0].get("message", {})
         content = message.get("content", "").strip()
+        # 有些推理模型把输出放在 reasoning_content 而非 content
+        if not content:
+            content = message.get("reasoning_content", "").strip()
         # Clean: remove dashes and em-dashes
         content = content.replace("—", "").replace("–", "").replace("---", "").replace("--", "")
         # Truncate detailed mode to 800 chars at sentence boundary
