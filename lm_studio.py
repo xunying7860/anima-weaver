@@ -436,38 +436,33 @@ def generate_nl_from_lm_studio(
         # 有些推理模型把输出放在 reasoning_content 而非 content
         if not content:
             content = message.get("reasoning_content", "").strip()
-        # Clean: remove dashes and em-dashes
-        content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
-        # Safety: strip any leaked reasoning / instruction echo
-        # Some models (especially reasoning models) output analysis steps like
+
+        # ═══ Extract description from reasoning preamble (BEFORE cleaning dashes) ═══
+        # Some models output analysis steps like:
         # "1. **Identify** — The subject stands..." or "2. **Analyze the Tags:**\n  * tag1: desc"
-        # Extract actual description content by:
-        #   a) finding content after em-dashes on analysis lines
-        #   b) finding content after colons on bullet-point analysis
-        #   c) finding the first line that looks like a real description sentence
         lines = content.split("\n")
         desc_parts: list[str] = []
         for line in lines:
             line = line.strip()
             if not line:
                 continue
-            # Case a: "1. **Title** — description text here..."
+            # a) "1. **Title** — description text"
             if " — " in line:
                 _, after = line.split(" — ", 1)
                 after = after.strip().lstrip(",:; ")
-                if after and len(after) > 15 and not after.startswith(("describes", "description")):
+                if after and len(after) > 10 and not after.startswith(("describes", "description")):
                     desc_parts.append(after)
                 continue
-            # Case b: "* tagged item: description" or "N. Title: description"
+            # b) "* tagged item: description" or "N. Title: description"
             if (": " in line and not line.startswith("http") and
                 any(line.lstrip().startswith(p) for p in ("* ", "- ", "1.", "2.", "3.", "4.", "5.", "6.", "1,", "2,", "3,"))):
                 _, after = line.split(": ", 1)
                 after = after.strip().lstrip(",:; ")
-                if after and len(after) > 15 and not after.startswith(("Write", "The goal", "Task:", "Constraint")):
+                if after and len(after) > 10 and not after.startswith(("Write", "The goal", "Task:", "Constraint")):
                     desc_parts.append(after)
                 continue
-            # Case c: regular line that looks like description
-            stripped = line.lstrip(' \t*"-\u2014\u2013')
+            # c) regular description line
+            stripped = line.lstrip(' \t*"\u2014\u2013')
             lower = stripped.lower()
             if any(lower.startswith(s) for s in ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")):
                 desc_parts.append(line)
@@ -479,10 +474,12 @@ def generate_nl_from_lm_studio(
         if desc_parts:
             content = " ".join(desc_parts)
         else:
-            # Fallback: keep non-empty lines
             non_empty = [l for l in lines if l.strip()]
             if non_empty:
                 content = "\n".join(non_empty)
+
+        # Clean: remove dashes and em-dashes (after extraction so em-dash split still works)
+        content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
         # Clean up any leading non-alpha chars
         content = content.lstrip(",:; \t\n\r -*\"\u2014\u2013")
         # Truncate detailed mode to 800 chars at sentence boundary
