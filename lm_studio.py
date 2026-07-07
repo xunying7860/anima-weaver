@@ -11,6 +11,8 @@ from __future__ import annotations
 import json
 import os
 import platform
+import random
+import re
 import shutil
 import subprocess
 import sys
@@ -466,7 +468,20 @@ def generate_nl_from_lm_studio(
                 if after and len(after) > 10 and not after.startswith(("Write", "The goal", "Task:", "Constraint")):
                     desc_parts.append(after)
                 continue
-            # c) regular description line
+            # c) "Subject:" / "Features:" / "Core:" key-value lines
+            # These don't start with numbers/* but are analysis headers.
+            if re.match(r'^(Subject|Features|Expression|Core Subject|Setting|Pose|Action|Appearance|Clothing|Constraints):', line):
+                _, after = line.split(":", 1)
+                after = after.strip()
+                if after and len(after) > 5 and not after.startswith(("describes",)):
+                    # Check if value is comma-separated tags; join them
+                    if "," in after:
+                        parts = [p.strip() for p in after.split(",") if p.strip()]
+                        desc_parts.append(", ".join(parts))
+                    else:
+                        desc_parts.append(after)
+                continue
+            # d) regular description line
             stripped = line.lstrip(' \t*"\u2014\u2013')
             lower = stripped.lower()
             if any(lower.startswith(s) for s in ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")):
