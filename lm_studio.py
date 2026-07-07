@@ -367,8 +367,11 @@ def generate_nl_from_lm_studio(
             "lighting, background, atmosphere, and every visual detail in rich depth. "
             "Do not repeat tags verbatim. "
             "IMPORTANT: Write ONLY the description. Do NOT include any meta-commentary, "
-            "explanations, phrases like 'as requested', 'English text is included', or "
+            "explanations, numbered lists, thinking processes, analysis steps, "
+            "phrases like 'as requested', 'English text is included', or "
             "anything outside the description itself. "
+            "NEVER start with 'Thinking Process' or '1.' or 'First'. "
+            "Output ONLY the description text and nothing else. "
             "You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
@@ -378,7 +381,10 @@ def generate_nl_from_lm_studio(
         )
         if aspect_ratio:
             user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
-        user_msg += "English only, at least 6 sentences, background at the end:"
+        user_msg += (
+            "English only, at least 6 sentences, background at the end, "
+            "NO thinking process or analysis:"
+        )
         max_tokens = 1024
     else:
         system_msg = (
@@ -387,7 +393,10 @@ def generate_nl_from_lm_studio(
             "write a concise, fluent English description (1-3 sentences) that "
             "captures the scene. Do not repeat tags verbatim. Be coherent and vivid. "
             "IMPORTANT: Write ONLY the description. Do NOT include any meta-commentary, "
-            "explanations, or text outside the description itself. "
+            "explanations, numbered lists, thinking processes, analysis steps, or "
+            "anything outside the description itself. "
+            "NEVER start with 'Thinking Process' or '1.' or 'First'. "
+            "Output ONLY the description text and nothing else. "
             "You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
@@ -428,7 +437,23 @@ def generate_nl_from_lm_studio(
         if not content:
             content = message.get("reasoning_content", "").strip()
         # Clean: remove dashes and em-dashes
-        content = content.replace("—", "").replace("–", "").replace("---", "").replace("--", "")
+        content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
+        # Safety: strip any leaked thinking/reasoning process
+        for stopword in ["Thinking Process", "Thinking Process:", "1. **Analyze", "1.**Analyze"]:
+            idx = content.find(stopword)
+            if idx != -1:
+                # Keep everything after the thinking block
+                after = content[idx + len(stopword):]
+                # Find the next double-newline or list end, take content after that
+                lines = after.split("\n")
+                desc_lines = [l for l in lines if l.strip() and not l.strip().startswith(("*", "-", "1.", "2.", "3.", "4.", "5.", "6."))]
+                if desc_lines:
+                    content = "\n".join(desc_lines).strip()
+                else:
+                    content = after.strip()
+                # Clean up any leading non-alpha chars (stray ":" etc.)
+                content = content.lstrip(",:; \t\n\r")
+                break
         # Truncate detailed mode to 800 chars at sentence boundary
         if detailed and len(content) > 800:
             # Find the last sentence end within 800 chars
