@@ -1,8 +1,8 @@
 {
   "id": "ce9e890b-ef39-4e8e-afa9-0cc6e665cfd0",
   "revision": 0,
-  "last_node_id": 86,
-  "last_link_id": 128,
+  "last_node_id": 87,
+  "last_link_id": 135,
   "nodes": [
     {
       "id": 16,
@@ -25,7 +25,7 @@
           "widget": {
             "name": "width"
           },
-          "link": 123
+          "link": 130
         },
         {
           "name": "height",
@@ -33,7 +33,7 @@
           "widget": {
             "name": "height"
           },
-          "link": 124
+          "link": 132
         }
       ],
       "outputs": [
@@ -122,7 +122,7 @@
       ],
       "size": [
         210,
-        546
+        348
       ],
       "flags": {},
       "order": 28,
@@ -181,7 +181,7 @@
         }
       },
       "widgets_values": [
-        683881895639176,
+        1079274006231633,
         "randomize",
         30,
         4.5,
@@ -719,7 +719,7 @@
         }
       },
       "widgets_values": [
-        3808022444,
+        1869959308,
         "randomize",
         3840,
         0,
@@ -1893,7 +1893,7 @@
         }
       },
       "widgets_values": [
-        91866081212776,
+        571075617345452,
         "randomize"
       ]
     },
@@ -2145,7 +2145,7 @@
         }
       },
       "widgets_values": [
-        331808010475832,
+        950590270177939,
         "randomize",
         10,
         5,
@@ -2199,46 +2199,6 @@
         }
       },
       "widgets_values": []
-    },
-    {
-      "id": 71,
-      "type": "Fast Groups Bypasser (rgthree)",
-      "pos": [
-        6051.955445673481,
-        1225.6085141798585
-      ],
-      "size": [
-        501.453589877146,
-        82
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "label": "可选连接",
-          "name": "OPT_CONNECTION",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "properties": {
-        "matchColors": "",
-        "matchTitle": "二采",
-        "showNav": true,
-        "showAllGraphs": true,
-        "sort": "position",
-        "customSortAlphabet": "",
-        "toggleRestriction": "default",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "color": "#332922",
-      "bgcolor": "#593930"
     },
     {
       "id": 25,
@@ -2325,7 +2285,7 @@
         }
       },
       "widgets_values": [
-        "Mode: hybrid\nSeed: 14971675440161857827 (randomize)\n→ Running Raffle extraction …\n  Raffle slots filled: 8\nMerged slots:\n  count_identity: 1 tags\n  appearance: 8 tags\n  clothing: 5 tags\n  pose_action: 2 tags\n  expression: 5 tags\n  camera: 2 tags\n  scene: 4 tags\n  detail_mood: 2 tags\n✓ No conflicts\nArtist: @yousui\nTag ratio: 0.6\nTags: 319 chars\nNL:   411 chars"
+        "Mode: hybrid\nSeed: 15743186336575981630 (randomize)\n→ Running Raffle extraction …\n  Raffle slots filled: 6\nMerged slots:\n  count_identity: 4 tags\n  appearance: 8 tags\n  clothing: 8 tags\n  pose_action: 2 tags\n  expression: 5 tags\n  camera: 0 tags\n  scene: 4 tags\n  detail_mood: 0 tags\n✓ No conflicts\nArtist: @chonmage daikon\nTag ratio: 0.6\nTags: 377 chars\nNL:   447 chars"
       ]
     },
     {
@@ -2340,7 +2300,7 @@
         70
       ],
       "flags": {},
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2382,7 +2342,7 @@
         423.712431882225
       ],
       "flags": {},
-      "order": 9,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -2422,52 +2382,6 @@
       },
       "widgets_values": [
         "masterpiece, best quality, score_7, "
-      ]
-    },
-    {
-      "id": 27,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        3101.5583029530494,
-        1153.862492584149
-      ],
-      "size": [
-        511.5006252093159,
-        82
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 4,
-      "inputs": [
-        {
-          "label": "模型",
-          "name": "model",
-          "type": "MODEL",
-          "link": 31
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            30
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.22.0",
-        "Node name for S&R": "LoraLoaderModelOnly",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
-        0.8
       ]
     },
     {
@@ -2524,7 +2438,7 @@
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_kiifv_00001_.png&type=temp&subfolder=&rand=0.6814186790837348"
+            "url": "/api/view?filename=rgthree.compare._temp_kiifv_00002_.png&type=temp&subfolder=&rand=0.13685580377651885"
           }
         ]
       ]
@@ -2541,7 +2455,7 @@
         418.44369797887543
       ],
       "flags": {},
-      "order": 10,
+      "order": 9,
       "mode": 4,
       "inputs": [
         {
@@ -2595,7 +2509,7 @@
         82
       ],
       "flags": {},
-      "order": 11,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -2616,7 +2530,7 @@
           "links": [
             116,
             120,
-            122
+            129
           ]
         }
       ],
@@ -2631,7 +2545,7 @@
         }
       },
       "widgets_values": [
-        752187361221725,
+        827462044566008,
         "randomize"
       ]
     },
@@ -2745,7 +2659,7 @@
         {
           "name": "source",
           "type": "*",
-          "link": 126
+          "link": 131
         }
       ],
       "outputs": [
@@ -2756,18 +2670,19 @@
         }
       ],
       "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        },
         "cnr_id": "comfy-core",
         "ver": "0.27.0",
-        "Node name for S&R": "PreviewAny"
+        "Node name for S&R": "PreviewAny",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
       },
       "widgets_values": [
         null,
         null,
-        false
+        null
       ]
     },
     {
@@ -2788,7 +2703,7 @@
         {
           "name": "source",
           "type": "*",
-          "link": 127
+          "link": 133
         }
       ],
       "outputs": [
@@ -2799,13 +2714,14 @@
         }
       ],
       "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        },
         "cnr_id": "comfy-core",
         "ver": "0.27.0",
-        "Node name for S&R": "PreviewAny"
+        "Node name for S&R": "PreviewAny",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
       },
       "widgets_values": [
         null,
@@ -2831,7 +2747,7 @@
         {
           "name": "source",
           "type": "*",
-          "link": 128
+          "link": 135
         }
       ],
       "outputs": [
@@ -2842,84 +2758,19 @@
         }
       ],
       "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        },
         "cnr_id": "comfy-core",
         "ver": "0.27.0",
-        "Node name for S&R": "PreviewAny"
+        "Node name for S&R": "PreviewAny",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
       },
       "widgets_values": [
         null,
         null,
         null
-      ]
-    },
-    {
-      "id": 82,
-      "type": "RandomResolution",
-      "pos": [
-        2568.132311921185,
-        1802.3738218819979
-      ],
-      "size": [
-        472.7770290343615,
-        170
-      ],
-      "flags": {},
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "随机种子",
-          "type": "INT",
-          "widget": {
-            "name": "随机种子"
-          },
-          "link": 122
-        }
-      ],
-      "outputs": [
-        {
-          "name": "宽度",
-          "type": "INT",
-          "links": [
-            123,
-            126
-          ]
-        },
-        {
-          "name": "高度",
-          "type": "INT",
-          "links": [
-            124,
-            127
-          ]
-        },
-        {
-          "name": "画幅比例",
-          "type": "STRING",
-          "links": [
-            125,
-            128
-          ]
-        }
-      ],
-      "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        },
-        "aux_id": "xunying7860/anima-weaver",
-        "ver": "b3e536bab2bf8f79e45cbd0ff3d0b6f8c1021526",
-        "Node name for S&R": "RandomResolution"
-      },
-      "widgets_values": [
-        true,
-        1,
-        0,
-        "1:1 (square)"
       ]
     },
     {
@@ -2960,7 +2811,7 @@
           "widget": {
             "name": "画幅比例"
           },
-          "link": 125
+          "link": 134
         }
       ],
       "outputs": [
@@ -3038,7 +2889,7 @@
         779.3481476758575
       ],
       "flags": {},
-      "order": 12,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -3079,6 +2930,206 @@
       ]
     },
     {
+      "id": 87,
+      "type": "RandomResolution",
+      "pos": [
+        2568.132311921185,
+        1802.3738218819979
+      ],
+      "size": [
+        500.444106546076,
+        194
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "type": "INT",
+          "widget": {
+            "name": "随机种子"
+          },
+          "link": 129
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": [
+            130,
+            131
+          ]
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": [
+            132,
+            133
+          ]
+        },
+        {
+          "name": "画幅比例",
+          "type": "STRING",
+          "links": [
+            134,
+            135
+          ]
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "ed70be35cde92b4fefd08875d1889f3092e762b8",
+        "Node name for S&R": "RandomResolution"
+      },
+      "widgets_values": [
+        true,
+        1,
+        0,
+        "1:1 (square)",
+        8
+      ]
+    },
+    {
+      "id": 68,
+      "type": "ShowText|pysssss",
+      "pos": [
+        3647.5504573869653,
+        1332.6224495447261
+      ],
+      "size": [
+        515.8981764959062,
+        551.7522143616011
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "link": 104
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "合并后提示词",
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "ShowText|pysssss",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "masterpiece, best quality, score_7, 1girl, solo, suzuhara_lulu, suzuhara_lulu_(1st_costume), breasts, brown_hair, fingernails, green_eyes, huge_breasts, medium_hair, pink_lips, pink_nails, beret, blue_gemstone, bow, center_frills, collared_shirt, frills, glasses, hair_bow, own_hands_together, v_arms, :3, blush, closed_mouth, looking_at_viewer, smile, gem, Her bright pink lips curve upwards in a gentle, knowing glance as she appears to be lost in thought, her hands clasped together in a quiet, introspective pose. Soft pink and gold details catch the eye, amidst a backdrop of natural beauty., brown_background, two-tone_background, white_background, A bespectacled girl with a charming smile sits serenely in a serene, naturalistic background, her brown hair styled in medium-length waves and adorned with a delicate blue gemstone tucked behind her left ear., @chonmage daikon"
+      ]
+    },
+    {
+      "id": 27,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        3101.5583029530494,
+        1153.862492584149
+      ],
+      "size": [
+        511.5006252093159,
+        82
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            30
+          ]
+        }
+      ],
+      "title": "LoRA加载",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.0",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
+        0.8
+      ]
+    },
+    {
+      "id": 71,
+      "type": "Fast Groups Bypasser (rgthree)",
+      "pos": [
+        6029.878243075823,
+        1222.8488638551512
+      ],
+      "size": [
+        501.453589877146,
+        82
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "可选连接",
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "matchColors": "",
+        "matchTitle": "二采",
+        "showNav": true,
+        "showAllGraphs": true,
+        "sort": "position",
+        "customSortAlphabet": "",
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
       "id": 70,
       "type": "CR Text",
       "pos": [
@@ -3117,7 +3168,7 @@
           "links": null
         }
       ],
-      "title": "文本",
+      "title": "说明",
       "properties": {
         "Node name for S&R": "CR Text",
         "ue_properties": {
@@ -3128,51 +3179,6 @@
       },
       "widgets_values": [
         "参考过滤标签：\nmonochrome, greyscale,\ncross-section, cervix, cervical_penetration, uterus, x-ray, internal_cumshot,\nlactation, forced_lactation, male_lactation, projectile_lactation, lactation_through_clothes, breast_milk,\nmale_focus, male_penetrated, interracial, dark-skinned_male,\ngaping, extreme_gaping,\nprolapse, anal_prolapse, fisting, anal_fisting,\nanal, anal_only, after_anal, anal_fluid,\nanal_object_insertion, butt_plug, jewel_butt_plug, anal_beads, vibrator_in_anus,\nanus, cum_in_ass, spread_anus, spread_ass, anus_peek, puckered_anus, dark_anus, presenting_anus, spreading_own_anus, anus_cutout, censored_anus, spread_anus_under_clothes, colored_anus,\npubic_hair, female_pubic_hair, pubic_hair_peek, colored_pubic_hair, sparse_pubic_hair, mismatched_pubic_hair, excessive_pubic_hair, shaped_pubic_hair,\ncondom, used_condom, condom_wrapper, condom_in_mouth, holding_condom, condom_on_penis, multiple_condoms, condom_packet_strip, pointless_condom, condom_belt, condom_box, used_condom_on_penis, condom_left_inside, colored_condom, okamoto_condoms, condom_wrapper_in_clothes, condom_thigh_strap, buying_condoms, broken_condom, used_condom_in_clothes,\n1boy,\n\n\n参考排除标签列表：\ncomic, 4koma, multiple_girls, multiple_boys, multiple_views, reference_sheet, 1girl, 2girls, 3girls, 4girls, 5girls, 6+girls, 2boys, 3boys, 4boys, 5boys, 6+boys, gangbang, threesome, mmf_threesome, ffm_threesome, group_sex, cooperative_fellatio, cooperative_paizuri, double_handjob, surrounded_by_penises, furry, obese, yaoi, yuri, otoko_no_ko, strap-on, futa_with_female, futa_without_pussy, implied_futanari, futanari, diaper, fart, pee, peeing, pee_puddle, pee_stain, peeing_self, golden_shower, scat, guro, ero_guro, intestines, vore, horse_penis\n\n\n参考排除标签分类：\nartist, character_name, copyright, meta, clothes_and_accessories, female_physical_descriptors, named_garment_exposure, specific_garment_interactions, speech_and_text, standard_physical_descriptors, metadata_and_attribution, intentional_design_exposure, two_handed_character_items, holding_large_items, content_censorship_methods"
-      ]
-    },
-    {
-      "id": 68,
-      "type": "ShowText|pysssss",
-      "pos": [
-        3647.5504573869653,
-        1332.6224495447261
-      ],
-      "size": [
-        515.8981764959062,
-        551.7522143616011
-      ],
-      "flags": {},
-      "order": 27,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "link": 104
-        }
-      ],
-      "outputs": [
-        {
-          "label": "字符串",
-          "name": "STRING",
-          "shape": 6,
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-custom-scripts",
-        "ver": "1.2.5",
-        "Node name for S&R": "ShowText|pysssss",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "杰作，最高质量，评分7，1个女孩，蓬松兽耳，动物耳朵，黑发，齐刘海，猫耳，额外耳朵，中长发，双马尾，黑色衬衫，项圈，铃铛，颈铃，衬衫，铃铛，耳朵特写，脸红，闭嘴，微笑，裂口笑，什么，多角度，肖像，动物，猫，英文文字，迷因，女孩开心脸庞两侧有两大蓬松猫耳，穿着可爱黑色衬衫扎双马尾，脖子和头发上都系着铃铛。微微泛红的脸颊透露出她讨喜的表情，简约背景，白色背景，中长发丝自然垂落更凸显猫娘特征，模糊背景配合简约色彩增强画面俏皮卡通质感，@yousui"
       ]
     }
   ],
@@ -3626,56 +3632,56 @@
       "INT"
     ],
     [
-      122,
+      129,
       66,
       0,
-      82,
+      87,
       0,
       "INT"
     ],
     [
-      123,
-      82,
+      130,
+      87,
       0,
       16,
       0,
       "INT"
     ],
     [
-      124,
-      82,
-      1,
-      16,
-      1,
-      "INT"
-    ],
-    [
-      125,
-      82,
-      2,
-      78,
-      2,
-      "STRING"
-    ],
-    [
-      126,
-      82,
+      131,
+      87,
       0,
       83,
       0,
       "INT"
     ],
     [
-      127,
-      82,
+      132,
+      87,
+      1,
+      16,
+      1,
+      "INT"
+    ],
+    [
+      133,
+      87,
       1,
       85,
       0,
       "INT"
     ],
     [
-      128,
-      82,
+      134,
+      87,
+      2,
+      78,
+      2,
+      "STRING"
+    ],
+    [
+      135,
+      87,
       2,
       86,
       0,
@@ -3712,10 +3718,10 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 0.9646149645000051,
+      "scale": 0.8769226950000016,
       "offset": [
-        -3029.742714249908,
-        -1357.4685568190541
+        -2547.861787942875,
+        -1103.2748262836246
       ]
     },
     "qgn_navigation_groups": [],
