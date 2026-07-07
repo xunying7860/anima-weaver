@@ -1,29 +1,43 @@
 """
 Anima Weaver — Random Resolution Selector
 
-A standalone ComfyUI node that outputs random width, height,
-and aspect-ratio string for use with the AnimaWeaver prompt builder.
+Outputs random width, height, and aspect-ratio string based on
+a target megapixel range and optional aspect ratio.
 """
 
 from __future__ import annotations
 
+import math
 import random
 from typing import Any
 
-# ── Resolution presets ───────────────────────────────────────────────
+# ── Resolution helpers ─────────────────────────────────────────────
 
-ASPECT_PRESETS: dict[str, list[tuple[int, int]]] = {
-    "1:1 (square)":       [(1024, 1024), (896, 896), (768, 768)],
-    "4:3 (standard)":     [(1152, 896), (1216, 832), (1344, 1008)],
-    "16:9 (landscape)":   [(1216, 704), (1344, 768), (1408, 800)],
-    "9:16 (portrait)":    [(704, 1216), (768, 1344), (800, 1408)],
-    "3:2 (photo)":        [(1216, 832), (1344, 896), (1408, 960)],
-    "2:3 (photo portrait)": [(832, 1216), (896, 1344), (960, 1408)],
-    "21:9 (ultrawide)":   [(1408, 640), (1536, 704), (1600, 736)],
-    "16:10 (widescreen)": [(1152, 896), (1280, 800), (1408, 896)],
+ASPECT_RATIOS: dict[str, tuple[float, float]] = {
+    "1:1 (square)":          (1.0, 1.0),
+    "4:3 (standard)":        (4.0, 3.0),
+    "16:9 (landscape)":      (16.0, 9.0),
+    "9:16 (portrait)":       (9.0, 16.0),
+    "3:2 (photo)":           (3.0, 2.0),
+    "2:3 (photo portrait)":  (2.0, 3.0),
+    "21:9 (ultrawide)":      (21.0, 9.0),
+    "16:10 (widescreen)":    (16.0, 10.0),
 }
 
-ASPECT_NAMES = list(ASPECT_PRESETS.keys())
+ASPECT_NAMES = list(ASPECT_RATIOS.keys())
+
+
+def _resolve(megapixel: float, ratio: tuple[float, float]) -> tuple[int, int]:
+    """Calculate width/height from megapixels and aspect ratio, snapped to 8."""
+    w_ratio, h_ratio = ratio
+    area = megapixel * 1_000_000
+    h = int(math.sqrt(area / (w_ratio / h_ratio)))
+    w = int(h * (w_ratio / h_ratio))
+    # snap to 8
+    w = max(64, (w // 8) * 8)
+    h = max(64, (h // 8) * 8)
+    return w, h
+
 
 # ── Node ─────────────────────────────────────────────────────────────
 
@@ -32,11 +46,24 @@ class RandomResolution:
     def INPUT_TYPES(s) -> dict[str, Any]:
         return {
             "required": {
-                "随机画幅": ("BOOLEAN", {"default": True,
-                    "tooltip": "开启时随机选择比例和分辨率，关闭时使用下面的固定值"}),
-                "固定比例": (ASPECT_NAMES, {"default": "1:1 (square)"}),
-                "固定宽度": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
-                "固定高度": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
+                "随机画幅": (
+                    "BOOLEAN",
+                    {"default": True,
+                     "tooltip": "开启时从可用比例中随机选择，关闭时使用固定比例"},
+                ),
+                "百万像素": (
+                    "FLOAT",
+                    {"default": 1.0, "min": 0.0, "max": 32.0, "step": 0.01,
+                     "tooltip": "目标百万像素范围（0.00 ~ 32.00 MP）"},
+                ),
+                "随机种子": (
+                    "INT",
+                    {"default": 0, "min": 0, "max": 0x7FFFFFFF},
+                ),
+                "固定比例": (
+                    ASPECT_NAMES,
+                    {"default": "1:1 (square)"},
+                ),
             },
         }
 
@@ -49,17 +76,19 @@ class RandomResolution:
     def pick(
         self,
         随机画幅: bool,
+        百万像素: float,
+        随机种子: int,
         固定比例: str,
-        固定宽度: int,
-        固定高度: int,
     ) -> tuple[int, int, str]:
+        rng = random.Random(随机种子)
+
         if 随机画幅:
-            ratio_name = random.choice(ASPECT_NAMES)
-            candidates = ASPECT_PRESETS[ratio_name]
-            width, height = random.choice(candidates)
+            ratio_name = rng.choice(ASPECT_NAMES)
         else:
-            width, height = 固定宽度, 固定高度
             ratio_name = 固定比例
+
+        w_ratio, h_ratio = ASPECT_RATIOS[ratio_name]
+        width, height = _resolve(百万像素, (w_ratio, h_ratio))
 
         return (width, height, ratio_name)
 
