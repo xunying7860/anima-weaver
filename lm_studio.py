@@ -452,6 +452,10 @@ def generate_nl_from_lm_studio(
                 "next, i", "so i need", "so i have",
                 "a single female", "check if",
                 "looking at the tags", "review against", "check for",
+                "clothing:", "pose:", "expression:", "lighting:",
+                "maybe ", "perhaps ", "i can keep", "i can tell",
+                "could mean", "or maybe", "the lighting", "that sounds",
+                "i'm combining", "implies that",
             ]):
                 continue
             # Skip lines that start with backtick-quoted tags (echoing input)
@@ -504,7 +508,15 @@ def generate_nl_from_lm_studio(
             # d) regular description line
             stripped = line.lstrip(' \t*"\u2014\u2013')
             lower = stripped.lower()
-            if any(lower.startswith(s) for s in ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")):
+            # Skip tag-analysis lines with parentheticals and no verbs e.g. "hair (alternate), eyes (on Ada)"
+            skip_analysis = ("(" in line and ")" in line
+                 and not any(v in line.lower() for v in
+                 [" stands", " wears", " holds", " sits", " lies", " walks", " runs",
+                  " looks", " has ", " is a", " are ", " was ", " were ",
+                  " wearing", " holding", " standing"]))
+            if skip_analysis:
+                pass
+            elif any(lower.startswith(s) for s in ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")):
                 desc_parts.append(line)
             elif (len(stripped.split()) >= 5 and stripped[0].isupper() and stripped[-1] in ".!?"
                   and not any(stripped.startswith(f"{n}.") for n in "0123456789")
