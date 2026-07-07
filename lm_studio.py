@@ -438,22 +438,42 @@ def generate_nl_from_lm_studio(
             content = message.get("reasoning_content", "").strip()
         # Clean: remove dashes and em-dashes
         content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
-        # Safety: strip any leaked thinking/reasoning process
-        for stopword in ["Thinking Process", "Thinking Process:", "1. **Analyze", "1.**Analyze"]:
-            idx = content.find(stopword)
-            if idx != -1:
-                # Keep everything after the thinking block
-                after = content[idx + len(stopword):]
-                # Find the next double-newline or list end, take content after that
-                lines = after.split("\n")
-                desc_lines = [l for l in lines if l.strip() and not l.strip().startswith(("*", "-", "1.", "2.", "3.", "4.", "5.", "6."))]
-                if desc_lines:
-                    content = "\n".join(desc_lines).strip()
-                else:
-                    content = after.strip()
-                # Clean up any leading non-alpha chars (stray ":" etc.)
-                content = content.lstrip(",:; \t\n\r")
+        # Safety: strip any leaked reasoning / instruction echo
+        # Find the first line that looks like actual description text.
+        desc_starters = ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")
+        # Also match any line that looks like a real sentence: capital letter, 5+ words, ends with period,
+        # and is not a numbered instruction header.
+        lines = content.split("\n")
+        desc_start = -1
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if not line:
+                continue
+            stripped = line.lstrip(' \t*"-\u2014\u2013')
+            lower = stripped.lower()
+            # Direct match via starters
+            if any(lower.startswith(s) for s in desc_starters):
+                desc_start = i
                 break
+            # Sentence heuristic: starts with uppercase, 5+ words, ends with .!?
+            words = stripped.split()
+            if (len(words) >= 5
+                and stripped[0].isupper()
+                and stripped[-1] in ".!?"
+                and not any(stripped.startswith(f"{n}.") for n in "0123456789")
+                and not stripped.startswith("*")
+                and not stripped.startswith("-")):
+                desc_start = i
+                break
+        if desc_start > 0:
+            content = "\n".join(lines[desc_start:]).strip()
+        elif desc_start == -1:
+            # No description found, keep all non-empty lines (fallback)
+            non_empty = [l for l in lines if l.strip()]
+            if non_empty:
+                content = "\n".join(non_empty)
+        # Clean up any leading non-alpha chars
+        content = content.lstrip(",:; \t\n\r -*\"")
         # Truncate detailed mode to 800 chars at sentence boundary
         if detailed and len(content) > 800:
             # Find the last sentence end within 800 chars
