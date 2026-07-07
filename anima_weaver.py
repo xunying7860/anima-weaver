@@ -238,6 +238,10 @@ class AnimaWeaver:
                     "STRING",
                     {"default": "", "tooltip": "从「随机分辨率」节点接入画幅比例，用于自然语言生成"},
                 ),
+                "随机画幅": (
+                    "BOOLEAN",
+                    {"default": True, "tooltip": "关闭时使用上面手填的固定画幅，开启时随机选择画幅比例"},
+                ),
             },
         }
 
@@ -675,6 +679,13 @@ class AnimaWeaver:
                     cloud_model = kwargs.get("云端模型名", "").strip()
                     detailed_nl = bool(kwargs.get("强制详细自然语言", False))
                     aspect_ratio = str(kwargs.get("画幅比例", "") or "")
+                    if kwargs.get("随机画幅", True) or not aspect_ratio:
+                        common_ratios = [
+                            "1:1 (square)", "4:3 (standard)", "16:9 (landscape)",
+                            "9:16 (portrait)", "3:2 (photo)", "2:3 (photo portrait)",
+                            "21:9 (ultrawide)", "16:10 (widescreen)",
+                        ]
+                        aspect_ratio = random.choice(common_ratios)
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
