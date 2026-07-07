@@ -1,79 +1,74 @@
 """
 Anima Weaver — Random Resolution Selector
 
-Selects a random resolution matching a target megapixel count
-and aspect ratio.  Outputs width, height, and aspect-ratio label.
+A standalone ComfyUI node that outputs random width, height,
+and aspect-ratio string for use with the AnimaWeaver prompt builder.
 """
 
 from __future__ import annotations
 
-import math
 import random
 from typing import Any
 
-# ── Aspect ratios ─────────────────────────────────────────────────────
+# ── Resolution presets ───────────────────────────────────────────────
 
-ASPECT_RATIOS: dict[str, tuple[float, float]] = {
-    "1:1 (方形)":       (1, 1),
-    "2:3 (竖幅照片)":    (2, 3),
-    "3:2 (照片)":       (3, 2),
-    "3:4 (竖幅标准)":    (3, 4),
-    "4:3 (标准)":       (4, 3),
-    "9:16 (竖幅宽屏)":   (9, 16),
-    "16:9 (宽屏)":      (16, 9),
-    "21:9 (超宽屏)":    (21, 9),
+ASPECT_PRESETS: dict[str, list[tuple[int, int]]] = {
+    "1:1 (square)":       [(1024, 1024), (896, 896), (768, 768)],
+    "4:3 (standard)":     [(1152, 896), (1216, 832), (1344, 1008)],
+    "16:9 (landscape)":   [(1216, 704), (1344, 768), (1408, 800)],
+    "9:16 (portrait)":    [(704, 1216), (768, 1344), (800, 1408)],
+    "3:2 (photo)":        [(1216, 832), (1344, 896), (1408, 960)],
+    "2:3 (photo portrait)": [(832, 1216), (896, 1344), (960, 1408)],
+    "21:9 (ultrawide)":   [(1408, 640), (1536, 704), (1600, 736)],
+    "16:10 (widescreen)": [(1152, 896), (1280, 800), (1408, 896)],
 }
 
-# ── ComfyUI Node ──────────────────────────────────────────────────────
+ASPECT_NAMES = list(ASPECT_PRESETS.keys())
+
+# ── Node ─────────────────────────────────────────────────────────────
 
 class RandomResolution:
-    """
-    Picks a random (width, height) pair that approximately matches a
-    user-specified megapixel target and an aspect ratio.
-    """
-
     @classmethod
-    def INPUT_TYPES(cls) -> dict[str, Any]:
+    def INPUT_TYPES(s) -> dict[str, Any]:
         return {
             "required": {
-                "宽高比": (list(ASPECT_RATIOS.keys()), {"default": "3:4 (竖幅标准)"}),
-                "百万像素": ("FLOAT", {"default": 1.6, "min": 0.1, "max": 50.0, "step": 0.1}),
-                "种子": ("INT", {"default": 0, "min": 0, "max": 0x7FFFFFFF}),
-            }
+                "随机画幅": ("BOOLEAN", {"default": True,
+                    "tooltip": "开启时随机选择比例和分辨率，关闭时使用下面的固定值"}),
+                "固定比例": (ASPECT_NAMES, {"default": "1:1 (square)"}),
+                "固定宽度": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
+                "固定高度": ("INT", {"default": 1024, "min": 64, "max": 8192, "step": 8}),
+            },
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("INT", "INT", "STRING", "FLOAT")
-    RETURN_NAMES = ("宽度", "高度", "画幅比例", "实际百万像素")
-    FUNCTION = "generate"
+    RETURN_TYPES = ("INT", "INT", "STRING")
+    RETURN_NAMES = ("宽度", "高度", "画幅比例")
+    FUNCTION = "pick"
+    OUTPUT_NODE = False
 
-    def generate(
+    def pick(
         self,
-        宽高比: str,
-        百万像素: float,
-        种子: int,
-    ) -> tuple[int, int, str, float]:
-        rng = random.Random(种子)
+        随机画幅: bool,
+        固定比例: str,
+        固定宽度: int,
+        固定高度: int,
+    ) -> tuple[int, int, str]:
+        if 随机画幅:
+            ratio_name = random.choice(ASPECT_NAMES)
+            candidates = ASPECT_PRESETS[ratio_name]
+            width, height = random.choice(candidates)
+        else:
+            width, height = 固定宽度, 固定高度
+            ratio_name = 固定比例
 
-        w_ratio, h_ratio = ASPECT_RATIOS[宽高比]
+        return (width, height, ratio_name)
 
-        # Target total pixels
-        target_pixels = 百万像素 * 1_000_000
 
-        # Base guess: w = sqrt(pixels * ratio), h = pixels / w
-        base_w = math.sqrt(target_pixels * w_ratio / h_ratio)
-        base_h = target_pixels / base_w
+# ── Node registration ───────────────────────────────────────────────
 
-        # Round to nearest multiples of 64 (common for AI models)
-        def _round64(x: int) -> int:
-            return max(64, (x // 64) * 64)
-
-        # Add ±10% jitter for variety
-        jitter = rng.uniform(0.90, 1.10)
-        w = _round64(int(base_w * jitter))
-        h = _round64(int(base_h * jitter))
-
-        # Ensure ratio is maintained
-        actual_mp = round(w * h / 1_000_000, 2)
-
-        return (w, h, 宽高比, actual_mp)
+NODE_CLASS_MAPPINGS = {
+    "RandomResolution": RandomResolution,
+}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "RandomResolution": "随机分辨率选择器",
+}

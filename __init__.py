@@ -11,7 +11,7 @@ NODE_CLASS_MAPPINGS = {
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AnimaWeaver": "提示词编织器",
-    "RandomResolution": "随机分辨率",
+    "RandomResolution": "随机分辨率选择器",
 }
 
 __all__ = [
