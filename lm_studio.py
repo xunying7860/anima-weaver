@@ -448,6 +448,15 @@ def generate_nl_from_lm_studio(
             line = line.strip()
             if not line:
                 continue
+            # Skip meta-commentary lines about the task itself
+            lower_line = line.lower()
+            if any(lower_line.startswith(p) for p in [
+                "the prompt", "the user wants", "the user asked", "the task",
+                "i need to", "i should", "i must", "this is a", "this sets",
+                "sets the tone", "focus on", "introduce the", "core identity",
+                "these are key", "weave these",
+            ]):
+                continue
             # a) "1. **Title** — description text"
             if " — " in line:
                 _, after = line.split(" — ", 1)
