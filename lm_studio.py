@@ -361,53 +361,38 @@ def generate_nl_from_lm_studio(
 
     if detailed:
         system_msg = (
-            "You are an AI assistant that writes highly detailed, cinematic "
-            "natural-language descriptions for image generation prompts. Given a list "
-            "of Danbooru-style tags, write a very detailed, vivid and immersive English "
-            "description (at least 6 sentences) that paints a complete picture of the "
-            "scene. Describe the subject's appearance, clothing, pose, expression, "
-            "lighting, background, atmosphere, and every visual detail in rich depth. "
-            "Do not repeat tags verbatim. "
-            "IMPORTANT: Write ONLY the description. Do NOT include any meta-commentary, "
-            "explanations, numbered lists, thinking processes, analysis steps, "
-            "phrases like 'as requested', 'English text is included', or "
-            "anything outside the description itself. "
-            "NEVER start with 'Thinking Process' or '1.' or 'First'. "
-            "Output ONLY the description text and nothing else. "
-            "You MUST write in English only. Do NOT use Chinese or any other language."
+            "You are a description generator for image prompts. Your task: given Danbooru-style tags, "
+            "write ONE continuous paragraph describing the image. "
+            "RULES: "
+            "1) Write ONLY the description. "
+            "2) No meta-commentary, analysis, thinking, or explanations of any kind. "
+            "3) No bullet points, no numbered lists, no line breaks, no prefixes. "
+            "4) Do not repeat tags verbatim. "
+            "5) Describe the subject, appearance, clothing, pose, expression, lighting, background in that order. "
+            "6) Put background/environment at the very end. "
+            "7) English only. "
+            "8) At least 6 sentences. "
+            "FAILURE MODE: If you output anything other than the description (explanations, "
+            "thinking, analysis, tag comments, etc.), the output will be rejected."
         )
         user_msg = (
-            "Write a very detailed English description (at least 6 sentences) "
-            "for these tags. Put background/environment description at the end:\n\n"
             f"{tag_prompt}\n\n"
+            "Output ONLY the description. No analysis. No commentary. No line breaks. "
+            "One paragraph. Background at the end."
         )
         if aspect_ratio:
-            user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
-        user_msg += (
-            "English only, at least 6 sentences, background at the end, "
-            "NO thinking process or analysis:"
-        )
+            user_msg += f" Aspect ratio: {aspect_ratio}."
         max_tokens = 1024
     else:
         system_msg = (
-            "You are an AI assistant that writes natural-language descriptions "
-            "for image generation prompts. Given a list of Danbooru-style tags, "
-            "write a concise, fluent English description (1-3 sentences) that "
-            "captures the scene. Do not repeat tags verbatim. Be coherent and vivid. "
-            "IMPORTANT: Write ONLY the description. Do NOT include any meta-commentary, "
-            "explanations, numbered lists, thinking processes, analysis steps, or "
-            "anything outside the description itself. "
-            "NEVER start with 'Thinking Process' or '1.' or 'First'. "
-            "Output ONLY the description text and nothing else. "
-            "You MUST write in English only. Do NOT use Chinese or any other language."
+            "You are a description generator for image prompts. "
+            f"Given these tags: {tag_prompt}\n\n"
+            "Write ONLY a concise English description (1-3 sentences). "
+            "RULES: No analysis. No commentary. No thinking. No line breaks. "
+            "No bullet points. No prefixes. No meta-commentary. "
+            "Just the description, as a single paragraph."
         )
-        user_msg = (
-            "Write an English natural language description for these tags:\n\n"
-            f"{tag_prompt}\n\n"
-        )
-        if aspect_ratio:
-            user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
-        user_msg += "English only, 1-3 sentences:"
+        user_msg = "Description only, 1-3 sentences, English:"
         max_tokens = 512
 
     payload: dict[str, Any] = {
@@ -537,6 +522,8 @@ def generate_nl_from_lm_studio(
         content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
         # Clean up any leading non-alpha chars
         content = content.lstrip(",:; \t\n\r -*\"\u2014\u2013")
+        # Final pass: collapse to single paragraph, remove remaining meta clutter
+        content = " ".join(content.split())  # collapse all whitespace to single spaces
         # Truncate detailed mode to 800 chars at sentence boundary
         if detailed and len(content) > 800:
             # Find the last sentence end within 800 chars
