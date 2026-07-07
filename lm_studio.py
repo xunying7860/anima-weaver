@@ -462,6 +462,7 @@ def generate_nl_from_lm_studio(
                 "now, structure", "now consider", "danbooru-style tags",
                 "option 2", "option 1", "potential opening",
                 "that captures", "a list of",
+                "let's think", "let's consider", "let me look at",
             ]):
                 continue
             # Skip lines that start with backtick-quoted tags (echoing input)
