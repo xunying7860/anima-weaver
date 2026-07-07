@@ -1,8 +1,8 @@
 {
   "id": "ce9e890b-ef39-4e8e-afa9-0cc6e665cfd0",
   "revision": 0,
-  "last_node_id": 79,
-  "last_link_id": 120,
+  "last_node_id": 86,
+  "last_link_id": 128,
   "nodes": [
     {
       "id": 16,
@@ -16,7 +16,7 @@
         110
       ],
       "flags": {},
-      "order": 18,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -25,7 +25,7 @@
           "widget": {
             "name": "width"
           },
-          "link": 114
+          "link": 123
         },
         {
           "name": "height",
@@ -33,7 +33,7 @@
           "widget": {
             "name": "height"
           },
-          "link": 115
+          "link": 124
         }
       ],
       "outputs": [
@@ -122,10 +122,10 @@
       ],
       "size": [
         210,
-        348
+        546
       ],
       "flags": {},
-      "order": 26,
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
@@ -181,7 +181,7 @@
         }
       },
       "widgets_values": [
-        954010064501695,
+        683881895639176,
         "randomize",
         30,
         4.5,
@@ -208,7 +208,7 @@
         120
       ],
       "flags": {},
-      "order": 44,
+      "order": 46,
       "mode": 4,
       "inputs": [
         {
@@ -299,7 +299,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 41,
+      "order": 43,
       "mode": 4,
       "inputs": [
         {
@@ -340,7 +340,7 @@
         250
       ],
       "flags": {},
-      "order": 46,
+      "order": 48,
       "mode": 4,
       "inputs": [
         {
@@ -380,7 +380,7 @@
         120
       ],
       "flags": {},
-      "order": 39,
+      "order": 41,
       "mode": 4,
       "inputs": [
         {
@@ -425,7 +425,7 @@
         80
       ],
       "flags": {},
-      "order": 40,
+      "order": 42,
       "mode": 4,
       "inputs": [
         {
@@ -498,7 +498,7 @@
         50
       ],
       "flags": {},
-      "order": 31,
+      "order": 33,
       "mode": 4,
       "inputs": [
         {
@@ -549,7 +549,7 @@
         390
       ],
       "flags": {},
-      "order": 45,
+      "order": 47,
       "mode": 4,
       "inputs": [
         {
@@ -719,7 +719,7 @@
         }
       },
       "widgets_values": [
-        1588934598,
+        3808022444,
         "randomize",
         3840,
         0,
@@ -746,7 +746,7 @@
         200
       ],
       "flags": {},
-      "order": 24,
+      "order": 26,
       "mode": 0,
       "inputs": [
         {
@@ -805,7 +805,7 @@
         26
       ],
       "flags": {},
-      "order": 35,
+      "order": 37,
       "mode": 4,
       "inputs": [
         {
@@ -849,7 +849,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 38,
+      "order": 40,
       "mode": 4,
       "inputs": [
         {
@@ -1238,7 +1238,7 @@
         200
       ],
       "flags": {},
-      "order": 16,
+      "order": 14,
       "mode": 0,
       "inputs": [
         {
@@ -1291,7 +1291,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 48,
+      "order": 50,
       "mode": 4,
       "inputs": [
         {
@@ -1342,7 +1342,7 @@
         130
       ],
       "flags": {},
-      "order": 42,
+      "order": 44,
       "mode": 4,
       "inputs": [
         {
@@ -1407,7 +1407,7 @@
         416.43581039262926
       ],
       "flags": {},
-      "order": 47,
+      "order": 49,
       "mode": 4,
       "inputs": [
         {
@@ -1471,7 +1471,7 @@
         66
       ],
       "flags": {},
-      "order": 43,
+      "order": 45,
       "mode": 4,
       "inputs": [
         {
@@ -1525,7 +1525,7 @@
         80
       ],
       "flags": {},
-      "order": 37,
+      "order": 39,
       "mode": 4,
       "inputs": [
         {
@@ -1601,7 +1601,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 36,
+      "order": 38,
       "mode": 4,
       "inputs": [
         {
@@ -1699,7 +1699,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 32,
+      "order": 34,
       "mode": 4,
       "inputs": [
         {
@@ -1745,58 +1745,6 @@
       ]
     },
     {
-      "id": 45,
-      "type": "CR Text",
-      "pos": [
-        29.833712838534716,
-        869.2638140163201
-      ],
-      "size": [
-        400,
-        200
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": null
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "文本",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "你是一位精通 Anima 系列模型底层机制与提示词工程的顶尖专家。\n"
-      ]
-    },
-    {
       "id": 11,
       "type": "ModelSamplingAuraFlow",
       "pos": [
@@ -1808,7 +1756,7 @@
         60
       ],
       "flags": {},
-      "order": 20,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
@@ -1856,7 +1804,7 @@
         50
       ],
       "flags": {},
-      "order": 27,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -1904,7 +1852,7 @@
         102
       ],
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -1945,7 +1893,7 @@
         }
       },
       "widgets_values": [
-        446471475200179,
+        91866081212776,
         "randomize"
       ]
     },
@@ -1961,7 +1909,7 @@
         58
       ],
       "flags": {},
-      "order": 21,
+      "order": 23,
       "mode": 0,
       "inputs": [
         {
@@ -2006,7 +1954,7 @@
         120
       ],
       "flags": {},
-      "order": 7,
+      "order": 6,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2049,7 +1997,7 @@
         150
       ],
       "flags": {},
-      "order": 28,
+      "order": 30,
       "mode": 4,
       "inputs": [
         {
@@ -2142,7 +2090,7 @@
         348
       ],
       "flags": {},
-      "order": 30,
+      "order": 32,
       "mode": 4,
       "inputs": [
         {
@@ -2197,7 +2145,7 @@
         }
       },
       "widgets_values": [
-        960304681962270,
+        331808010475832,
         "randomize",
         10,
         5,
@@ -2224,7 +2172,7 @@
         553.4084132773351
       ],
       "flags": {},
-      "order": 34,
+      "order": 36,
       "mode": 4,
       "inputs": [
         {
@@ -2264,7 +2212,7 @@
         82
       ],
       "flags": {},
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2304,7 +2252,7 @@
         455.6205684979079
       ],
       "flags": {},
-      "order": 29,
+      "order": 31,
       "mode": 0,
       "inputs": [
         {
@@ -2335,15 +2283,103 @@
       "widgets_values": []
     },
     {
-      "id": 70,
-      "type": "CR Text",
+      "id": 37,
+      "type": "easy showAnything",
       "pos": [
-        2005.7884320668186,
-        2630.2598237177267
+        3660.7543385090135,
+        2012.168405198724
       ],
       "size": [
-        482.73495560876063,
-        524.3468788694613
+        394.4006477779899,
+        302.55687173919296
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 118
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "title": "提示词-随机-调试信息",
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "9947b8be70e17ceabafa4fa7f476b54626de4704",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.1"
+        }
+      },
+      "widgets_values": [
+        "Mode: hybrid\nSeed: 14971675440161857827 (randomize)\n→ Running Raffle extraction …\n  Raffle slots filled: 8\nMerged slots:\n  count_identity: 1 tags\n  appearance: 8 tags\n  clothing: 5 tags\n  pose_action: 2 tags\n  expression: 5 tags\n  camera: 2 tags\n  scene: 4 tags\n  detail_mood: 2 tags\n✓ No conflicts\nArtist: @yousui\nTag ratio: 0.6\nTags: 319 chars\nNL:   411 chars"
+      ]
+    },
+    {
+      "id": 19,
+      "type": "VAELoader",
+      "pos": [
+        4479.223503453732,
+        1656.8856692537781
+      ],
+      "size": [
+        350,
+        70
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            14,
+            50,
+            54
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "VAELoader",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "vae_name": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "wan_2.1_vae.safetensors"
+      ]
+    },
+    {
+      "id": 72,
+      "type": "CR Text",
+      "pos": [
+        2778.92320482981,
+        1338.8932830023193
+      ],
+      "size": [
+        273.72523328852867,
+        423.712431882225
       ],
       "flags": {},
       "order": 9,
@@ -2364,7 +2400,9 @@
           "label": "文本",
           "name": "text",
           "type": "*",
-          "links": null
+          "links": [
+            106
+          ]
         },
         {
           "label": "显示帮助",
@@ -2373,7 +2411,7 @@
           "links": null
         }
       ],
-      "title": "文本",
+      "title": "手写部分",
       "properties": {
         "Node name for S&R": "CR Text",
         "ue_properties": {
@@ -2383,7 +2421,218 @@
         }
       },
       "widgets_values": [
-        "参考过滤标签：\nmonochrome, greyscale,\ncross-section, cervix, cervical_penetration, uterus, x-ray, internal_cumshot,\nlactation, forced_lactation, male_lactation, projectile_lactation, lactation_through_clothes, breast_milk,\nmale_focus, male_penetrated, interracial, dark-skinned_male,\ngaping, extreme_gaping,\nprolapse, anal_prolapse, fisting, anal_fisting,\nanal, anal_only, after_anal, anal_fluid,\nanal_object_insertion, butt_plug, jewel_butt_plug, anal_beads, vibrator_in_anus,\nanus, cum_in_ass, spread_anus, spread_ass, anus_peek, puckered_anus, dark_anus, presenting_anus, spreading_own_anus, anus_cutout, censored_anus, spread_anus_under_clothes, colored_anus,\npubic_hair, female_pubic_hair, pubic_hair_peek, colored_pubic_hair, sparse_pubic_hair, mismatched_pubic_hair, excessive_pubic_hair, shaped_pubic_hair,\ncondom, used_condom, condom_wrapper, condom_in_mouth, holding_condom, condom_on_penis, multiple_condoms, condom_packet_strip, pointless_condom, condom_belt, condom_box, used_condom_on_penis, condom_left_inside, colored_condom, okamoto_condoms, condom_wrapper_in_clothes, condom_thigh_strap, buying_condoms, broken_condom, used_condom_in_clothes,\n1boy,\n\n\n参考排除标签列表：\ncomic, 4koma, multiple_girls, multiple_boys, multiple_views, reference_sheet, 1girl, 2girls, 3girls, 4girls, 5girls, 6+girls, 2boys, 3boys, 4boys, 5boys, 6+boys, gangbang, threesome, mmf_threesome, ffm_threesome, group_sex, cooperative_fellatio, cooperative_paizuri, double_handjob, surrounded_by_penises, furry, obese, yaoi, yuri, otoko_no_ko, strap-on, futa_with_female, futa_without_pussy, implied_futanari, futanari, diaper, fart, pee, peeing, pee_puddle, pee_stain, peeing_self, golden_shower, scat, guro, ero_guro, intestines, vore, horse_penis\n\n\n参考排除标签分类：\nartist, character_name, copyright, meta, clothes_and_accessories, female_physical_descriptors, named_garment_exposure, specific_garment_interactions, speech_and_text, standard_physical_descriptors, metadata_and_attribution, intentional_design_exposure, two_handed_character_items, holding_large_items, content_censorship_methods"
+        "masterpiece, best quality, score_7, "
+      ]
+    },
+    {
+      "id": 27,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        3101.5583029530494,
+        1153.862492584149
+      ],
+      "size": [
+        511.5006252093159,
+        82
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            30
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.0",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
+        0.8
+      ]
+    },
+    {
+      "id": 30,
+      "type": "Image Comparer (rgthree)",
+      "pos": [
+        3076.4718803830624,
+        1278.5701154186484
+      ],
+      "size": [
+        560.0594992982024,
+        608.6050992457558
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "dir": 3,
+          "label": "图像_A",
+          "name": "image_a",
+          "type": "IMAGE",
+          "link": 48
+        },
+        {
+          "dir": 3,
+          "label": "图像_B",
+          "name": "image_b",
+          "type": "IMAGE",
+          "link": 39
+        }
+      ],
+      "outputs": [
+        {
+          "dir": 4,
+          "name": "images",
+          "shape": 3,
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "rgthree-comfy",
+        "ver": "8ff50e4521881eca1fe26aec9615fc9362474931",
+        "comparer_mode": "Slide",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        [
+          {
+            "name": "B",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_kiifv_00001_.png&type=temp&subfolder=&rand=0.6814186790837348"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 74,
+      "type": "CR Text",
+      "pos": [
+        2554.918865165164,
+        1342.5394530350995
+      ],
+      "size": [
+        216.52911365049658,
+        418.44369797887543
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": [
+            113
+          ]
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "手写画师/触发词",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        " @zirba, @wzry_ssx, "
+      ]
+    },
+    {
+      "id": 66,
+      "type": "Seed_",
+      "pos": [
+        2234.9768717794627,
+        2529.5639052243628
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "随机种",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "随机种",
+          "name": "seed",
+          "type": "INT",
+          "links": [
+            116,
+            120,
+            122
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-mixlab-nodes",
+        "ver": "0.46.0",
+        "Node name for S&R": "Seed_",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        752187361221725,
+        "randomize"
       ]
     },
     {
@@ -2398,7 +2647,7 @@
         190
       ],
       "flags": {},
-      "order": 22,
+      "order": 24,
       "mode": 0,
       "inputs": [
         {
@@ -2479,398 +2728,198 @@
       ]
     },
     {
-      "id": 37,
-      "type": "easy showAnything",
+      "id": 83,
+      "type": "PreviewAny",
       "pos": [
-        3660.7543385090135,
-        1973.767870930421
+        2258.7348734481984,
+        2033.1851950434846
       ],
       "size": [
-        394.4006477779899,
-        302.55687173919296
+        241.92983846768857,
+        112
       ],
       "flags": {},
-      "order": 23,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
-          "label": "输入任何",
-          "name": "anything",
-          "shape": 7,
+          "name": "source",
           "type": "*",
-          "link": 118
+          "link": 126
         }
       ],
       "outputs": [
         {
-          "label": "输出",
-          "name": "output",
-          "type": "*",
+          "name": "STRING",
+          "type": "STRING",
           "links": null
         }
       ],
-      "title": "提示词-随机-调试信息",
       "properties": {
-        "cnr_id": "comfyui-easy-use",
-        "ver": "9947b8be70e17ceabafa4fa7f476b54626de4704",
-        "Node name for S&R": "easy showAnything",
         "ue_properties": {
           "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.5.1"
-        }
-      },
-      "widgets_values": [
-        "Mode: hybrid\nSeed: 9349855534709099085 (randomize)\n→ Running Raffle extraction …\n  Raffle slots filled: 7\nMerged slots:\n  count_identity: 6 tags\n  appearance: 6 tags\n  clothing: 6 tags\n  pose_action: 4 tags\n  expression: 3 tags\n  camera: 0 tags\n  scene: 5 tags\n  detail_mood: 1 tags\n✓ No conflicts\nTag ratio: 0.6\nTags: 419 chars\nNL:   796 chars"
-      ]
-    },
-    {
-      "id": 19,
-      "type": "VAELoader",
-      "pos": [
-        4479.223503453732,
-        1656.8856692537781
-      ],
-      "size": [
-        350,
-        70
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            14,
-            50,
-            54
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.21.1",
-        "Node name for S&R": "VAELoader",
-        "ue_properties": {
-          "widget_ue_connectable": {
-            "vae_name": true
-          },
-          "version": "7.8",
           "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "wan_2.1_vae.safetensors"
-      ]
-    },
-    {
-      "id": 72,
-      "type": "CR Text",
-      "pos": [
-        2778.92320482981,
-        1338.8932830023193
-      ],
-      "size": [
-        273.72523328852867,
-        423.712431882225
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": [
-            106
-          ]
         },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "手写部分",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "masterpiece, best quality, score_7, "
-      ]
-    },
-    {
-      "id": 27,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        3101.5583029530494,
-        1153.862492584149
-      ],
-      "size": [
-        511.5006252093159,
-        82
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 4,
-      "inputs": [
-        {
-          "label": "模型",
-          "name": "model",
-          "type": "MODEL",
-          "link": 31
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            30
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.22.0",
-        "Node name for S&R": "LoraLoaderModelOnly",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
-        0.8
-      ]
-    },
-    {
-      "id": 30,
-      "type": "Image Comparer (rgthree)",
-      "pos": [
-        3076.4718803830624,
-        1278.5701154186484
-      ],
-      "size": [
-        560.0594992982024,
-        608.6050992457558
-      ],
-      "flags": {},
-      "order": 33,
-      "mode": 0,
-      "inputs": [
-        {
-          "dir": 3,
-          "label": "图像_A",
-          "name": "image_a",
-          "type": "IMAGE",
-          "link": 48
-        },
-        {
-          "dir": 3,
-          "label": "图像_B",
-          "name": "image_b",
-          "type": "IMAGE",
-          "link": 39
-        }
-      ],
-      "outputs": [
-        {
-          "dir": 4,
-          "name": "images",
-          "shape": 3,
-          "type": "IMAGE",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "rgthree-comfy",
-        "ver": "8ff50e4521881eca1fe26aec9615fc9362474931",
-        "comparer_mode": "Slide",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        [
-          {
-            "name": "B",
-            "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_rmpis_00013_.png&type=temp&subfolder=&rand=0.8053387897196664"
-          }
-        ]
-      ]
-    },
-    {
-      "id": 77,
-      "type": "ResolutionSelector",
-      "pos": [
-        2785.9765275352984,
-        1798.8623232161601
-      ],
-      "size": [
-        270,
-        126
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "label": "宽度",
-          "name": "width",
-          "type": "INT",
-          "links": [
-            114
-          ]
-        },
-        {
-          "label": "高度",
-          "name": "height",
-          "type": "INT",
-          "links": [
-            115
-          ]
-        }
-      ],
-      "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.27.0",
-        "Node name for S&R": "ResolutionSelector",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
+        "Node name for S&R": "PreviewAny"
       },
       "widgets_values": [
-        "3:4 (Portrait Standard)",
-        1.6,
-        8
+        null,
+        null,
+        false
       ]
     },
     {
-      "id": 74,
-      "type": "CR Text",
+      "id": 85,
+      "type": "PreviewAny",
       "pos": [
-        2554.918865165164,
-        1342.5394530350995
+        2257.796230817905,
+        2198.9029749224837
       ],
       "size": [
-        216.52911365049658,
-        418.44369797887543
+        241.92983846768857,
+        112
       ],
       "flags": {},
-      "order": 13,
-      "mode": 4,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": [
-            113
-          ]
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "手写画师/触发词",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        " @zirba, @wzry_ssx, "
-      ]
-    },
-    {
-      "id": 68,
-      "type": "ShowText|pysssss",
-      "pos": [
-        3647.5504573869653,
-        1332.6224495447261
-      ],
-      "size": [
-        515.8981764959062,
-        551.7522143616011
-      ],
-      "flags": {},
-      "order": 25,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "link": 104
+          "name": "source",
+          "type": "*",
+          "link": 127
         }
       ],
       "outputs": [
         {
-          "label": "字符串",
           "name": "STRING",
-          "shape": 6,
           "type": "STRING",
           "links": null
         }
       ],
       "properties": {
-        "cnr_id": "comfyui-custom-scripts",
-        "ver": "1.2.5",
-        "Node name for S&R": "ShowText|pysssss",
         "ue_properties": {
           "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
+          "input_ue_unconnectable": {}
+        },
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "PreviewAny"
       },
       "widgets_values": [
-        "masterpiece, best quality, score_7, 1girl, prinz_eugen_(azur_lane), solo, antenna_hair, breasts, multicolored_hair, side_slit, streaked_hair, thighs, twintails, white_hair, black_gloves, cross, garter_belt, garter_straps, german_clothes, gloves, hair_ornament, looking_at_viewer, flower, red_flower, red_rose, rose, iron_cross, red_background, @momochichi77"
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "id": 86,
+      "type": "PreviewAny",
+      "pos": [
+        2254.375176696367,
+        2356.271464513233
+      ],
+      "size": [
+        241.92983846768857,
+        112
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 128
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "id": 82,
+      "type": "RandomResolution",
+      "pos": [
+        2568.132311921185,
+        1802.3738218819979
+      ],
+      "size": [
+        472.7770290343615,
+        170
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "type": "INT",
+          "widget": {
+            "name": "随机种子"
+          },
+          "link": 122
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": [
+            123,
+            126
+          ]
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": [
+            124,
+            127
+          ]
+        },
+        {
+          "name": "画幅比例",
+          "type": "STRING",
+          "links": [
+            125,
+            128
+          ]
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "b3e536bab2bf8f79e45cbd0ff3d0b6f8c1021526",
+        "Node name for S&R": "RandomResolution"
+      },
+      "widgets_values": [
+        true,
+        1,
+        0,
+        "1:1 (square)"
       ]
     },
     {
@@ -2878,14 +2927,14 @@
       "type": "AnimaWeaver",
       "pos": [
         2561.9824992145614,
-        1982.4752620444735
+        2020.8757963127766
       ],
       "size": [
         1054.789758862381,
-        1236
+        1284.0000000000011
       ],
       "flags": {},
-      "order": 19,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
@@ -2903,6 +2952,15 @@
             "name": "随机种子"
           },
           "link": 116
+        },
+        {
+          "name": "画幅比例",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "画幅比例"
+          },
+          "link": 125
         }
       ],
       "outputs": [
@@ -2922,13 +2980,14 @@
         }
       ],
       "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        },
         "aux_id": "xunying7860/anima-weaver",
         "ver": "6fe9f6aed7a71d44073abae130480251d7b13d49",
-        "Node name for S&R": "AnimaWeaver"
+        "Node name for S&R": "AnimaWeaver",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
       },
       "widgets_values": [
         "hybrid",
@@ -2942,7 +3001,7 @@
         "",
         "",
         "",
-        "manual",
+        "lm_studio",
         "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
         false,
         "",
@@ -2963,49 +3022,52 @@
         "",
         "",
         "",
-        true
+        true,
+        ""
       ]
     },
     {
-      "id": 66,
-      "type": "Seed_",
+      "id": 73,
+      "type": "CR Text",
       "pos": [
-        2234.9768717794627,
-        2491.1633709560597
+        3668.893116711269,
+        2530.8873350815006
       ],
       "size": [
-        270,
-        82
+        409.6116048265053,
+        779.3481476758575
       ],
       "flags": {},
-      "order": 14,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
-          "label": "随机种",
-          "name": "seed",
-          "type": "INT",
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
           "widget": {
-            "name": "seed"
+            "name": "text"
           },
           "link": null
         }
       ],
       "outputs": [
         {
-          "label": "随机种",
-          "name": "seed",
-          "type": "INT",
-          "links": [
-            116,
-            120
-          ]
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": null
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
         }
       ],
+      "title": "说明",
       "properties": {
-        "cnr_id": "comfyui-mixlab-nodes",
-        "ver": "0.46.0",
-        "Node name for S&R": "Seed_",
+        "Node name for S&R": "CR Text",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
@@ -3013,23 +3075,22 @@
         }
       },
       "widgets_values": [
-        225489225411424,
-        "randomize"
+        "自然语言来源选择 手动 则不启动LLM服务\n\n模型默认读取1234端口的\n\n\n\n\n\n\n\n\n\napi地址\n\n本地：http://127.0.0.1:1234/v1\n\ndeepseek：https://api.deepseek.com\n模型名：deepseek-chat\n\n填key默认选择云端，不填默认用本地模型\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n画幅比例可自己填"
       ]
     },
     {
-      "id": 73,
+      "id": 70,
       "type": "CR Text",
       "pos": [
-        3679.514143968281,
-        2545.5919370982574
+        668.1562705454468,
+        2913.8359033629226
       ],
       "size": [
-        400,
-        200
+        1875.1039830747409,
+        385.22401126024715
       ],
       "flags": {},
-      "order": 15,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
@@ -3066,7 +3127,52 @@
         }
       },
       "widgets_values": [
-        "api地址\n\n本地：http://127.0.0.1:1234/v1\n\ndeepseek：https://api.deepseek.com\n模型名：deepseek-chat"
+        "参考过滤标签：\nmonochrome, greyscale,\ncross-section, cervix, cervical_penetration, uterus, x-ray, internal_cumshot,\nlactation, forced_lactation, male_lactation, projectile_lactation, lactation_through_clothes, breast_milk,\nmale_focus, male_penetrated, interracial, dark-skinned_male,\ngaping, extreme_gaping,\nprolapse, anal_prolapse, fisting, anal_fisting,\nanal, anal_only, after_anal, anal_fluid,\nanal_object_insertion, butt_plug, jewel_butt_plug, anal_beads, vibrator_in_anus,\nanus, cum_in_ass, spread_anus, spread_ass, anus_peek, puckered_anus, dark_anus, presenting_anus, spreading_own_anus, anus_cutout, censored_anus, spread_anus_under_clothes, colored_anus,\npubic_hair, female_pubic_hair, pubic_hair_peek, colored_pubic_hair, sparse_pubic_hair, mismatched_pubic_hair, excessive_pubic_hair, shaped_pubic_hair,\ncondom, used_condom, condom_wrapper, condom_in_mouth, holding_condom, condom_on_penis, multiple_condoms, condom_packet_strip, pointless_condom, condom_belt, condom_box, used_condom_on_penis, condom_left_inside, colored_condom, okamoto_condoms, condom_wrapper_in_clothes, condom_thigh_strap, buying_condoms, broken_condom, used_condom_in_clothes,\n1boy,\n\n\n参考排除标签列表：\ncomic, 4koma, multiple_girls, multiple_boys, multiple_views, reference_sheet, 1girl, 2girls, 3girls, 4girls, 5girls, 6+girls, 2boys, 3boys, 4boys, 5boys, 6+boys, gangbang, threesome, mmf_threesome, ffm_threesome, group_sex, cooperative_fellatio, cooperative_paizuri, double_handjob, surrounded_by_penises, furry, obese, yaoi, yuri, otoko_no_ko, strap-on, futa_with_female, futa_without_pussy, implied_futanari, futanari, diaper, fart, pee, peeing, pee_puddle, pee_stain, peeing_self, golden_shower, scat, guro, ero_guro, intestines, vore, horse_penis\n\n\n参考排除标签分类：\nartist, character_name, copyright, meta, clothes_and_accessories, female_physical_descriptors, named_garment_exposure, specific_garment_interactions, speech_and_text, standard_physical_descriptors, metadata_and_attribution, intentional_design_exposure, two_handed_character_items, holding_large_items, content_censorship_methods"
+      ]
+    },
+    {
+      "id": 68,
+      "type": "ShowText|pysssss",
+      "pos": [
+        3647.5504573869653,
+        1332.6224495447261
+      ],
+      "size": [
+        515.8981764959062,
+        551.7522143616011
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "link": 104
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "ShowText|pysssss",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "杰作，最高质量，评分7，1个女孩，蓬松兽耳，动物耳朵，黑发，齐刘海，猫耳，额外耳朵，中长发，双马尾，黑色衬衫，项圈，铃铛，颈铃，衬衫，铃铛，耳朵特写，脸红，闭嘴，微笑，裂口笑，什么，多角度，肖像，动物，猫，英文文字，迷因，女孩开心脸庞两侧有两大蓬松猫耳，穿着可爱黑色衬衫扎双马尾，脖子和头发上都系着铃铛。微微泛红的脸颊透露出她讨喜的表情，简约背景，白色背景，中长发丝自然垂落更凸显猫娘特征，模糊背景配合简约色彩增强画面俏皮卡通质感，@yousui"
       ]
     }
   ],
@@ -3488,22 +3594,6 @@
       "STRING"
     ],
     [
-      114,
-      77,
-      0,
-      16,
-      0,
-      "INT"
-    ],
-    [
-      115,
-      77,
-      1,
-      16,
-      1,
-      "INT"
-    ],
-    [
       116,
       66,
       0,
@@ -3534,6 +3624,62 @@
       78,
       0,
       "INT"
+    ],
+    [
+      122,
+      66,
+      0,
+      82,
+      0,
+      "INT"
+    ],
+    [
+      123,
+      82,
+      0,
+      16,
+      0,
+      "INT"
+    ],
+    [
+      124,
+      82,
+      1,
+      16,
+      1,
+      "INT"
+    ],
+    [
+      125,
+      82,
+      2,
+      78,
+      2,
+      "STRING"
+    ],
+    [
+      126,
+      82,
+      0,
+      83,
+      0,
+      "INT"
+    ],
+    [
+      127,
+      82,
+      1,
+      85,
+      0,
+      "INT"
+    ],
+    [
+      128,
+      82,
+      2,
+      86,
+      0,
+      "STRING"
     ]
   ],
   "groups": [
@@ -3566,10 +3712,10 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 1.0610764609500052,
+      "scale": 0.9646149645000051,
       "offset": [
-        -2203.591554022397,
-        -1751.5208648843663
+        -3029.742714249908,
+        -1357.4685568190541
       ]
     },
     "qgn_navigation_groups": [],
