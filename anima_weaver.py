@@ -27,8 +27,13 @@ except ImportError:
 
 # ── Artist index (lazy loaded) ────────────────────────────────────────
 
+import os as _os
+
 _ARTIST_LIST: list[str] | None = None
-_ARTIST_FILE = r"F:\工作流\Anima\Anima-Style-Explorer-main\Anima2B_Artist_Index_59k.txt"
+_ARTIST_FILE = _os.path.join(
+    _os.path.dirname(_os.path.abspath(__file__)),
+    "tags", "Anima2B_Artist_Index_59k.txt",
+)
 
 def _load_artists() -> list[str]:
     global _ARTIST_LIST
