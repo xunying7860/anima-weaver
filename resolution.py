@@ -27,15 +27,16 @@ ASPECT_RATIOS: dict[str, tuple[float, float]] = {
 ASPECT_NAMES = list(ASPECT_RATIOS.keys())
 
 
-def _resolve(megapixel: float, ratio: tuple[float, float]) -> tuple[int, int]:
-    """Calculate width/height from megapixels and aspect ratio, snapped to 8."""
+def _resolve(megapixel: float, ratio: tuple[float, float], align: int = 8) -> tuple[int, int]:
+    """Calculate width/height from megapixels and aspect ratio, snapped to align."""
     w_ratio, h_ratio = ratio
     area = megapixel * 1_000_000
     h = int(math.sqrt(area / (w_ratio / h_ratio)))
     w = int(h * (w_ratio / h_ratio))
-    # snap to 8
-    w = max(64, (w // 8) * 8)
-    h = max(64, (h // 8) * 8)
+    # snap to align
+    align = max(1, align)
+    w = max(64, (w // align) * align)
+    h = max(64, (h // align) * align)
     return w, h
 
 
@@ -64,6 +65,11 @@ class RandomResolution:
                     ASPECT_NAMES,
                     {"default": "1:1 (square)"},
                 ),
+                "对齐到": (
+                    "INT",
+                    {"default": 8, "min": 1, "max": 256, "step": 1,
+                     "tooltip": "宽度和高度对齐到此值的倍数（如 8、16、64）"},
+                ),
             },
         }
 
@@ -79,6 +85,7 @@ class RandomResolution:
         百万像素: float,
         随机种子: int,
         固定比例: str,
+        对齐到: int = 8,
     ) -> tuple[int, int, str]:
         rng = random.Random(随机种子)
 
@@ -88,7 +95,7 @@ class RandomResolution:
             ratio_name = 固定比例
 
         w_ratio, h_ratio = ASPECT_RATIOS[ratio_name]
-        width, height = _resolve(百万像素, (w_ratio, h_ratio))
+        width, height = _resolve(百万像素, (w_ratio, h_ratio), 对齐到)
 
         return (width, height, ratio_name)
 
