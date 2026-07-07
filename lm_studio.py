@@ -328,6 +328,7 @@ def generate_nl_from_lm_studio(
     api_key: str = "",
     model_name: str = "",
     detailed: bool = False,
+    aspect_ratio: str = "",
     timeout: int = 60,
 ) -> str:
     """
@@ -360,19 +361,24 @@ def generate_nl_from_lm_studio(
         system_msg = (
             "You are an AI assistant that writes highly detailed, cinematic "
             "natural-language descriptions for image generation prompts. Given a list "
-            "of Danbooru-style tags, write a vivid and immersive English description "
-            "(about 6 sentences) that paints a complete picture of the scene. "
-            "Describe the subject first (appearance, clothing, pose, expression), "
-            "then describe the background and environment at the very end. "
+            "of Danbooru-style tags, write a very detailed, vivid and immersive English "
+            "description (at least 10 sentences) that paints a complete picture of the "
+            "scene. Describe the subject's appearance, clothing, pose, expression, "
+            "lighting, background, atmosphere, and every visual detail in rich depth. "
             "Do not repeat tags verbatim. "
-            "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
+            "IMPORTANT: Write ONLY the description. Do NOT include any meta-commentary, "
+            "explanations, phrases like 'as requested', 'English text is included', or "
+            "anything outside the description itself. "
+            "You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
-            "Write a detailed English description (about 6 sentences) "
+            "Write a very detailed English description (at least 10 sentences) "
             "for these tags. Put background/environment description at the end:\n\n"
             f"{tag_prompt}\n\n"
-            "English only, about 6 sentences, background at the end:"
         )
+        if aspect_ratio:
+            user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
+        user_msg += "English only, at least 10 sentences, background at the end:"
         max_tokens = 1024
     else:
         system_msg = (
@@ -380,13 +386,17 @@ def generate_nl_from_lm_studio(
             "for image generation prompts. Given a list of Danbooru-style tags, "
             "write a concise, fluent English description (1-3 sentences) that "
             "captures the scene. Do not repeat tags verbatim. Be coherent and vivid. "
-            "IMPORTANT: You MUST write in English only. Do NOT use Chinese or any other language."
+            "IMPORTANT: Write ONLY the description. Do NOT include any meta-commentary, "
+            "explanations, or text outside the description itself. "
+            "You MUST write in English only. Do NOT use Chinese or any other language."
         )
         user_msg = (
             "Write an English natural language description for these tags:\n\n"
             f"{tag_prompt}\n\n"
-            "English only, 1-3 sentences:"
         )
+        if aspect_ratio:
+            user_msg += f"The image aspect ratio is {aspect_ratio}.\n\n"
+        user_msg += "English only, 1-3 sentences:"
         max_tokens = 256
 
     payload: dict[str, Any] = {

@@ -233,6 +233,12 @@ class AnimaWeaver:
                     {"default": True},
                 ),
             },
+            "optional": {
+                "画幅比例": (
+                    "STRING",
+                    {"default": "", "tooltip": "从「随机分辨率」节点接入画幅比例，用于自然语言生成"},
+                ),
+            },
         }
 
     CATEGORY = "Anima Weaver"
@@ -668,6 +674,7 @@ class AnimaWeaver:
                     api_key = kwargs.get("API密钥", "")
                     cloud_model = kwargs.get("云端模型名", "").strip()
                     detailed_nl = bool(kwargs.get("强制详细自然语言", False))
+                    aspect_ratio = str(kwargs.get("画幅比例", "") or "")
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
@@ -676,6 +683,7 @@ class AnimaWeaver:
                             tag_prompt, base_url,
                             api_key=api_key, model_name=model_for_api,
                             detailed=detailed_nl,
+                            aspect_ratio=aspect_ratio,
                         )
                     else:
                         # 本地 LM Studio：先加载模型再调用 API
@@ -685,6 +693,7 @@ class AnimaWeaver:
                                 tag_prompt, base_url,
                                 model_name=lm_model,
                                 detailed=detailed_nl,
+                                aspect_ratio=aspect_ratio,
                             )
 
                     if nl:
