@@ -450,7 +450,12 @@ def generate_nl_from_lm_studio(
             if " — " in line:
                 _, after = line.split(" — ", 1)
                 after = after.strip().lstrip(",:; ")
-                if after and len(after) > 10 and not after.startswith(("describes", "description")):
+                if after and len(after) > 10 and not after.startswith(("The goal", "Task:", "Constraint")):
+                    # Strip leading "describes" / "description" meta-words
+                    for prefix in ("describes ", "description ", "describe "):
+                        if after.startswith(prefix):
+                            after = after[len(prefix):].strip()
+                            break
                     desc_parts.append(after)
                 continue
             # b) "* tagged item: description" or "N. Title: description"
