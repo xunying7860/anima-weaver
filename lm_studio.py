@@ -463,6 +463,7 @@ def generate_nl_from_lm_studio(
                 "option 2", "option 1", "potential opening",
                 "that captures", "a list of",
                 "let's think", "let's consider", "let me look at",
+                "next, i", "so i need", "so i have",
             ]):
                 continue
             # Skip lines that start with backtick-quoted tags (echoing input)
@@ -470,7 +471,7 @@ def generate_nl_from_lm_studio(
                 continue
             # Handle "Let me draft: ..." / "Let me start: ..." → extract after colon
             lower_line = line.lower()
-            if any(lower_line.startswith(p) for p in ("let me draft", "let me start", "reviewing against")):
+            if any(lower_line.startswith(p) for p in ("let me draft", "let me start", "reviewing against", "next, describe", "so i need", "so i have")):
                 if ":" in line:
                     _, after = line.split(":", 1)
                     after = after.strip().strip(' "\'')
