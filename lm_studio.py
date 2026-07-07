@@ -419,6 +419,7 @@ def generate_nl_from_lm_studio(
         "temperature": 0.7,
         "max_tokens": max_tokens,
         "stream": False,
+        "enable_thinking": False,
     }
 
     url = f"{base_url.rstrip('/')}/chat/completions"
@@ -473,7 +474,7 @@ def generate_nl_from_lm_studio(
                 continue
             # Handle "Let me draft: ..." / "Let me start: ..." → extract after colon
             lower_line = line.lower()
-            if any(lower_line.startswith(p) for p in ("let me draft", "let me start", "reviewing against", "next, describe", "so i need", "so i have")):
+            if any(lower_line.startswith(p) for p in ("let me draft", "let me start", "reviewing against", "next, describe", "so i need", "so i have", "combining")):
                 if ":" in line:
                     _, after = line.split(":", 1)
                     after = after.strip().strip(' "\'')
