@@ -1,8 +1,8 @@
 {
   "id": "ce9e890b-ef39-4e8e-afa9-0cc6e665cfd0",
   "revision": 0,
-  "last_node_id": 76,
-  "last_link_id": 113,
+  "last_node_id": 79,
+  "last_link_id": 120,
   "nodes": [
     {
       "id": 16,
@@ -25,7 +25,7 @@
           "widget": {
             "name": "width"
           },
-          "link": 23
+          "link": 114
         },
         {
           "name": "height",
@@ -33,7 +33,7 @@
           "widget": {
             "name": "height"
           },
-          "link": 24
+          "link": 115
         }
       ],
       "outputs": [
@@ -122,10 +122,10 @@
       ],
       "size": [
         210,
-        546
+        348
       ],
       "flags": {},
-      "order": 27,
+      "order": 26,
       "mode": 0,
       "inputs": [
         {
@@ -181,7 +181,7 @@
         }
       },
       "widgets_values": [
-        792300587154245,
+        954010064501695,
         "randomize",
         30,
         4.5,
@@ -208,7 +208,7 @@
         120
       ],
       "flags": {},
-      "order": 45,
+      "order": 44,
       "mode": 4,
       "inputs": [
         {
@@ -299,7 +299,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 42,
+      "order": 41,
       "mode": 4,
       "inputs": [
         {
@@ -340,7 +340,7 @@
         250
       ],
       "flags": {},
-      "order": 47,
+      "order": 46,
       "mode": 4,
       "inputs": [
         {
@@ -380,7 +380,7 @@
         120
       ],
       "flags": {},
-      "order": 40,
+      "order": 39,
       "mode": 4,
       "inputs": [
         {
@@ -425,7 +425,7 @@
         80
       ],
       "flags": {},
-      "order": 41,
+      "order": 40,
       "mode": 4,
       "inputs": [
         {
@@ -498,7 +498,7 @@
         50
       ],
       "flags": {},
-      "order": 32,
+      "order": 31,
       "mode": 4,
       "inputs": [
         {
@@ -549,7 +549,7 @@
         390
       ],
       "flags": {},
-      "order": 46,
+      "order": 45,
       "mode": 4,
       "inputs": [
         {
@@ -719,7 +719,7 @@
         }
       },
       "widgets_values": [
-        1865354367,
+        1588934598,
         "randomize",
         3840,
         0,
@@ -746,7 +746,7 @@
         200
       ],
       "flags": {},
-      "order": 25,
+      "order": 24,
       "mode": 0,
       "inputs": [
         {
@@ -805,7 +805,7 @@
         26
       ],
       "flags": {},
-      "order": 36,
+      "order": 35,
       "mode": 4,
       "inputs": [
         {
@@ -849,7 +849,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 39,
+      "order": 38,
       "mode": 4,
       "inputs": [
         {
@@ -1227,88 +1227,6 @@
       ]
     },
     {
-      "id": 8,
-      "type": "PrimitiveInt",
-      "pos": [
-        2562.640722041464,
-        1837.5223089290075
-      ],
-      "size": [
-        210,
-        82
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "label": "整数",
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            23
-          ]
-        }
-      ],
-      "title": "宽度",
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.25.0",
-        "Node name for S&R": "PrimitiveInt",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        1024,
-        "fixed"
-      ]
-    },
-    {
-      "id": 9,
-      "type": "PrimitiveInt",
-      "pos": [
-        2791.8082202966443,
-        1836.847004405877
-      ],
-      "size": [
-        210,
-        82
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "label": "整数",
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            24
-          ]
-        }
-      ],
-      "title": "高度",
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.25.0",
-        "Node name for S&R": "PrimitiveInt",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        1536,
-        "fixed"
-      ]
-    },
-    {
       "id": 12,
       "type": "CLIPTextEncode",
       "pos": [
@@ -1320,7 +1238,7 @@
         200
       ],
       "flags": {},
-      "order": 17,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -1373,7 +1291,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 49,
+      "order": 48,
       "mode": 4,
       "inputs": [
         {
@@ -1424,7 +1342,7 @@
         130
       ],
       "flags": {},
-      "order": 43,
+      "order": 42,
       "mode": 4,
       "inputs": [
         {
@@ -1489,7 +1407,7 @@
         416.43581039262926
       ],
       "flags": {},
-      "order": 48,
+      "order": 47,
       "mode": 4,
       "inputs": [
         {
@@ -1553,7 +1471,7 @@
         66
       ],
       "flags": {},
-      "order": 44,
+      "order": 43,
       "mode": 4,
       "inputs": [
         {
@@ -1607,7 +1525,7 @@
         80
       ],
       "flags": {},
-      "order": 38,
+      "order": 37,
       "mode": 4,
       "inputs": [
         {
@@ -1683,7 +1601,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 37,
+      "order": 36,
       "mode": 4,
       "inputs": [
         {
@@ -1739,7 +1657,7 @@
         58
       ],
       "flags": {},
-      "order": 6,
+      "order": 4,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -1768,52 +1686,6 @@
       "bgcolor": "#593930"
     },
     {
-      "id": 27,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        3101.5583029530494,
-        1153.862492584149
-      ],
-      "size": [
-        511.5006252093159,
-        82
-      ],
-      "flags": {},
-      "order": 19,
-      "mode": 4,
-      "inputs": [
-        {
-          "label": "模型",
-          "name": "model",
-          "type": "MODEL",
-          "link": 31
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            30
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.22.0",
-        "Node name for S&R": "LoraLoaderModelOnly",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
-        0.8
-      ]
-    },
-    {
       "id": 22,
       "type": "ZML_SaveImageV2",
       "pos": [
@@ -1827,7 +1699,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 33,
+      "order": 32,
       "mode": 4,
       "inputs": [
         {
@@ -1884,7 +1756,7 @@
         200
       ],
       "flags": {},
-      "order": 7,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -1936,7 +1808,7 @@
         60
       ],
       "flags": {},
-      "order": 22,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -1984,7 +1856,7 @@
         50
       ],
       "flags": {},
-      "order": 28,
+      "order": 27,
       "mode": 0,
       "inputs": [
         {
@@ -2032,7 +1904,7 @@
         102
       ],
       "flags": {},
-      "order": 8,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -2073,7 +1945,7 @@
         }
       },
       "widgets_values": [
-        118668049255462,
+        446471475200179,
         "randomize"
       ]
     },
@@ -2134,7 +2006,7 @@
         120
       ],
       "flags": {},
-      "order": 9,
+      "order": 7,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2166,56 +2038,6 @@
       "boxcolor": "rgba(212, 175, 55, 0.6)"
     },
     {
-      "id": 66,
-      "type": "Seed_",
-      "pos": [
-        2234.9768717794627,
-        2491.1633709560597
-      ],
-      "size": [
-        270,
-        82
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "随机种",
-          "name": "seed",
-          "type": "INT",
-          "widget": {
-            "name": "seed"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "随机种",
-          "name": "seed",
-          "type": "INT",
-          "links": [
-            109
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-mixlab-nodes",
-        "ver": "0.46.0",
-        "Node name for S&R": "Seed_",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        1036516928447281,
-        "randomize"
-      ]
-    },
-    {
       "id": 31,
       "type": "LatentPixelScale",
       "pos": [
@@ -2227,7 +2049,7 @@
         150
       ],
       "flags": {},
-      "order": 29,
+      "order": 28,
       "mode": 4,
       "inputs": [
         {
@@ -2320,7 +2142,7 @@
         348
       ],
       "flags": {},
-      "order": 31,
+      "order": 30,
       "mode": 4,
       "inputs": [
         {
@@ -2375,7 +2197,7 @@
         }
       },
       "widgets_values": [
-        1012432411876285,
+        960304681962270,
         "randomize",
         10,
         5,
@@ -2402,7 +2224,7 @@
         553.4084132773351
       ],
       "flags": {},
-      "order": 35,
+      "order": 34,
       "mode": 4,
       "inputs": [
         {
@@ -2442,7 +2264,7 @@
         82
       ],
       "flags": {},
-      "order": 11,
+      "order": 8,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -2482,7 +2304,7 @@
         455.6205684979079
       ],
       "flags": {},
-      "order": 30,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -2513,100 +2335,6 @@
       "widgets_values": []
     },
     {
-      "id": 73,
-      "type": "CR Text",
-      "pos": [
-        3679.514143968281,
-        2545.5919370982574
-      ],
-      "size": [
-        400,
-        200
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": null
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "文本",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "api地址\n\n本地：http://127.0.0.1:1234/v1\n\ndeepseek：https://api.deepseek.com\n"
-      ]
-    },
-    {
-      "id": 19,
-      "type": "VAELoader",
-      "pos": [
-        4479.223503453732,
-        1656.8856692537781
-      ],
-      "size": [
-        350,
-        70
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            14,
-            50,
-            54
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.21.1",
-        "Node name for S&R": "VAELoader",
-        "ue_properties": {
-          "widget_ue_connectable": {
-            "vae_name": true
-          },
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "wan_2.1_vae.safetensors"
-      ]
-    },
-    {
       "id": 70,
       "type": "CR Text",
       "pos": [
@@ -2618,7 +2346,7 @@
         524.3468788694613
       ],
       "flags": {},
-      "order": 14,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -2659,190 +2387,6 @@
       ]
     },
     {
-      "id": 72,
-      "type": "CR Text",
-      "pos": [
-        2778.92320482981,
-        1338.8932830023193
-      ],
-      "size": [
-        273.72523328852867,
-        423.712431882225
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": [
-            106
-          ]
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "手写部分",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "masterpiece, best quality, score_7, safe,"
-      ]
-    },
-    {
-      "id": 37,
-      "type": "easy showAnything",
-      "pos": [
-        3772.023756645883,
-        1985.7145384304335
-      ],
-      "size": [
-        394.4006477779899,
-        302.55687173919296
-      ],
-      "flags": {},
-      "order": 24,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "输入任何",
-          "name": "anything",
-          "shape": 7,
-          "type": "*",
-          "link": 111
-        }
-      ],
-      "outputs": [
-        {
-          "label": "输出",
-          "name": "output",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "title": "提示词-随机-调试信息",
-      "properties": {
-        "cnr_id": "comfyui-easy-use",
-        "ver": "9947b8be70e17ceabafa4fa7f476b54626de4704",
-        "Node name for S&R": "easy showAnything",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.5.1"
-        }
-      },
-      "widgets_values": [
-        "Mode: hybrid\nSeed: 8981978722119513677 (randomize)\n→ Running Raffle extraction …\n  Raffle slots filled: 7\nMerged slots:\n  count_identity: 3 tags\n  appearance: 3 tags\n  clothing: 8 tags\n  pose_action: 1 tags\n  expression: 2 tags\n  camera: 1 tags\n  scene: 2 tags\n  detail_mood: 0 tags\n✓ No conflicts\nTag ratio: 0.6\nTags: 268 chars\nNL:   746 chars"
-      ]
-    },
-    {
-      "id": 76,
-      "type": "AnimaWeaver",
-      "pos": [
-        2531.496631369195,
-        1956.131953205403
-      ],
-      "size": [
-        1067.8353785791787,
-        1233.534230357672
-      ],
-      "flags": {},
-      "order": 20,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "随机种子",
-          "type": "INT",
-          "widget": {
-            "name": "随机种子"
-          },
-          "link": 109
-        }
-      ],
-      "outputs": [
-        {
-          "name": "生成的提示词",
-          "type": "STRING",
-          "links": [
-            112
-          ]
-        },
-        {
-          "name": "调试信息",
-          "type": "STRING",
-          "links": [
-            111
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "xunying7860/anima-weaver",
-        "ver": "34739cfe6cc301ae541dd57a92a533001227612f",
-        "Node name for S&R": "AnimaWeaver",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "hybrid",
-        0.6,
-        "solo_display",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "lm_studio",
-        "huihui-qwen3-vl-4b-instruct-abliterated",
-        false,
-        "",
-        "",
-        4096,
-        "http://localhost:1234/v1",
-        "",
-        true,
-        0,
-        "randomize",
-        true,
-        false,
-        false,
-        false,
-        "",
-        "",
-        "",
-        "",
-        true
-      ]
-    },
-    {
       "id": 43,
       "type": "JoinStringMulti",
       "pos": [
@@ -2854,7 +2398,7 @@
         190
       ],
       "flags": {},
-      "order": 23,
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
@@ -2868,7 +2412,7 @@
           "name": "string_2",
           "shape": 7,
           "type": "STRING",
-          "link": 112
+          "link": 117
         },
         {
           "label": "输入数量",
@@ -2935,18 +2479,106 @@
       ]
     },
     {
-      "id": 74,
-      "type": "CR Text",
+      "id": 37,
+      "type": "easy showAnything",
       "pos": [
-        2554.918865165164,
-        1342.5394530350995
+        3660.7543385090135,
+        1973.767870930421
       ],
       "size": [
-        216.52911365049658,
-        418.44369797887543
+        394.4006477779899,
+        302.55687173919296
       ],
       "flags": {},
-      "order": 16,
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 118
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "title": "提示词-随机-调试信息",
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "9947b8be70e17ceabafa4fa7f476b54626de4704",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.1"
+        }
+      },
+      "widgets_values": [
+        "Mode: hybrid\nSeed: 9349855534709099085 (randomize)\n→ Running Raffle extraction …\n  Raffle slots filled: 7\nMerged slots:\n  count_identity: 6 tags\n  appearance: 6 tags\n  clothing: 6 tags\n  pose_action: 4 tags\n  expression: 3 tags\n  camera: 0 tags\n  scene: 5 tags\n  detail_mood: 1 tags\n✓ No conflicts\nTag ratio: 0.6\nTags: 419 chars\nNL:   796 chars"
+      ]
+    },
+    {
+      "id": 19,
+      "type": "VAELoader",
+      "pos": [
+        4479.223503453732,
+        1656.8856692537781
+      ],
+      "size": [
+        350,
+        70
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            14,
+            50,
+            54
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "VAELoader",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "vae_name": true
+          },
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "wan_2.1_vae.safetensors"
+      ]
+    },
+    {
+      "id": 72,
+      "type": "CR Text",
+      "pos": [
+        2778.92320482981,
+        1338.8932830023193
+      ],
+      "size": [
+        273.72523328852867,
+        423.712431882225
+      ],
+      "flags": {},
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -2965,7 +2597,7 @@
           "name": "text",
           "type": "*",
           "links": [
-            113
+            106
           ]
         },
         {
@@ -2975,7 +2607,7 @@
           "links": null
         }
       ],
-      "title": "画师",
+      "title": "手写部分",
       "properties": {
         "Node name for S&R": "CR Text",
         "ue_properties": {
@@ -2985,7 +2617,53 @@
         }
       },
       "widgets_values": [
-        " @zirba, "
+        "masterpiece, best quality, score_7, "
+      ]
+    },
+    {
+      "id": 27,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        3101.5583029530494,
+        1153.862492584149
+      ],
+      "size": [
+        511.5006252093159,
+        82
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            30
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.22.0",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
+        0.8
       ]
     },
     {
@@ -3000,7 +2678,7 @@
         608.6050992457558
       ],
       "flags": {},
-      "order": 34,
+      "order": 33,
       "mode": 0,
       "inputs": [
         {
@@ -3042,24 +2720,127 @@
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_egftj_00013_.png&type=temp&subfolder=&rand=0.9077445553847431"
+            "url": "/api/view?filename=rgthree.compare._temp_rmpis_00013_.png&type=temp&subfolder=&rand=0.8053387897196664"
           }
         ]
+      ]
+    },
+    {
+      "id": 77,
+      "type": "ResolutionSelector",
+      "pos": [
+        2785.9765275352984,
+        1798.8623232161601
+      ],
+      "size": [
+        270,
+        126
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "宽度",
+          "name": "width",
+          "type": "INT",
+          "links": [
+            114
+          ]
+        },
+        {
+          "label": "高度",
+          "name": "height",
+          "type": "INT",
+          "links": [
+            115
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "ResolutionSelector",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "3:4 (Portrait Standard)",
+        1.6,
+        8
+      ]
+    },
+    {
+      "id": 74,
+      "type": "CR Text",
+      "pos": [
+        2554.918865165164,
+        1342.5394530350995
+      ],
+      "size": [
+        216.52911365049658,
+        418.44369797887543
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": [
+            113
+          ]
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "手写画师/触发词",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        " @zirba, @wzry_ssx, "
       ]
     },
     {
       "id": 68,
       "type": "ShowText|pysssss",
       "pos": [
-        3652.204108178358,
-        1313.7465302654207
+        3647.5504573869653,
+        1332.6224495447261
       ],
       "size": [
         515.8981764959062,
         551.7522143616011
       ],
       "flags": {},
-      "order": 26,
+      "order": 25,
       "mode": 0,
       "inputs": [
         {
@@ -3089,7 +2870,203 @@
         }
       },
       "widgets_values": [
-        "杰作，最高画质，评分7分，安全，1位少女，艾尔（《装甲核心VI》），独自一人，拟人化，红瞳，白发，黑色过膝袜，露指手套，吊带袜，手套，耳机，兜帽，连帽夹克，夹克，站立，闭着嘴，注视观众，牛仔镜头。她赤红的眼眸直直锁定观者的视线，一眨不眨且充满锐利锋芒；手指随意垂在身侧，露指手套既暗示着备战状态又不失美学格调。黑色过膝袜与吊带袜勾勒出她兜帽装束下的体态，耳畔的耳机则为这身军事美学融入一抹现代气息。她的姿态坚定而放松，仿佛守护着一个秘密，或正静待指令，紧闭的双唇只流露出沉静的决意。简单背景，白色背景。一个孤傲惹眼的身影静伫于沉默之中——她的白发如雪瀑般倾泻在素净背景之上，被一件受装甲核心启发的连帽夹克包裹，战术设计与风格化时尚浑然一体。@zirba"
+        "masterpiece, best quality, score_7, 1girl, prinz_eugen_(azur_lane), solo, antenna_hair, breasts, multicolored_hair, side_slit, streaked_hair, thighs, twintails, white_hair, black_gloves, cross, garter_belt, garter_straps, german_clothes, gloves, hair_ornament, looking_at_viewer, flower, red_flower, red_rose, rose, iron_cross, red_background, @momochichi77"
+      ]
+    },
+    {
+      "id": 78,
+      "type": "AnimaWeaver",
+      "pos": [
+        2561.9824992145614,
+        1982.4752620444735
+      ],
+      "size": [
+        1054.789758862381,
+        1236
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "画师种子",
+          "type": "INT",
+          "widget": {
+            "name": "画师种子"
+          },
+          "link": 120
+        },
+        {
+          "name": "随机种子",
+          "type": "INT",
+          "widget": {
+            "name": "随机种子"
+          },
+          "link": 116
+        }
+      ],
+      "outputs": [
+        {
+          "name": "生成的提示词",
+          "type": "STRING",
+          "links": [
+            117
+          ]
+        },
+        {
+          "name": "调试信息",
+          "type": "STRING",
+          "links": [
+            118
+          ]
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "6fe9f6aed7a71d44073abae130480251d7b13d49",
+        "Node name for S&R": "AnimaWeaver"
+      },
+      "widgets_values": [
+        "hybrid",
+        0.6,
+        "solo_display",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "manual",
+        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        false,
+        "",
+        "",
+        4096,
+        "http://localhost:1234/v1",
+        "",
+        false,
+        true,
+        19,
+        0,
+        "randomize",
+        true,
+        false,
+        false,
+        false,
+        "",
+        "",
+        "",
+        "",
+        true
+      ]
+    },
+    {
+      "id": 66,
+      "type": "Seed_",
+      "pos": [
+        2234.9768717794627,
+        2491.1633709560597
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "随机种",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "随机种",
+          "name": "seed",
+          "type": "INT",
+          "links": [
+            116,
+            120
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-mixlab-nodes",
+        "ver": "0.46.0",
+        "Node name for S&R": "Seed_",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        225489225411424,
+        "randomize"
+      ]
+    },
+    {
+      "id": 73,
+      "type": "CR Text",
+      "pos": [
+        3679.514143968281,
+        2545.5919370982574
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": null
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "文本",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "api地址\n\n本地：http://127.0.0.1:1234/v1\n\ndeepseek：https://api.deepseek.com\n模型名：deepseek-chat"
       ]
     }
   ],
@@ -3149,22 +3126,6 @@
       17,
       2,
       "CONDITIONING"
-    ],
-    [
-      23,
-      8,
-      0,
-      16,
-      0,
-      "INT"
-    ],
-    [
-      24,
-      9,
-      0,
-      16,
-      1,
-      "INT"
     ],
     [
       28,
@@ -3519,36 +3480,60 @@
       "STRING"
     ],
     [
-      109,
-      66,
-      0,
-      76,
-      0,
-      "INT"
-    ],
-    [
-      111,
-      76,
-      1,
-      37,
-      0,
-      "STRING"
-    ],
-    [
-      112,
-      76,
-      0,
-      43,
-      1,
-      "STRING"
-    ],
-    [
       113,
       74,
       0,
       43,
       5,
       "STRING"
+    ],
+    [
+      114,
+      77,
+      0,
+      16,
+      0,
+      "INT"
+    ],
+    [
+      115,
+      77,
+      1,
+      16,
+      1,
+      "INT"
+    ],
+    [
+      116,
+      66,
+      0,
+      78,
+      1,
+      "INT"
+    ],
+    [
+      117,
+      78,
+      0,
+      43,
+      1,
+      "STRING"
+    ],
+    [
+      118,
+      78,
+      1,
+      37,
+      0,
+      "STRING"
+    ],
+    [
+      120,
+      66,
+      0,
+      78,
+      0,
+      "INT"
     ]
   ],
   "groups": [
@@ -3581,10 +3566,10 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 1.0152559799477163,
+      "scale": 1.0610764609500052,
       "offset": [
-        -2656.4485753966464,
-        -1077.2153528492813
+        -2203.591554022397,
+        -1751.5208648843663
       ]
     },
     "qgn_navigation_groups": [],
