@@ -1,0 +1,532 @@
+{
+  "id": "13f1334b-399a-49ff-b357-6f8042b51bd7",
+  "revision": 0,
+  "last_node_id": 133,
+  "last_link_id": 298,
+  "nodes": [
+    {
+      "id": 113,
+      "type": "ArtistSeedNode",
+      "pos": [
+        220.4236015167134,
+        5625.325087009721
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "artist_seed",
+          "type": "INT",
+          "links": [
+            271
+          ]
+        },
+        {
+          "name": "状态",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "ArtistSeedNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0
+      ]
+    },
+    {
+      "id": 118,
+      "type": "BottomControls",
+      "pos": [
+        -246.26231559175122,
+        6128.937056460623
+      ],
+      "size": [
+        400,
+        346
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "底部数据",
+          "type": "STRING",
+          "links": [
+            268
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "BottomControls",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "",
+        "1girl",
+        "",
+        "",
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 119,
+      "type": "PromptSlots",
+      "pos": [
+        180.2176681236604,
+        6110.920134106362
+      ],
+      "size": [
+        400,
+        520.0000000000001
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "槽位数据",
+          "type": "STRING",
+          "links": [
+            267
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "PromptSlots",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1boy, solo,",
+        "green eyes,",
+        "",
+        "",
+        "shy,",
+        "from below,",
+        "class room,",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 133,
+      "type": "easy seed",
+      "pos": [
+        -234.1339438790342,
+        5817.117023616667
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "随机种子",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "随机种子",
+          "name": "seed",
+          "type": "INT",
+          "links": [
+            294,
+            295
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy seed",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        709067632980604,
+        "randomize",
+        null
+      ]
+    },
+    {
+      "id": 120,
+      "type": "AnimaWeaver",
+      "pos": [
+        603.8354482141126,
+        6106.303738002435
+      ],
+      "size": [
+        270,
+        510
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": 295
+        },
+        {
+          "name": "槽位数据",
+          "shape": 7,
+          "type": "STRING",
+          "link": 267
+        },
+        {
+          "name": "底部数据",
+          "shape": 7,
+          "type": "STRING",
+          "link": 268
+        },
+        {
+          "name": "分辨率",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师种子",
+          "type": "INT",
+          "widget": {
+            "name": "画师种子"
+          },
+          "link": 271
+        }
+      ],
+      "outputs": [
+        {
+          "name": "生成的提示词",
+          "type": "STRING",
+          "links": [
+            298
+          ]
+        },
+        {
+          "name": "调试信息",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "提示词串",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "反推串",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "AnimaWeaver",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "hybrid",
+        0.6,
+        "solo_display",
+        "lm_studio",
+        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        true,
+        "",
+        "deepseek-chat",
+        4096,
+        "http://localhost:1234/v1",
+        false,
+        0,
+        0,
+        true
+      ]
+    },
+    {
+      "id": 114,
+      "type": "easy showAnything",
+      "pos": [
+        919.6989286320406,
+        6103.125197414353
+      ],
+      "size": [
+        483.68432972304345,
+        461.2059041677858
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 298
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "4girls, multiple_girls, sonetto_(reverse:1999), 1boy, solo, aged_down, braid, green_eyes, hair_intakes, long_hair, orange_hair, single_braid, armor, bow, bowtie, dress, hair_ornament, hairband, white_dress, white_hairband, closed_mouth, looking_ahead, looking_at_viewer, shy, portrait, profile, upper_body, from below, arch, indoors, statue, window, class room, sidelighting, A girl in profile is shown with her long hair in a single braid that reaches down to her back, adorned with an orange-haired hairband and a white-hair band around the edge, dressed in a white dress from beneath, peered into by a boy standing slightly off to one side wearing a bowtie, arching towards her under soft, indirect sidelight through an open window, the scene set in a student classroom., @nobushito"
+      ]
+    },
+    {
+      "id": 115,
+      "type": "RandomResolution",
+      "pos": [
+        218.9006261215922,
+        5792.14820104888
+      ],
+      "size": [
+        270,
+        230
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": 294
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "宽度串",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "高度串",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "RandomResolution",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        1,
+        "1:1 (square)",
+        8
+      ]
+    }
+  ],
+  "links": [
+    [
+      267,
+      119,
+      0,
+      120,
+      1,
+      "STRING"
+    ],
+    [
+      268,
+      118,
+      0,
+      120,
+      2,
+      "STRING"
+    ],
+    [
+      271,
+      113,
+      0,
+      120,
+      8,
+      "INT"
+    ],
+    [
+      294,
+      133,
+      0,
+      115,
+      0,
+      "INT"
+    ],
+    [
+      295,
+      133,
+      0,
+      120,
+      0,
+      "INT"
+    ],
+    [
+      298,
+      120,
+      0,
+      114,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 1.0610764609500023,
+      "offset": [
+        517.1343047290634,
+        -5583.707654815523
+      ]
+    },
+    "qgn_navigation_groups": [],
+    "qgn_locked": false,
+    "links_added_by_ue": [],
+    "frontendVersion": "1.45.20",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

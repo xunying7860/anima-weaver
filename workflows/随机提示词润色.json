@@ -1,0 +1,1106 @@
+{
+  "id": "16ffe7e1-1a0b-4c16-af4f-d635eca0d053",
+  "revision": 0,
+  "last_node_id": 131,
+  "last_link_id": 299,
+  "nodes": [
+    {
+      "id": 115,
+      "type": "RandomResolution",
+      "pos": [
+        218.90062612159184,
+        5814.955228525801
+      ],
+      "size": [
+        270,
+        230
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 264
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": [
+            293
+          ]
+        },
+        {
+          "name": "宽度串",
+          "type": "STRING",
+          "links": [
+            256
+          ]
+        },
+        {
+          "name": "高度串",
+          "type": "STRING",
+          "links": [
+            257
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "RandomResolution",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        1,
+        "1:1 (square)",
+        8
+      ]
+    },
+    {
+      "id": 126,
+      "type": "easy showAnything",
+      "pos": [
+        3797.4618906329633,
+        5497.949164464439
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 299
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality.",
+        "A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality.",
+        "A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality."
+      ]
+    },
+    {
+      "id": 129,
+      "type": "easy showAnything",
+      "pos": [
+        3799.1314790794113,
+        6043.063805384975
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 289
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1000",
+        "1000",
+        "1000"
+      ]
+    },
+    {
+      "id": 130,
+      "type": "easy showAnything",
+      "pos": [
+        3799.1314790794113,
+        6298.502513126479
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 290
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1000",
+        "1000",
+        "1000"
+      ]
+    },
+    {
+      "id": 123,
+      "type": "easy showAnything",
+      "pos": [
+        2742.9318081705537,
+        5124.322445282664
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 277
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"4697483075917740358\", \"提示词\": \"\", \"画师\": \"[2824] @arizuka \\\\(catacombe\\\\)\", \"分辨率\": \"1000x1000\", \"反推\": \"A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality.\", \"宽度\": \"1000\", \"高度\": \"1000\"}",
+        "{\"种子\": \"4697483075917740358\", \"提示词\": \"\", \"画师\": \"[2824] @arizuka \\\\(catacombe\\\\)\", \"分辨率\": \"1000x1000\", \"反推\": \"A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality.\", \"宽度\": \"1000\", \"高度\": \"1000\"}",
+        "{\"种子\": \"4697483075917740358\", \"提示词\": \"\", \"画师\": \"[2824] @arizuka \\\\(catacombe\\\\)\", \"分辨率\": \"1000x1000\", \"反推\": \"A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality.\", \"宽度\": \"1000\", \"高度\": \"1000\"}"
+      ]
+    },
+    {
+      "id": 125,
+      "type": "easy showAnything",
+      "pos": [
+        3797.4618906329633,
+        5254.76389847458
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 285
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "4697483075917740358",
+        "4697483075917740358",
+        "4697483075917740358"
+      ]
+    },
+    {
+      "id": 117,
+      "type": "BatchSeedNode",
+      "pos": [
+        -142.58187745815806,
+        5650.207269079885
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "种子串",
+          "type": "STRING",
+          "links": [
+            260,
+            261,
+            263,
+            264
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "BatchSeedNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        3
+      ]
+    },
+    {
+      "id": 121,
+      "type": "easy promptLine",
+      "pos": [
+        2256.604241694261,
+        5724.870687706114
+      ],
+      "size": [
+        400,
+        204
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "提示词",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 273
+        },
+        {
+          "label": "起始索引",
+          "name": "start_index",
+          "type": "INT",
+          "widget": {
+            "name": "start_index"
+          },
+          "link": null
+        },
+        {
+          "label": "最大行数",
+          "name": "max_rows",
+          "type": "INT",
+          "widget": {
+            "name": "max_rows"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            277,
+            278
+          ]
+        },
+        {
+          "name": "COMBO",
+          "shape": 6,
+          "type": "COMBO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy promptLine",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "text",
+        0,
+        1000,
+        true,
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 122,
+      "type": "easy showAnything",
+      "pos": [
+        1709.2164998420335,
+        5141.000163001851
+      ],
+      "size": [
+        210,
+        88
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 276
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"3044777485282266080\", \"提示词\": \"\", \"画师\": \"[18294] @xx tk9\", \"分辨率\": \"1224x816\", \"反推\": \"A 19-year-old Asian female with delicate yet striking facial features stands confidently in the center of an ethereal, softly lit studio environment that blends soft natural light filtering through sheer curtains with a subtle ambient glow emanating from unseen sources, casting gentle highlights across her skin while keeping shadows minimal to accentuate contour and texture without overpowering. Her complexion is luminous and naturally radiant, with porcelain-toned skin smooth as polished silk, subtly freckled across the bridge of her nose and cheekbones  not too pronounced but clearly visible under the diffused illumination  giving an organic, unfiltered realism that enhances her natural beauty rather than masking it. Her eyes are large, almond-shaped, and a deep, rich brown with naturally thick lashes and well-defined upper eyelids; they hold a focused, slightly challenging gaze directed straight at the viewer, conveying both intensity and quiet vulnerability simultaneously. The irises show no artificial enhancements  each fleck of color is natural, alive, and unblurred, suggesting she has been photographed under controlled conditions to capture maximum detail without digital manipulation. Her eyebrows are naturally arched but perfectly symmetrical, with fine hairs delicately defined against the skin, resting just above her eyes in a gentle arch that frames them with elegance. Her nose is straight, proportionate, and refined  not overly prominent or flat  with a soft bridge and slightly rounded tip, contributing to an overall balanced facial structure. Her lips are naturally full and softly pinkish in tone, parted slightly as if she has just finished speaking or is caught mid-breath, revealing a hint of her upper teeth which are perfectly aligned and subtly gleaming under the ambient light  neither too white nor too dark, but naturally toned to reflect health and vitality. A faint trace of dew-like moisture glistens on her lips from the environment’s soft lighting, adding an almost surreal layer of realism. Her hair is a cascade of glossy black strands, thick and voluminous with a natural sheen that catches light only where it falls  not uniformly shiny but rather in dynamic streaks along the length of each strand. The texture is smooth to the touch, as if freshly washed or naturally conditioned; no frizz or static visible. It flows freely around her shoulders and down past her waist in an effortless, gravity-defying manner, with a few loose tendrils framing her face  one resting lightly on her temple while another drapes over the curve of her neck  suggesting movement frozen mid-sway. The hair appears to have a slight sheen from ambient lighting, not artificial glossing, and does not look “perfectly styled” but instead feels like it has been left naturally loose after a gentle wash  softness enhanced by real-world physics. She is wearing a form-fitting black athletic top with a slightly textured surface that mimics the appearance of moisture-resistant fabric, featuring subtle horizontal stitching lines across the chest and shoulders for structure. The neckline is low-cut but not revealing  just enough to draw attention upwards without crossing boundaries, ending above her collarbone in a graceful curve. At the hemline, there’s a slight gradient transition from opaque black to semi-transparent mesh material along one side, which subtly reveals skin tone beneath as if caught by shadow and light at the same moment  enhancing realism through optical illusion rather than digital editing. The sleeves are short, ending just above her elbows with elastic cuffs that slightly tighten against her wrists  visible creases hinting at movement or tension. Her lower body is clad in sleek black leggings crafted from high-performance spandex material that clings tightly to every curve of her figure without distortion  emphasizing the natural contour and tonality of muscle definition beneath. The fabric has a slight sheen under lighting, but not glossy; rather, it reflects ambient tones subtly as if made from real materials designed for movement and flexibility  no digital “glitching” or over-saturation present. No visible seams interrupt the flow of her silhouette, suggesting expert tailoring or seamless construction. Her feet are barefoot on a minimalist surface that appears to be a reflective material like polished stone or glass  not marble but rather something with a smooth, non-reflective finish. Her toes are naturally curved and slightly spread apart in an athletic stance  not overly exaggerated  her posture maintaining balance without leaning into any direction, suggesting controlled presence rather than casualness. There’s no visible footwork or wear; the soles appear unmarked, clean, and natural. Her arms hang loosely at her sides but subtly shift weight as if she is preparing to move  one hand slightly tensed near her hip while the other hangs relaxed with fingers curled inward  indicating readiness without aggression. Her shoulders are broad yet toned from regular physical activity; they are not overly muscular or exaggerated in definition, which adds to the natural balance of her physique. Her chest and abdomen are gently curved  not flat or bloated but sculpted by a combination of fitness and natural body structure.\", \"宽度\": \"1224\", \"高度\": \"816\"}\n{\"种子\": \"9136527372326816629\", \"提示词\": \"\", \"画师\": \"[58871] @yatufusa1\", \"分辨率\": \"1264x784\", \"反推\": \"A 19-year-old Asian woman with delicate, youthful features stands confidently in a dynamic yet graceful postureher body slightly angled to one side as if caught mid-motion during a candid moment of movement or preparation for action; her left foot is positioned forward while the right remains planted firmly on the ground, suggesting readiness rather than rest. Her hair is long, straight, and dark black, falling naturally over her shoulders with subtle natural waves along the ends that catch soft ambient light; it is not tied back nor looseinstead, a single braid wraps loosely around one side of her head near the temple, adding texture to the otherwise sleek look, while strands fall artfully across her cheekbones and neck. She has a slender, athletic build with defined shoulders and toned arms visible through thin fabric; her torso is slightly arched as though she’s in motion or preparing to acther hips are subtly tilted outward, reinforcing an aura of poise and strength. Her skin tone is warm and naturally pigmented, with soft, radiant undertones that suggest health and vitality; there are no visible blemishes or imperfections on her face or body. Her facial expression is intense yet serenea mix of focus and determination in her eyes, which are large, almond-shaped, and framed by thick dark lashes. The irises are a deep brown with faint golden reflectionspossibly from the ambient lightingwhich suggest depth and realism; there’s no makeup applied except for minimal contouring around her cheekbones to enhance her natural structure without looking artificial. Her lips are slightly parted in a way that suggests she’s about to speak, or perhaps holding her breath momentarily during a moment of high tension or anticipationthere is a slight sheen on them from moisture or sweat, adding realism and emotion. Her eyebrows are naturally arched but relaxed, not furrowed, conveying calmness despite the implied energy. She wears a form-fitting athletic top made of breathable, lightweight material that hugs her frame with precisionits cut reveals toned abdominal muscles subtly through the fabric’s natural stretch; it is black in color and features a low-cut neckline that rises just above her collarbone without exposing skin excessively. The sleeves end at mid-forearm with thin, elasticated cuffs that slightly distort to match muscle movement; there are no visible seams or zippers except for one discreet zipper on the side seam of the torsothis detail is minimally visible but suggests practical design. She also wears matching black leggings that contour her legs perfectlyno stretch marks or bulges visible, suggesting either fitness or photographic staging with precision to mimic real muscle definition; they have no logos or branding, emphasizing minimalism. Around her neck hangs a thin chain necklace with what appears to be a small circular pendantits surface is polished and reflective, catching glints of light that shift depending on the viewer’s perspective. On her left wrist she wears a slim rubber watchband with minimalist digital display; its face is off-center slightly so it doesn’t dominate but still visible, suggesting functionality over fashion. Her right arm carries an unobtrusive black crossbody bag made from durable fabric stitched seamlesslyit rests against her hip without dragging or interfering with movement. Her hands are positioned with purpose: the left hand rests lightly on her thigh near the knee as if to steady herself; the fingers are slightly curled into fists, conveying readiness for action. The right arm is bent at the elbow in a relaxed but tense positionher palm faces inward toward her body, suggesting protection or preparation for interaction. Her nails are short and clean-cut with natural polish-free tips, free of any glitter or nail art, reflecting practicality. The background is an urban park setting during golden houra wide-open grassy field bordered by mature trees whose leaves form a dense canopy overhead. There are no people in sight, only a few blurred figures visible far off in the distance near a trailsuggesting isolation or quiet focus within a public space. A rusted metal bench sits abandoned on the left side of the frame; its paint is peeling and it’s partially covered by moss, adding grit to the scene. Behind her, there are low-hanging branches with leaves that sway slightly in an unseen breeze, creating motion blur around themadding realism even though nothing else moves. The color palette is dominated by earth tones: muted greens from the foliage, warm browns and grays of the ground, and deep blacks and charcoal greys of her clothing.\", \"宽度\": \"1264\", \"高度\": \"784\"}\n{\"种子\": \"4697483075917740358\", \"提示词\": \"\", \"画师\": \"[2824] @arizuka \\\\(catacombe\\\\)\", \"分辨率\": \"1000x1000\", \"反推\": \"A 19-year-old Asian female stands center-frame in a cinematic, high-resolution portrait shot from a slightly low-angle perspective that accentuates her stature while maintaining intimate closeness to the viewer, her posture relaxed yet poisedshoulders subtly squared, spine aligned with natural curvature, arms gently resting at her sides with palms facing inward as if in quiet contemplation or subtle surrender to the moment. Her hair is long and straight, falling just past her waistline in a glossy cascade of deep chestnut brown with subtle highlights caught by soft ambient light that glimmers like liquid amber along its surface; it’s parted slightly off-center toward her left temple, framing her face with deliberate elegance while strands graze her collarbone and shoulders without obstructing the vieweach strand individually rendered with fine texture and realistic sheen, reflecting the directional lighting. Her facial features are refined yet naturally expressive: high cheekbones softly contour beneath a delicate jawline; eyes are large, almond-shaped with natural brown irises that hold depth and emotionnot vacant but alert, scanning slightly to her right as if caught in mid-thought or observing something just beyond frameeyelashes long and voluminous, coated in fine individual hairs, glistening faintly with moisture from the ambient air; eyebrows are naturally arched, thick, and well-defined, resting delicately above her eyes without being overly emphasized. Her nose is straight, small yet proportionate to her face, with a subtle bridge curvature that adds character without dominance. Lips are full but not plump, painted in a matte rose-gold gloss that catches the light at the cupid’s bow onlyno lipstick sheen or artificial gloss applied; natural moisture and slight sheen suggest recent breath or ambient humidity. Her expression is contemplative yet serenea faint, almost imperceptible smile plays at her lips, not forced but emerging from inner calmness, eyes softening with a hint of melancholy or daydreaming, head slightly tilted as if listening to unseen music or remembering something tender. She wears contemporary minimalist fashion: a form-fitting black cropped hoodie with ribbed cuffs and hemline, its fabric subtly textured with micro-reflective fibers that catch ambient light only when angled correctlyno excessive shine but a tactile realism. Underneath, she wears a thin white cotton tank top with no visible branding or seams, the sleeves rolled just above her elbows exposing smooth skin of even tone under soft illumination; both garments appear freshly laundered and unwrinkled, showing natural fabric drape without stiff lines or artificial smoothing. Her legs are covered by high-waisted black leggings that hug her silhouette perfectlyno excess material, no sagging, only precise contours matching her muscle definition along the thigh and calf; a faint sheen from light reflection off the fabric’s surface indicates it is not matte but possesses a subtle synthetic finish that enhances realism without being glossy. Over her feet: flat black canvas sneakers with white rubber soles, laces neatly tied in an X-shape behind her ankles, no visible wear or dirtclean lines, minimalistic design, subtly scuffed at the toe cap from normal use, hinting at recent walking. Her nails are short and clean-cut, natural skin tone, unpolished, with slight moisture visible on the cuticles suggesting she has been in motion recently or is breathing heavily due to environmental factors. Her posture: relaxed but groundedhips slightly wider than her shoulders creating a subtle feminine curve that enhances balance without appearing uncontrolled. Her spine remains perfectly aligned; her hands are resting at her sides, fingers loosely curled as if unconsciously gripping airno tension visible in her knuckles or tendons, suggesting calmness rather than exhaustion. She is standing directly facing the camera lens but her gaze has been subtly directed off-center, looking toward the upper right quadrant of the frame with an expression that implies she’s aware of being photographed yet emotionally detached from itan artistically composed still life portrait where emotion is not forced but naturally captured through composition alone. The background: a muted urban alleyway at twilightfaint orange glow from distant streetlights bleeding into dark blue shadows, walls textured with damp concrete and faint graffiti tags barely discernible in the dimness; one wall features a cracked mirror hanging crookedly on its surface, reflecting distorted silhouettes of surrounding buildings as if warped by heat haze or lens distortion. The ground beneath her feet is slightly unevensmall pebbles scattered around, patches of moss visible under broken bricksand there’s a faint rust-colored stain near the far corner, suggesting recent spillage or neglect. The light source: soft golden hour illumination filtered through nearby buildings’ overhangs casting long shadows behind her while illuminating the front half of her body with diffused, warm tones that create gentle gradients across her skin and clothing without harsh contrastno direct sunlight; only indirect ambient glow creating an ethereal, almost otherworldly quality.\", \"宽度\": \"1000\", \"高度\": \"1000\"}"
+      ]
+    },
+    {
+      "id": 114,
+      "type": "easy showAnything",
+      "pos": [
+        228.51537401489628,
+        5437.618209003956
+      ],
+      "size": [
+        210,
+        88
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 263
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "3044777485282266080\n9136527372326816629\n4697483075917740358"
+      ]
+    },
+    {
+      "id": 124,
+      "type": "PassthroughSplit",
+      "pos": [
+        3058.971560973215,
+        5715.863522705728
+      ],
+      "size": [
+        140,
+        146
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "JSON行",
+          "type": "STRING",
+          "link": 278
+        }
+      ],
+      "outputs": [
+        {
+          "name": "种子",
+          "type": "INT",
+          "links": [
+            285
+          ]
+        },
+        {
+          "name": "提示词",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "画师",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": [
+            288
+          ]
+        },
+        {
+          "name": "反推",
+          "type": "STRING",
+          "links": [
+            299
+          ]
+        },
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": [
+            289
+          ]
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": [
+            290
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "PassthroughSplit",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 128,
+      "type": "easy showAnything",
+      "pos": [
+        3799.1314790794113,
+        5779.642638026545
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 288
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1000x1000",
+        "1000x1000",
+        "1000x1000"
+      ]
+    },
+    {
+      "id": 112,
+      "type": "SyncPassthrough",
+      "pos": [
+        1321.309736128119,
+        5678.999770234797
+      ],
+      "size": [
+        278.685546875,
+        226
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 261
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 298
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 297
+        },
+        {
+          "name": "宽度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 256
+        },
+        {
+          "name": "高度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 257
+        }
+      ],
+      "outputs": [
+        {
+          "name": "合并输出",
+          "type": "STRING",
+          "links": [
+            273,
+            276
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "SyncPassthrough",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0,
+        1000,
+        true
+      ]
+    },
+    {
+      "id": 109,
+      "type": "ImageCaption",
+      "pos": [
+        823.5141068637548,
+        5996.160842371695
+      ],
+      "size": [
+        387.8048939923565,
+        406
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "图像",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "WD14标签",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "自定义提示词",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 260
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 293
+        },
+        {
+          "name": "待润色文本",
+          "shape": 7,
+          "type": "STRING",
+          "link": 292
+        }
+      ],
+      "outputs": [
+        {
+          "name": "描述文本",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "提示词串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": [
+            298
+          ]
+        },
+        {
+          "name": "反推串",
+          "type": "STRING",
+          "links": [
+            297
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "ImageCaption",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "huihui-qwen3-vl-4b-instruct-abliterated",
+        "http://localhost:1234/v1",
+        "",
+        "deepseek-chat",
+        4096,
+        1024,
+        "",
+        true
+      ]
+    },
+    {
+      "id": 131,
+      "type": "CR Text",
+      "pos": [
+        210.3341220692993,
+        6103.887210321662
+      ],
+      "size": [
+        445.61405495384065,
+        278.684244795375
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": [
+            292
+          ]
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "文本",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "一个19岁亚洲女性"
+      ]
+    }
+  ],
+  "links": [
+    [
+      256,
+      115,
+      4,
+      112,
+      5,
+      "STRING"
+    ],
+    [
+      257,
+      115,
+      5,
+      112,
+      6,
+      "STRING"
+    ],
+    [
+      260,
+      117,
+      0,
+      109,
+      5,
+      "STRING"
+    ],
+    [
+      261,
+      117,
+      0,
+      112,
+      0,
+      "STRING"
+    ],
+    [
+      263,
+      117,
+      0,
+      114,
+      0,
+      "STRING"
+    ],
+    [
+      264,
+      117,
+      0,
+      115,
+      1,
+      "STRING"
+    ],
+    [
+      273,
+      112,
+      0,
+      121,
+      0,
+      "STRING"
+    ],
+    [
+      276,
+      112,
+      0,
+      122,
+      0,
+      "STRING"
+    ],
+    [
+      277,
+      121,
+      0,
+      123,
+      0,
+      "STRING"
+    ],
+    [
+      278,
+      121,
+      0,
+      124,
+      0,
+      "STRING"
+    ],
+    [
+      285,
+      124,
+      0,
+      125,
+      0,
+      "INT"
+    ],
+    [
+      288,
+      124,
+      3,
+      128,
+      0,
+      "STRING"
+    ],
+    [
+      289,
+      124,
+      5,
+      129,
+      0,
+      "INT"
+    ],
+    [
+      290,
+      124,
+      6,
+      130,
+      0,
+      "INT"
+    ],
+    [
+      292,
+      131,
+      0,
+      109,
+      9,
+      "STRING"
+    ],
+    [
+      293,
+      115,
+      3,
+      109,
+      8,
+      "STRING"
+    ],
+    [
+      297,
+      109,
+      4,
+      112,
+      4,
+      "STRING"
+    ],
+    [
+      298,
+      109,
+      3,
+      112,
+      3,
+      "STRING"
+    ],
+    [
+      299,
+      124,
+      4,
+      126,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 0.45,
+      "offset": [
+        2456.85885045378,
+        -4836.562666052682
+      ]
+    },
+    "qgn_navigation_groups": [],
+    "qgn_locked": false,
+    "links_added_by_ue": [],
+    "frontendVersion": "1.45.20",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

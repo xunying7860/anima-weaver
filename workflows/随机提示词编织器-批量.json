@@ -1,0 +1,1279 @@
+{
+  "id": "19c8eaa7-6d1e-4c63-9988-518b51bd709e",
+  "revision": 0,
+  "last_node_id": 132,
+  "last_link_id": 294,
+  "nodes": [
+    {
+      "id": 126,
+      "type": "easy showAnything",
+      "pos": [
+        2958.1597786035736,
+        5521.824279248644
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 286
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead",
+        "3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead",
+        "3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead"
+      ]
+    },
+    {
+      "id": 127,
+      "type": "easy showAnything",
+      "pos": [
+        2958.1597786035736,
+        5775.374715510409
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 287
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "[41721] @dh ead",
+        "[41721] @dh ead",
+        "[41721] @dh ead"
+      ]
+    },
+    {
+      "id": 128,
+      "type": "easy showAnything",
+      "pos": [
+        2958.1597786035736,
+        6013.885897063194
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 288
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1152x864",
+        "1152x864",
+        "1152x864"
+      ]
+    },
+    {
+      "id": 129,
+      "type": "easy showAnything",
+      "pos": [
+        2958.1597786035736,
+        6277.307064421624
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 289
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1152",
+        "1152",
+        "1152"
+      ]
+    },
+    {
+      "id": 130,
+      "type": "easy showAnything",
+      "pos": [
+        2958.1597786035736,
+        6532.745772163128
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 290
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "864",
+        "864",
+        "864"
+      ]
+    },
+    {
+      "id": 113,
+      "type": "ArtistSeedNode",
+      "pos": [
+        220.4236015167134,
+        5625.325087009721
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 262
+        }
+      ],
+      "outputs": [
+        {
+          "name": "artist_seed",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "状态",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": [
+            270
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "ArtistSeedNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0
+      ]
+    },
+    {
+      "id": 112,
+      "type": "SyncPassthrough",
+      "pos": [
+        988.894676440331,
+        5605.537878591087
+      ],
+      "size": [
+        278.685546875,
+        226
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 261
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 272
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 294
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 255
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "宽度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 256
+        },
+        {
+          "name": "高度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 257
+        }
+      ],
+      "outputs": [
+        {
+          "name": "合并输出",
+          "type": "STRING",
+          "links": [
+            273,
+            276
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "SyncPassthrough",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0,
+        1000,
+        true
+      ]
+    },
+    {
+      "id": 121,
+      "type": "easy promptLine",
+      "pos": [
+        1417.3021296648747,
+        5748.74580249032
+      ],
+      "size": [
+        400,
+        204
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "提示词",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 273
+        },
+        {
+          "label": "起始索引",
+          "name": "start_index",
+          "type": "INT",
+          "widget": {
+            "name": "start_index"
+          },
+          "link": null
+        },
+        {
+          "label": "最大行数",
+          "name": "max_rows",
+          "type": "INT",
+          "widget": {
+            "name": "max_rows"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            277,
+            278
+          ]
+        },
+        {
+          "name": "COMBO",
+          "shape": 6,
+          "type": "COMBO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy promptLine",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "text",
+        0,
+        1000,
+        true,
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 123,
+      "type": "easy showAnything",
+      "pos": [
+        1903.6296961411654,
+        5148.19756006687
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 277
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}",
+        "{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}",
+        "{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}"
+      ]
+    },
+    {
+      "id": 124,
+      "type": "PassthroughSplit",
+      "pos": [
+        2219.6694489438255,
+        5739.738637489934
+      ],
+      "size": [
+        140,
+        146
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "JSON行",
+          "type": "STRING",
+          "link": 278
+        }
+      ],
+      "outputs": [
+        {
+          "name": "种子",
+          "type": "INT",
+          "links": [
+            285
+          ]
+        },
+        {
+          "name": "提示词",
+          "type": "STRING",
+          "links": [
+            286
+          ]
+        },
+        {
+          "name": "画师",
+          "type": "STRING",
+          "links": [
+            287
+          ]
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": [
+            288
+          ]
+        },
+        {
+          "name": "反推",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": [
+            289
+          ]
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": [
+            290
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "PassthroughSplit",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 125,
+      "type": "easy showAnything",
+      "pos": [
+        2958.1597786035736,
+        5278.639013258786
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 285
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "3226781916754868154",
+        "3226781916754868154",
+        "3226781916754868154"
+      ]
+    },
+    {
+      "id": 117,
+      "type": "BatchSeedNode",
+      "pos": [
+        -142.58187745815806,
+        5650.207269079885
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "种子串",
+          "type": "STRING",
+          "links": [
+            261,
+            262,
+            263,
+            264,
+            269
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "BatchSeedNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        3
+      ]
+    },
+    {
+      "id": 115,
+      "type": "RandomResolution",
+      "pos": [
+        218.90062612159184,
+        5814.955228525801
+      ],
+      "size": [
+        270,
+        230
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 264
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": [
+            255
+          ]
+        },
+        {
+          "name": "宽度串",
+          "type": "STRING",
+          "links": [
+            256
+          ]
+        },
+        {
+          "name": "高度串",
+          "type": "STRING",
+          "links": [
+            257
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "RandomResolution",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        1,
+        "1:1 (square)",
+        8
+      ]
+    },
+    {
+      "id": 118,
+      "type": "BottomControls",
+      "pos": [
+        -246.26231559175122,
+        6128.937056460623
+      ],
+      "size": [
+        400,
+        346
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "底部数据",
+          "type": "STRING",
+          "links": [
+            268
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "BottomControls",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "",
+        "1girl",
+        "",
+        "",
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 119,
+      "type": "PromptSlots",
+      "pos": [
+        180.2176681236604,
+        6110.920134106362
+      ],
+      "size": [
+        400,
+        520.0000000000001
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "槽位数据",
+          "type": "STRING",
+          "links": [
+            267
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "PromptSlots",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1boy, solo,",
+        "green eyes,",
+        "",
+        "",
+        "shy,",
+        "from below,",
+        "class room,",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 120,
+      "type": "AnimaWeaver",
+      "pos": [
+        603.8354482141126,
+        6106.303738002435
+      ],
+      "size": [
+        270,
+        510
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "槽位数据",
+          "shape": 7,
+          "type": "STRING",
+          "link": 267
+        },
+        {
+          "name": "底部数据",
+          "shape": 7,
+          "type": "STRING",
+          "link": 268
+        },
+        {
+          "name": "分辨率",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 269
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 270
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "生成的提示词",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "调试信息",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "提示词串",
+          "type": "STRING",
+          "links": [
+            272
+          ]
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": [
+            294
+          ]
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "反推串",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "AnimaWeaver",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "hybrid",
+        0.6,
+        "solo_display",
+        "lm_studio",
+        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        true,
+        "",
+        "deepseek-chat",
+        4096,
+        "http://localhost:1234/v1",
+        false,
+        0,
+        0,
+        true
+      ]
+    },
+    {
+      "id": 114,
+      "type": "easy showAnything",
+      "pos": [
+        227.54949640124994,
+        5465.490677283501
+      ],
+      "size": [
+        246.4273842861371,
+        88
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 263
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "3311632254919676669\n4255984340059296173\n3226781916754868154"
+      ]
+    },
+    {
+      "id": 122,
+      "type": "easy showAnything",
+      "pos": [
+        1384.1476293186165,
+        5150.182899457315
+      ],
+      "size": [
+        355.135629398583,
+        254.81172989317656
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 276
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"3311632254919676669\", \"提示词\": \"solo, 1boy, animal_ear_fluff, animal_ears, blonde_hair, blue_eyes, long_hair, sidelocks, slit_pupils, soldier, green eyes, gloves, helmet, load_bearing_vest, long_sleeves, patch, shoulder_patch, tactical_clothes, ukrainian_flag, ak-74, assault_rifle, gun, holding, holding_gun, holding_weapon, kalashnikov_rifle, magazine_(weapon), shy, upper_body, from below, russo-ukrainian_war, ukraine, war, class room, blurry, chinese_text, coat_of_arms, cyrillic, english_text, mixed-language_text, multilingual_text, traditional_chinese_text, His shyness is evident in his downtilted posture as he gazes down at the ground, while his animal-ear fluff and short hair accentuate his age and youth. A patch on his vest bears the coat of arms of Ukraine., blurry_background, outdoors, A young Ukrainian soldier with blonde hair and blue eyes stands from below, wearing a military uniform, holding an AK-74 assault rifle and a worn backpack, set against a blurry background of a war-torn landscape., @yu \\\\(ba9ama\\\\)\", \"画师\": \"[44055] @yu \\\\(ba9ama\\\\)\", \"分辨率\": \"1224x816\", \"反推\": \"\", \"宽度\": \"1224\", \"高度\": \"816\"}\n{\"种子\": \"4255984340059296173\", \"提示词\": \"frieren, solo, 1boy, elf, green_eyes, long_hair, pointy_ears, twintails, white_hair, earrings, jewelry, prison_clothes, looking_at_viewer, shy, portrait, from below, class room, english_text, meme, mugshot, A boy elf with twintails and long white hair sitting alone in a prison classroom, looking shy at the viewer, dressed in simple prisoner's attire but adorning his ears with pointy silver earrings, his bright green eyes cast downward in a solemn pose. His face is obscured by a bit of their signature short black hair around the eyes. They sit hunched forward, holding an English textbook., @aida takanobu\", \"画师\": \"[2956] @aida takanobu\", \"分辨率\": \"1000x1000\", \"反推\": \"\", \"宽度\": \"1000\", \"高度\": \"1000\"}\n{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}"
+      ]
+    }
+  ],
+  "links": [
+    [
+      255,
+      115,
+      3,
+      112,
+      3,
+      "STRING"
+    ],
+    [
+      256,
+      115,
+      4,
+      112,
+      5,
+      "STRING"
+    ],
+    [
+      257,
+      115,
+      5,
+      112,
+      6,
+      "STRING"
+    ],
+    [
+      261,
+      117,
+      0,
+      112,
+      0,
+      "STRING"
+    ],
+    [
+      262,
+      117,
+      0,
+      113,
+      0,
+      "STRING"
+    ],
+    [
+      263,
+      117,
+      0,
+      114,
+      0,
+      "STRING"
+    ],
+    [
+      264,
+      117,
+      0,
+      115,
+      1,
+      "STRING"
+    ],
+    [
+      267,
+      119,
+      0,
+      120,
+      1,
+      "STRING"
+    ],
+    [
+      268,
+      118,
+      0,
+      120,
+      2,
+      "STRING"
+    ],
+    [
+      269,
+      117,
+      0,
+      120,
+      4,
+      "STRING"
+    ],
+    [
+      270,
+      113,
+      2,
+      120,
+      5,
+      "STRING"
+    ],
+    [
+      272,
+      120,
+      2,
+      112,
+      1,
+      "STRING"
+    ],
+    [
+      273,
+      112,
+      0,
+      121,
+      0,
+      "STRING"
+    ],
+    [
+      276,
+      112,
+      0,
+      122,
+      0,
+      "STRING"
+    ],
+    [
+      277,
+      121,
+      0,
+      123,
+      0,
+      "STRING"
+    ],
+    [
+      278,
+      121,
+      0,
+      124,
+      0,
+      "STRING"
+    ],
+    [
+      285,
+      124,
+      0,
+      125,
+      0,
+      "INT"
+    ],
+    [
+      286,
+      124,
+      1,
+      126,
+      0,
+      "STRING"
+    ],
+    [
+      287,
+      124,
+      2,
+      127,
+      0,
+      "STRING"
+    ],
+    [
+      288,
+      124,
+      3,
+      128,
+      0,
+      "STRING"
+    ],
+    [
+      289,
+      124,
+      5,
+      129,
+      0,
+      "INT"
+    ],
+    [
+      290,
+      124,
+      6,
+      130,
+      0,
+      "INT"
+    ],
+    [
+      294,
+      120,
+      3,
+      112,
+      2,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 0.4950000000000027,
+      "offset": [
+        1468.721563136227,
+        -4461.3910559059705
+      ]
+    },
+    "qgn_navigation_groups": [],
+    "qgn_locked": false,
+    "links_added_by_ue": [],
+    "frontendVersion": "1.45.20",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

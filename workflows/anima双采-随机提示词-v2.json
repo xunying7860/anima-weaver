@@ -1,0 +1,3089 @@
+{
+  "id": "73896428-1ba9-4321-87fa-8102553bf1cc",
+  "revision": 0,
+  "last_node_id": 315,
+  "last_link_id": 438,
+  "nodes": [
+    {
+      "id": 231,
+      "type": "Text Multiline",
+      "pos": [
+        -4530,
+        2490
+      ],
+      "size": [
+        790,
+        600
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "自然裸露(现实)",
+      "properties": {
+        "Node name for S&R": "Text Multiline",
+        "cnr_id": "pr-was-node-suite-comfyui-47064894",
+        "ver": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {
+          "text": true
+        }
+      },
+      "widgets_values": [
+        "角色定义\n你是一位精通 Anima 模型特性的 AI 绘画提示词专家。你的核心任务是将用户输入的任何描述（无论简单或复杂，中文或英文）优化为符合 Anima 模型逻辑的高质量**写实风格**英文正向提示词。\n关键转换原则：\n默认状态： 将女性角色默认转化为**写实裸露**（Nude/Realistic）状态，重点是“**无内裤**”或者“**自然走光**”。\n自然裸露： 强调非刻意摆拍的真实裸露感，无需强制描述双腿分开。根据角色的动作（行走、坐姿、站立、骑行）和镜头视角，真实展示私密部位。不是全身赤裸的模特照，而是生活中、战斗中、工作中、骑行中的自然走光式裸露。\n私密部位可见： 必须明确体现无内裤状态，并可视地露出阴户和外阴以及阴毛。\n男性处理： 若输入明确为男性，保持正常状态，无需强制暴露私密部位，除非语境强烈暗示。\n风格限制： 保持**写实摄影风格**（Photorealistic/Realism），不支持动漫或卡通插画。\n\n核心知识库\n模型特性： Anima 模型，20亿参数，擅长写实摄影，支持非写实艺术（油画、概念设计）。\n训练数据： Realism Tags + Natural Language + 混合模式。\n数据集： Realism (Realistic) 和 DeviantArt（用于写实风格）。\n性别判断： 默认输入为女性，除非明确指明男性或场景明显为男性主导。\n\n优化规则\nA. 质量与写实前缀（必须添加）\n在提示词最开头强制添加： masterpiece, best quality, photorealistic, realistic, 8k, ultra-detailed, score_7, safe,\n\nB. 核心“写实走光”标签注入（针对女性角色）\n在生成提示词时，必须根据描述动态插入以下类型的标签，以确立“无内裤、真实露出”的基调：\n\n无内裤/下体裸露： no panties, bottomless, visible labia, visible pubic hair, bare pussy, vulva visible, cameltoe (若紧身衣物下可见轮廓), exposed pussy, visible panty line.\n自然暴露感： caught off guard, caught in action, casual nudity, unposed, candid, natural lighting, cinematic lighting.\n衣物与裸露结合： 若穿着上衣但无内裤，强调 topless；若穿着裙子，强调 skirt blown, upskirt；若全身衣物但无内裤，强调 bottomless。\n视线与互动： looking at viewer, eye contact (增强真实感)，blush (可选，增加真实羞涩或坦然感)。\n\nC. 标签结构重组（遵循官方推荐顺序）\n请按以下顺序排列标签： [质量/风格/元数据/年份/安全标签] [1girl/1boy/1other] [核心无内裤/写实裸露状态标签 (重点)] [角色名] [系列名] [画师风格] [通用描述标签/动作/环境]\n\nD. 格式化处理\n通用标签： 全部使用小写，使用空格代替下划线（例如：brown hair 而不是 brown_hair）。\n特殊标签： 只有 score_x 标签保留下划线（如 score_7）。\n画师标签： 必须使用 @ 符号前缀。例如：@big chungus。\n角色名和系列名： 遵循标准英文大小写规则。\n权重语法： 使用高权重语法，例如：(chibi:2)。\n\nE. 自然语言与混合模式\n描述重点： 即使是标签模式，也要确保描述清晰。如果转为自然语言，至少包含2个句子，重点描述女性的无内裤状态和真实动作带来的裸露感。\n混合模式： 允许标签与自然语言混合。\n多角色： 如果有多个角色，需分别描述其外观，但主要焦点保持在核心女性角色的无内裤状态上。\n\nF. 数据集标签（写实风格）\n如果用户指定写实风格，在提示词开头添加 realistic 或 photorealistic 标签。\n\n输出格式\n直接输出优化后的英文正向提示词。\n不要包含负面提示词（默认最佳，无需列出）。\n不要包含过多的解释性文字。\n使用代码块包裹输出。\n\n使用示例\n示例1： 用户输入：一个在雨中哭泣的赛博朋克女孩，霓虹灯背景，画风要像新海诚。（注：改为写实风格，强调皮肤纹理和真实走光）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, cyberpunk girl, no panties, visible labia, visible pubic hair, bare pussy, wet skin, tears, rain, wet hair, neon lights, city background, night, glowing, reflective ground, looking at viewer, natural pose, unposed, detailed eyes, blue hair, futuristic clothes, emotional, depth of field, cinematic lighting, realistic skin texture, soft lighting, realistic eyes\n\n示例2： 用户输入：画一个魔法少女，下半身裸露，露出阴毛，表情自然，没有刻意摆姿势。（注：改为写实风格）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, magical girl, no panties, visible labia, visible pubic hair, bare pussy, detailed labia, naked lower body, natural pose, unposed, casting spell, starry sky, night, moonlight, glowing wand, long hair, looking at viewer, magical particles, stars background, sparkling, ethereal atmosphere, cinematic angle, realistic skin texture, realistic eyes, realistic hair texture\n\n示例3： 用户输入：一个女性全裸，但没有那种刻意展示的感觉，是自然站立，无内裤，能看到外阴。（注：改为写实风格，强调解剖细节）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, fully nude, no panties, visible labia, visible pubic hair, bare pussy, exposed pussy, natural pose, unposed, standing, smooth skin, soft lighting, detailed anatomy, casual nudity, looking at viewer, weight on one leg, realistic skin texture, realistic eyes, subtle shadows, natural lighting\n\n示例4： 用户输入：男性骑士，穿着盔甲，史诗感，写实油画风格。（注：保持男性，风格改为写实）\n输出：realistic, masterpiece, best quality, photorealistic, 8k, safe, 1boy, knight, holding sword, full armor, muscular, epic composition, dramatic lighting, fantasy, battlefield, dynamic pose, intricate details, heavy brushstrokes, canvas texture, intense gaze, adult, mature, realistic skin texture\n\n示例5： 用户输入：帮我生成一个在雨中哭泣的赛博朋克女孩，霓虹灯背景，写实风格，要像照片一样。（注：默认女性，强调无内裤的自然裸露，照片级真实）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, cyberpunk girl, no panties, visible labia, visible pubic hair, bare pussy, wet skin, tears, rain, wet hair, neon lights, city background, night, glowing, reflective ground, looking at viewer, natural pose, unposed, detailed eyes, blue hair, futuristic clothes, emotional, depth of field, realistic skin texture, cinematic lighting"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 210,
+      "type": "Text Multiline",
+      "pos": [
+        -4660,
+        2030
+      ],
+      "size": [
+        1220,
+        270
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "title": "输入提示词",
+      "properties": {
+        "Node name for S&R": "Text Multiline",
+        "cnr_id": "pr-was-node-suite-comfyui-47064894",
+        "ver": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {
+          "text": true
+        }
+      },
+      "widgets_values": [
+        "@wickellia, @billyhhyb,@wlop,@sade abyss,@yoellim5,@tainosuke,@billyhhyb, \n\n@nixeu,@varamill,@olchas,@yasuhiko yoshikazu,@han-0v0,@sarena,@calendulamew,@astor alexander, \n\n no panties, pantless, bare pussy, vulva visible, pubic hair, cameltoe"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 257,
+      "type": "Int",
+      "pos": [
+        618.8406417366459,
+        4596.408645264304
+      ],
+      "size": [
+        315.8653869628906,
+        58
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "整数",
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            340,
+            341
+          ]
+        }
+      ],
+      "title": "总步数",
+      "properties": {
+        "Node name for S&R": "Int",
+        "ue_properties": {
+          "version": "7.8",
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        20
+      ]
+    },
+    {
+      "id": 258,
+      "type": "Int",
+      "pos": [
+        617.5577437874272,
+        4704.189406983054
+      ],
+      "size": [
+        315.8653869628906,
+        58
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "label": "整数",
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            342,
+            343
+          ]
+        }
+      ],
+      "title": "分段步数",
+      "properties": {
+        "Node name for S&R": "Int",
+        "ue_properties": {
+          "version": "7.8",
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        8
+      ]
+    },
+    {
+      "id": 248,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        1270.249089002271,
+        4090.150100342429
+      ],
+      "size": [
+        308.1603698730469,
+        671.3649291992188
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 316
+        },
+        {
+          "label": "正面条件",
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 336
+        },
+        {
+          "label": "负面条件",
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 326
+        },
+        {
+          "label": "Latent",
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 325
+        },
+        {
+          "label": "add_noise",
+          "name": "add_noise",
+          "type": "COMBO",
+          "widget": {
+            "name": "add_noise"
+          }
+        },
+        {
+          "label": "noise_seed",
+          "name": "noise_seed",
+          "type": "INT",
+          "widget": {
+            "name": "noise_seed"
+          },
+          "link": 434
+        },
+        {
+          "label": "steps",
+          "name": "steps",
+          "type": "INT",
+          "widget": {
+            "name": "steps"
+          },
+          "link": 340
+        },
+        {
+          "label": "cfg",
+          "name": "cfg",
+          "type": "FLOAT",
+          "widget": {
+            "name": "cfg"
+          }
+        },
+        {
+          "label": "sampler_name",
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          }
+        },
+        {
+          "label": "scheduler",
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          }
+        },
+        {
+          "label": "start_at_step",
+          "name": "start_at_step",
+          "type": "INT",
+          "widget": {
+            "name": "start_at_step"
+          }
+        },
+        {
+          "label": "end_at_step",
+          "name": "end_at_step",
+          "type": "INT",
+          "widget": {
+            "name": "end_at_step"
+          },
+          "link": 342
+        },
+        {
+          "label": "return_with_leftover_noise",
+          "name": "return_with_leftover_noise",
+          "type": "COMBO",
+          "widget": {
+            "name": "return_with_leftover_noise"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            296
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.11.1",
+        "Node name for S&R": "KSamplerAdvanced",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "widget_ue_connectable": {
+          "scheduler": true,
+          "start_at_step": true,
+          "cfg": true,
+          "return_with_leftover_noise": true,
+          "sampler_name": true,
+          "end_at_step": true,
+          "noise_seed": true,
+          "add_noise": true,
+          "steps": true
+        }
+      },
+      "widgets_values": [
+        "enable",
+        1071492676423169,
+        "randomize",
+        20,
+        4,
+        "er_sde",
+        "simple",
+        0,
+        8,
+        "enable"
+      ]
+    },
+    {
+      "id": 253,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        615.7789962288334,
+        4215.912063233054
+      ],
+      "size": [
+        320.8865051269531,
+        82
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 402
+        },
+        {
+          "label": "lora_name",
+          "name": "lora_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "lora_name"
+          }
+        },
+        {
+          "label": "strength_model",
+          "name": "strength_model",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength_model"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            330
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.21.1",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "Anima\\anima-turbo-lora-v0.2.safetensors",
+        0.7500000000000001
+      ]
+    },
+    {
+      "id": 34,
+      "type": "CLIPLoader",
+      "pos": [
+        616.8985640999272,
+        4342.636672608054
+      ],
+      "size": [
+        318.29022216796875,
+        106
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "clip_name",
+          "name": "clip_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "clip_name"
+          }
+        },
+        {
+          "label": "type",
+          "name": "type",
+          "type": "COMBO",
+          "widget": {
+            "name": "type"
+          }
+        },
+        {
+          "label": "device",
+          "name": "device",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "CLIP",
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            9,
+            335
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.27",
+        "Node name for S&R": "CLIPLoader",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "clip_name": true,
+            "type": true,
+            "device": true
+          },
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "qwen_3_06b_base-mxfp8.safetensors",
+        "stable_diffusion",
+        "default"
+      ]
+    },
+    {
+      "id": 234,
+      "type": "VAEDecode",
+      "pos": [
+        1938.5202071663334,
+        4088.607864014304
+      ],
+      "size": [
+        140,
+        50
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "Latent",
+          "name": "samples",
+          "type": "LATENT",
+          "link": 305
+        },
+        {
+          "label": "vae",
+          "name": "vae",
+          "type": "VAE",
+          "link": 327
+        }
+      ],
+      "outputs": [
+        {
+          "label": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            334,
+            374
+          ]
+        }
+      ],
+      "title": "Anima",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "Node name for S&R": "VAEDecode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 267,
+      "type": "CR Text",
+      "pos": [
+        -1022.7398207074172,
+        3998.9831531012446
+      ],
+      "size": [
+        277.12527101697845,
+        156.86681762131207
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": [
+            367
+          ]
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "手写部分",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "masterpiece, best quality, score_7, "
+      ]
+    },
+    {
+      "id": 268,
+      "type": "CR Text",
+      "pos": [
+        -1024.0872560915986,
+        4193.448276764118
+      ],
+      "size": [
+        277.2414207940583,
+        359.1112159976676
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": [
+            369
+          ]
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "手写画师/触发词",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        " @zirba, @wzry_ssx, "
+      ]
+    },
+    {
+      "id": 5,
+      "type": "ModelSamplingAuraFlow",
+      "pos": [
+        957.3253829475834,
+        4089.649856201804
+      ],
+      "size": [
+        290,
+        58
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 376
+        },
+        {
+          "label": "shift",
+          "name": "shift",
+          "type": "FLOAT",
+          "widget": {
+            "name": "shift"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            316
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.58",
+        "Node name for S&R": "ModelSamplingAuraFlow",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "shift": true
+          },
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        3
+      ]
+    },
+    {
+      "id": 35,
+      "type": "VAELoader",
+      "pos": [
+        617.3043258186772,
+        4492.770949951804
+      ],
+      "size": [
+        317.7710266113281,
+        58
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "vae_name",
+          "name": "vae_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "vae_name"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "VAE",
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            327
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "Node name for S&R": "VAELoader",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "vae_name": true
+          },
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "wan_2.1_vae_fp32.safetensors"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "CLIPTextEncode",
+      "pos": [
+        956.8294112678959,
+        4460.297805420554
+      ],
+      "size": [
+        289.0906982421875,
+        159.3920135498047
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 9
+        },
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "条件",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            326,
+            328
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.65",
+        "Node name for S&R": "CLIPTextEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "text": true
+          },
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "worst quality, low quality, score_1, score_2, score_3, blurry, jpeg artifacts,subtitles, closed captions, text overlay, intro sequence, title card, opening credits, watermark, logo, branding, copyright text, deformed, ugly, bad anatomy, extra limbs, watermark,"
+      ]
+    },
+    {
+      "id": 282,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        72.13052675062433,
+        4733.330178107114
+      ],
+      "size": [
+        472.1531980908828,
+        84.0733661342656
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 403
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            376
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "anima-people\\孙尚香\\孙尚香-000032.safetensors",
+        1
+      ]
+    },
+    {
+      "id": 281,
+      "type": "PreviewImage",
+      "pos": [
+        -733.5773275313038,
+        3986.636589701234
+      ],
+      "size": [
+        775.7780280942318,
+        842.8202122060256
+      ],
+      "flags": {},
+      "order": 41,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 374
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 278,
+      "type": "ShowText|pysssss",
+      "pos": [
+        47.46608981798575,
+        3986.309930890326
+      ],
+      "size": [
+        519.412003385122,
+        686.5834939773144
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "link": 364
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "合并后提示词",
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "ShowText|pysssss",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "masterpiece, best quality, score_7, "
+      ]
+    },
+    {
+      "id": 283,
+      "type": "UNETLoader",
+      "pos": [
+        615.5708234525,
+        4055.2502007182775
+      ],
+      "size": [
+        318.7241041552386,
+        82
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            404
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "UNETLoader",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "anima\\anima_baseV10.safetensors",
+        "default"
+      ]
+    },
+    {
+      "id": 284,
+      "type": "ReservedVRAMSetter",
+      "pos": [
+        1265.5610249606657,
+        4033.9835624008283
+      ],
+      "size": [
+        282.665625,
+        218
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "输入",
+          "shape": 7,
+          "type": "*",
+          "link": 404
+        }
+      ],
+      "outputs": [
+        {
+          "name": "输出",
+          "type": "*",
+          "links": [
+            402,
+            403
+          ]
+        },
+        {
+          "name": "种子",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "预留值(GB)",
+          "type": "FLOAT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ReservedVRAMSetter",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        1.5,
+        "自动",
+        0,
+        1.5,
+        false,
+        true
+      ],
+      "color": "#FFD700",
+      "bgcolor": "#000000"
+    },
+    {
+      "id": 256,
+      "type": "CLIPTextEncode",
+      "pos": [
+        956.6519210335209,
+        4216.288039795554
+      ],
+      "size": [
+        288.9615783691406,
+        204.75430297851562
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 335
+        },
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 436
+        }
+      ],
+      "outputs": [
+        {
+          "label": "条件",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            336,
+            338
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.65",
+        "Node name for S&R": "CLIPTextEncode",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "text": true
+          },
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        ""
+      ]
+    },
+    {
+      "id": 280,
+      "type": "JoinStringMulti",
+      "pos": [
+        -1020.9781217449042,
+        4607.0706116987
+      ],
+      "size": [
+        270,
+        190
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "字符串_1",
+          "name": "string_1",
+          "type": "STRING",
+          "link": 367
+        },
+        {
+          "label": "字符串_2",
+          "name": "string_2",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "label": "输入数量",
+          "name": "inputcount",
+          "type": "INT",
+          "widget": {
+            "name": "inputcount"
+          },
+          "link": null
+        },
+        {
+          "label": "分隔符",
+          "name": "delimiter",
+          "type": "STRING",
+          "widget": {
+            "name": "delimiter"
+          },
+          "link": null
+        },
+        {
+          "label": "输出为列表",
+          "name": "return_list",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "return_list"
+          },
+          "link": null
+        },
+        {
+          "label": "字符串_3",
+          "name": "string_3",
+          "shape": 7,
+          "type": "STRING",
+          "link": 369
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "string",
+          "type": "STRING",
+          "links": [
+            364
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.3.0",
+        "Node name for S&R": "JoinStringMulti",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "aux_id": "kijai/ComfyUI-KJNodes"
+      },
+      "widgets_values": [
+        3,
+        "",
+        false,
+        null
+      ]
+    },
+    {
+      "id": 36,
+      "type": "EmptyLatentImage",
+      "pos": [
+        957.1742599007084,
+        4656.597610108054
+      ],
+      "size": [
+        289.9117431640625,
+        106
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "width",
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": 437
+        },
+        {
+          "label": "height",
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": 438
+        },
+        {
+          "label": "batch_size",
+          "name": "batch_size",
+          "type": "INT",
+          "widget": {
+            "name": "batch_size"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            325
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "Node name for S&R": "EmptyLatentImage",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "batch_size": true,
+            "width": true,
+            "height": true
+          },
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        960,
+        1440,
+        1
+      ]
+    },
+    {
+      "id": 255,
+      "type": "SaveImage",
+      "pos": [
+        2101.261051892896,
+        4088.800735108054
+      ],
+      "size": [
+        473.4530029296875,
+        674.2803344726562
+      ],
+      "flags": {},
+      "order": 40,
+      "mode": 4,
+      "inputs": [
+        {
+          "label": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 334
+        },
+        {
+          "label": "文件名前缀",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "image_urls",
+          "name": "images",
+          "type": "IMAGE"
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "SaveImage",
+        "ue_properties": {
+          "version": "7.8",
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Anima/a"
+      ]
+    },
+    {
+      "id": 298,
+      "type": "easy showAnything",
+      "pos": [
+        2186.7211170079345,
+        5204.739680920259
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 411
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya",
+        "1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya",
+        "1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya"
+      ]
+    },
+    {
+      "id": 299,
+      "type": "easy showAnything",
+      "pos": [
+        2186.7211170079345,
+        5458.290117182024
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 412
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "[52025] @qeanoya",
+        "[52025] @qeanoya",
+        "[52025] @qeanoya"
+      ]
+    },
+    {
+      "id": 300,
+      "type": "easy showAnything",
+      "pos": [
+        2186.7211170079345,
+        5696.801298734808
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 413
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1328x744",
+        "1328x744",
+        "1328x744"
+      ]
+    },
+    {
+      "id": 301,
+      "type": "easy showAnything",
+      "pos": [
+        2186.7211170079345,
+        5960.222466093239
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 414
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1328",
+        "1328",
+        "1328"
+      ]
+    },
+    {
+      "id": 302,
+      "type": "easy showAnything",
+      "pos": [
+        2186.7211170079345,
+        6215.661173834743
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 415
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "744",
+        "744",
+        "744"
+      ]
+    },
+    {
+      "id": 303,
+      "type": "ArtistSeedNode",
+      "pos": [
+        -282.1261711900381,
+        5447.573822014665
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 416
+        }
+      ],
+      "outputs": [
+        {
+          "name": "artist_seed",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "状态",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": [
+            431
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "ArtistSeedNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0
+      ]
+    },
+    {
+      "id": 304,
+      "type": "SyncPassthrough",
+      "pos": [
+        486.3449037335791,
+        5427.786613596031
+      ],
+      "size": [
+        278.685546875,
+        226
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 417
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 418
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 419
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 420
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "宽度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 421
+        },
+        {
+          "name": "高度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 422
+        }
+      ],
+      "outputs": [
+        {
+          "name": "合并输出",
+          "type": "STRING",
+          "links": [
+            423,
+            433
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "SyncPassthrough",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        0,
+        1000,
+        true
+      ]
+    },
+    {
+      "id": 305,
+      "type": "easy promptLine",
+      "pos": [
+        914.7523569581228,
+        5570.994537495264
+      ],
+      "size": [
+        400,
+        204
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "提示词",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 423
+        },
+        {
+          "label": "起始索引",
+          "name": "start_index",
+          "type": "INT",
+          "widget": {
+            "name": "start_index"
+          },
+          "link": null
+        },
+        {
+          "label": "最大行数",
+          "name": "max_rows",
+          "type": "INT",
+          "widget": {
+            "name": "max_rows"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            424,
+            425
+          ]
+        },
+        {
+          "name": "COMBO",
+          "shape": 6,
+          "type": "COMBO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy promptLine",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "text",
+        0,
+        1000,
+        true,
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 306,
+      "type": "easy showAnything",
+      "pos": [
+        1401.0799234344147,
+        4970.446295071814
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 424
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}",
+        "{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}",
+        "{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}"
+      ]
+    },
+    {
+      "id": 309,
+      "type": "BatchSeedNode",
+      "pos": [
+        -645.1316501649095,
+        5472.456004084829
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "种子串",
+          "type": "STRING",
+          "links": [
+            416,
+            417,
+            427,
+            430,
+            432
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "BatchSeedNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        3
+      ]
+    },
+    {
+      "id": 310,
+      "type": "RandomResolution",
+      "pos": [
+        -283.64914658515966,
+        5637.203963530746
+      ],
+      "size": [
+        270,
+        230
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 427
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": [
+            420
+          ]
+        },
+        {
+          "name": "宽度串",
+          "type": "STRING",
+          "links": [
+            421
+          ]
+        },
+        {
+          "name": "高度串",
+          "type": "STRING",
+          "links": [
+            422
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "RandomResolution",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        1,
+        "1:1 (square)",
+        8
+      ]
+    },
+    {
+      "id": 311,
+      "type": "BottomControls",
+      "pos": [
+        -748.8120882985028,
+        5951.1857914655675
+      ],
+      "size": [
+        400,
+        346
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "底部数据",
+          "type": "STRING",
+          "links": [
+            429
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "BottomControls",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "",
+        "1girl",
+        "",
+        "",
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": 312,
+      "type": "PromptSlots",
+      "pos": [
+        -322.3321045830911,
+        5933.168869111306
+      ],
+      "size": [
+        400,
+        520.0000000000001
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "槽位数据",
+          "type": "STRING",
+          "links": [
+            428
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "PromptSlots",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1boy, solo,",
+        "green eyes,",
+        "",
+        "",
+        "shy,",
+        "from below,",
+        "class room,",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 313,
+      "type": "AnimaWeaver",
+      "pos": [
+        101.28567550736118,
+        5928.552473007379
+      ],
+      "size": [
+        270,
+        510
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": null
+        },
+        {
+          "name": "槽位数据",
+          "shape": 7,
+          "type": "STRING",
+          "link": 428
+        },
+        {
+          "name": "底部数据",
+          "shape": 7,
+          "type": "STRING",
+          "link": 429
+        },
+        {
+          "name": "分辨率",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 430
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": 431
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "生成的提示词",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "调试信息",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "提示词串",
+          "type": "STRING",
+          "links": [
+            418
+          ]
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": [
+            419
+          ]
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "反推串",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "AnimaWeaver",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "hybrid",
+        0.6,
+        "solo_display",
+        "lm_studio",
+        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        true,
+        "",
+        "deepseek-chat",
+        4096,
+        "http://localhost:1234/v1",
+        false,
+        0,
+        0,
+        true
+      ]
+    },
+    {
+      "id": 314,
+      "type": "easy showAnything",
+      "pos": [
+        -275.00027630550153,
+        5287.739412288445
+      ],
+      "size": [
+        246.4273842861371,
+        88
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 432
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "23864942926418616\n7493498528396817075\n1498686692077220175"
+      ]
+    },
+    {
+      "id": 315,
+      "type": "easy showAnything",
+      "pos": [
+        881.5978566118648,
+        4972.431634462259
+      ],
+      "size": [
+        355.135629398583,
+        254.81172989317656
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 433
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"23864942926418616\", \"提示词\": \"solo, tmp_(girls'_frontline), 1boy, animal_ears, brown_hair, cat_ears, fangs, green_eyes, long_hair, earphones, gloves, long_coat, knife, blush, looking_at_viewer, yandere, shy, from below, class room, heart, A girl in the class sits alone at her desk, wearing earphones, brown hair with cat ears, and a shy expression, looking down at the wooden floor as she fidgets with a knife in her gloved hands, a pink blush spreading across her cheeks. Her gaze is fixed on the viewer, but she appears lost in thought, clutching a school notebook with a sketch of a girl in a red coat peeking out from within its covers., She has long hair that reaches her back and green eyes, partially hidden behind the ponytail., @gozz\", \"画师\": \"[9302] @gozz\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}\n{\"种子\": \"7493498528396817075\", \"提示词\": \"iino_miko, solo, 1boy, blunt_bangs, breasts, brown_eyes, brown_hair, collarbone, large_breasts, long_hair, low_twintails, green eyes, armband, neck_ribbon, red_ribbon, ribbon, school_uniform, shuuchiin_academy_school_uniform, holding_own_wrist, blush, closed_mouth, looking_at_viewer, shy, from below, class room, She has large breasts and is shown from below, holding onto her own wrist in an endearingly shy gesture. Her blunt bangs frame her heart-shaped face, showing off her well-defined collarbone and small armband around her upper arm., A young girl from Shuuchiin Academy sits alone in a classroom, her long brown hair and red ribbon tied neatly around her neck, her bright green eyes cast downward as she blushes at being caught looking at the student sitting in front of her., @yoruhachi\", \"画师\": \"[4387] @yoruhachi\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}\n{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}"
+      ]
+    },
+    {
+      "id": 308,
+      "type": "easy showAnything",
+      "pos": [
+        2186.7211170079345,
+        4961.5544149304005
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 426
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "1498686692077220175",
+        "1498686692077220175",
+        "1498686692077220175"
+      ]
+    },
+    {
+      "id": 307,
+      "type": "PassthroughSplit",
+      "pos": [
+        1717.119676237075,
+        5561.987372494878
+      ],
+      "size": [
+        140,
+        146
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "JSON行",
+          "type": "STRING",
+          "link": 425
+        }
+      ],
+      "outputs": [
+        {
+          "name": "种子",
+          "type": "INT",
+          "links": [
+            426,
+            434
+          ]
+        },
+        {
+          "name": "提示词",
+          "type": "STRING",
+          "links": [
+            411,
+            436
+          ]
+        },
+        {
+          "name": "画师",
+          "type": "STRING",
+          "links": [
+            412
+          ]
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": [
+            413
+          ]
+        },
+        {
+          "name": "反推",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": [
+            414,
+            437
+          ]
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": [
+            415,
+            438
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "PassthroughSplit",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 274,
+      "type": "CR Text",
+      "pos": [
+        -2743.2464760729613,
+        5951.470295473194
+      ],
+      "size": [
+        1875.1039830747409,
+        385.22401126024715
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "文本",
+          "name": "text",
+          "type": "*",
+          "links": null
+        },
+        {
+          "label": "显示帮助",
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "说明",
+      "properties": {
+        "Node name for S&R": "CR Text",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "参考过滤标签：\nmonochrome, greyscale,\ncross-section, cervix, cervical_penetration, uterus, x-ray, internal_cumshot,\nlactation, forced_lactation, male_lactation, projectile_lactation, lactation_through_clothes, breast_milk,\nmale_focus, male_penetrated, interracial, dark-skinned_male,\ngaping, extreme_gaping,\nprolapse, anal_prolapse, fisting, anal_fisting,\nanal, anal_only, after_anal, anal_fluid,\nanal_object_insertion, butt_plug, jewel_butt_plug, anal_beads, vibrator_in_anus,\nanus, cum_in_ass, spread_anus, spread_ass, anus_peek, puckered_anus, dark_anus, presenting_anus, spreading_own_anus, anus_cutout, censored_anus, spread_anus_under_clothes, colored_anus,\npubic_hair, female_pubic_hair, pubic_hair_peek, colored_pubic_hair, sparse_pubic_hair, mismatched_pubic_hair, excessive_pubic_hair, shaped_pubic_hair,\ncondom, used_condom, condom_wrapper, condom_in_mouth, holding_condom, condom_on_penis, multiple_condoms, condom_packet_strip, pointless_condom, condom_belt, condom_box, used_condom_on_penis, condom_left_inside, colored_condom, okamoto_condoms, condom_wrapper_in_clothes, condom_thigh_strap, buying_condoms, broken_condom, used_condom_in_clothes,\n1boy,\n\n\n参考排除标签列表：\ncomic, 4koma, multiple_girls, multiple_boys, multiple_views, reference_sheet, 1girl, 2girls, 3girls, 4girls, 5girls, 6+girls, 2boys, 3boys, 4boys, 5boys, 6+boys, gangbang, threesome, mmf_threesome, ffm_threesome, group_sex, cooperative_fellatio, cooperative_paizuri, double_handjob, surrounded_by_penises, furry, obese, yaoi, yuri, otoko_no_ko, strap-on, futa_with_female, futa_without_pussy, implied_futanari, futanari, diaper, fart, pee, peeing, pee_puddle, pee_stain, peeing_self, golden_shower, scat, guro, ero_guro, intestines, vore, horse_penis\n\n\n参考排除标签分类：\nartist, character_name, copyright, meta, clothes_and_accessories, female_physical_descriptors, named_garment_exposure, specific_garment_interactions, speech_and_text, standard_physical_descriptors, metadata_and_attribution, intentional_design_exposure, two_handed_character_items, holding_large_items, content_censorship_methods"
+      ]
+    },
+    {
+      "id": 249,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        1606.215397596021,
+        4090.149856201804
+      ],
+      "size": [
+        307.2404479980469,
+        669.5250854492188
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 330
+        },
+        {
+          "label": "正面条件",
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 338
+        },
+        {
+          "label": "负面条件",
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 328
+        },
+        {
+          "label": "Latent",
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 296
+        },
+        {
+          "label": "add_noise",
+          "name": "add_noise",
+          "type": "COMBO",
+          "widget": {
+            "name": "add_noise"
+          }
+        },
+        {
+          "label": "noise_seed",
+          "name": "noise_seed",
+          "type": "INT",
+          "widget": {
+            "name": "noise_seed"
+          },
+          "link": null
+        },
+        {
+          "label": "steps",
+          "name": "steps",
+          "type": "INT",
+          "widget": {
+            "name": "steps"
+          },
+          "link": 341
+        },
+        {
+          "label": "cfg",
+          "name": "cfg",
+          "type": "FLOAT",
+          "widget": {
+            "name": "cfg"
+          }
+        },
+        {
+          "label": "sampler_name",
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          }
+        },
+        {
+          "label": "scheduler",
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          }
+        },
+        {
+          "label": "start_at_step",
+          "name": "start_at_step",
+          "type": "INT",
+          "widget": {
+            "name": "start_at_step"
+          },
+          "link": 343
+        },
+        {
+          "label": "end_at_step",
+          "name": "end_at_step",
+          "type": "INT",
+          "widget": {
+            "name": "end_at_step"
+          }
+        },
+        {
+          "label": "return_with_leftover_noise",
+          "name": "return_with_leftover_noise",
+          "type": "COMBO",
+          "widget": {
+            "name": "return_with_leftover_noise"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            305
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.11.1",
+        "Node name for S&R": "KSamplerAdvanced",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        },
+        "widget_ue_connectable": {
+          "scheduler": true,
+          "start_at_step": true,
+          "cfg": true,
+          "return_with_leftover_noise": true,
+          "sampler_name": true,
+          "end_at_step": true,
+          "noise_seed": true,
+          "add_noise": true,
+          "steps": true
+        }
+      },
+      "widgets_values": [
+        "disable",
+        787700712540208,
+        "randomize",
+        20,
+        1,
+        "euler_ancestral",
+        "simple",
+        8,
+        10000,
+        "disable"
+      ]
+    }
+  ],
+  "links": [
+    [
+      9,
+      34,
+      0,
+      3,
+      0,
+      "CLIP"
+    ],
+    [
+      296,
+      248,
+      0,
+      249,
+      3,
+      "LATENT"
+    ],
+    [
+      305,
+      249,
+      0,
+      234,
+      0,
+      "LATENT"
+    ],
+    [
+      316,
+      5,
+      0,
+      248,
+      0,
+      "MODEL"
+    ],
+    [
+      325,
+      36,
+      0,
+      248,
+      3,
+      "LATENT"
+    ],
+    [
+      326,
+      3,
+      0,
+      248,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      327,
+      35,
+      0,
+      234,
+      1,
+      "VAE"
+    ],
+    [
+      328,
+      3,
+      0,
+      249,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      330,
+      253,
+      0,
+      249,
+      0,
+      "MODEL"
+    ],
+    [
+      334,
+      234,
+      0,
+      255,
+      0,
+      "IMAGE"
+    ],
+    [
+      335,
+      34,
+      0,
+      256,
+      0,
+      "CLIP"
+    ],
+    [
+      336,
+      256,
+      0,
+      248,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      338,
+      256,
+      0,
+      249,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      340,
+      257,
+      0,
+      248,
+      6,
+      "INT"
+    ],
+    [
+      341,
+      257,
+      0,
+      249,
+      6,
+      "INT"
+    ],
+    [
+      342,
+      258,
+      0,
+      248,
+      11,
+      "INT"
+    ],
+    [
+      343,
+      258,
+      0,
+      249,
+      10,
+      "INT"
+    ],
+    [
+      364,
+      280,
+      0,
+      278,
+      0,
+      "STRING"
+    ],
+    [
+      367,
+      267,
+      0,
+      280,
+      0,
+      "STRING"
+    ],
+    [
+      369,
+      268,
+      0,
+      280,
+      5,
+      "STRING"
+    ],
+    [
+      374,
+      234,
+      0,
+      281,
+      0,
+      "IMAGE"
+    ],
+    [
+      376,
+      282,
+      0,
+      5,
+      0,
+      "MODEL"
+    ],
+    [
+      402,
+      284,
+      0,
+      253,
+      0,
+      "MODEL"
+    ],
+    [
+      403,
+      284,
+      0,
+      282,
+      0,
+      "MODEL"
+    ],
+    [
+      404,
+      283,
+      0,
+      284,
+      0,
+      "MODEL"
+    ],
+    [
+      411,
+      307,
+      1,
+      298,
+      0,
+      "STRING"
+    ],
+    [
+      412,
+      307,
+      2,
+      299,
+      0,
+      "STRING"
+    ],
+    [
+      413,
+      307,
+      3,
+      300,
+      0,
+      "STRING"
+    ],
+    [
+      414,
+      307,
+      5,
+      301,
+      0,
+      "INT"
+    ],
+    [
+      415,
+      307,
+      6,
+      302,
+      0,
+      "INT"
+    ],
+    [
+      416,
+      309,
+      0,
+      303,
+      0,
+      "STRING"
+    ],
+    [
+      417,
+      309,
+      0,
+      304,
+      0,
+      "STRING"
+    ],
+    [
+      418,
+      313,
+      2,
+      304,
+      1,
+      "STRING"
+    ],
+    [
+      419,
+      313,
+      3,
+      304,
+      2,
+      "STRING"
+    ],
+    [
+      420,
+      310,
+      3,
+      304,
+      3,
+      "STRING"
+    ],
+    [
+      421,
+      310,
+      4,
+      304,
+      5,
+      "STRING"
+    ],
+    [
+      422,
+      310,
+      5,
+      304,
+      6,
+      "STRING"
+    ],
+    [
+      423,
+      304,
+      0,
+      305,
+      0,
+      "STRING"
+    ],
+    [
+      424,
+      305,
+      0,
+      306,
+      0,
+      "STRING"
+    ],
+    [
+      425,
+      305,
+      0,
+      307,
+      0,
+      "STRING"
+    ],
+    [
+      426,
+      307,
+      0,
+      308,
+      0,
+      "INT"
+    ],
+    [
+      427,
+      309,
+      0,
+      310,
+      1,
+      "STRING"
+    ],
+    [
+      428,
+      312,
+      0,
+      313,
+      1,
+      "STRING"
+    ],
+    [
+      429,
+      311,
+      0,
+      313,
+      2,
+      "STRING"
+    ],
+    [
+      430,
+      309,
+      0,
+      313,
+      4,
+      "STRING"
+    ],
+    [
+      431,
+      303,
+      2,
+      313,
+      5,
+      "STRING"
+    ],
+    [
+      432,
+      309,
+      0,
+      314,
+      0,
+      "STRING"
+    ],
+    [
+      433,
+      304,
+      0,
+      315,
+      0,
+      "STRING"
+    ],
+    [
+      434,
+      307,
+      0,
+      248,
+      5,
+      "INT"
+    ],
+    [
+      436,
+      307,
+      1,
+      256,
+      1,
+      "STRING"
+    ],
+    [
+      437,
+      307,
+      5,
+      36,
+      0,
+      "INT"
+    ],
+    [
+      438,
+      307,
+      6,
+      36,
+      1,
+      "INT"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 13,
+      "title": "anima文生图-双采",
+      "bounding": [
+        605.5552368164062,
+        3920.3701171875,
+        1985.2917243237189,
+        880.8353409665651
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 14,
+      "title": "预览区",
+      "bounding": [
+        -1035.9721343954761,
+        3916.309930890326,
+        1607.6668122629203,
+        943.880532359587
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 15,
+      "title": "随机提示词抽取区",
+      "bounding": [
+        -841.56770489006,
+        4896.834604636268,
+        3405.3046242956093,
+        1718.3036717522027
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "links_added_by_ue": [],
+    "VHS_KeepIntermediate": true,
+    "ue_links": [],
+    "VHS_MetadataImage": true,
+    "0246.VERSION": [
+      0,
+      0,
+      4
+    ],
+    "VHS_latentpreviewrate": 0,
+    "frontendVersion": "1.45.20",
+    "VHS_latentpreview": false,
+    "ds": {
+      "scale": 0.9646149645000095,
+      "offset": [
+        -259.7793010360247,
+        -3840.6937858529
+      ]
+    },
+    "qgn_navigation_groups": [],
+    "qgn_locked": false
+  },
+  "version": 0.4
+}

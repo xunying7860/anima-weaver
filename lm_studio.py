@@ -332,6 +332,9 @@ def generate_nl_from_lm_studio(
     detailed: bool = False,
     aspect_ratio: str = "",
     timeout: int = 180,
+    system_prompt: str = "",
+    max_tokens_override: int = 0,
+    image_b64: str = "",
 ) -> str:
     """
     Use the LM Studio (or compatible OpenAI) chat completions endpoint
@@ -361,6 +364,7 @@ def generate_nl_from_lm_studio(
 
     if detailed:
         system_msg = (
+            system_prompt if system_prompt else
             "You are a description generator for image prompts. Your task: given Danbooru-style tags, "
             "write ONE continuous paragraph describing the image. "
             "RULES: "
@@ -372,19 +376,24 @@ def generate_nl_from_lm_studio(
             "6) Put background/environment at the very end. "
             "7) English only. "
             "8) At least 6 sentences. "
+            "9) Do NOT include resolution, aspect ratio, or dimension information in the output. "
             "FAILURE MODE: If you output anything other than the description (explanations, "
             "thinking, analysis, tag comments, etc.), the output will be rejected."
         )
         user_msg = (
             f"{tag_prompt}\n\n"
-            "Output ONLY the description. No analysis. No commentary. No line breaks. "
-            "One paragraph. Background at the end."
+            "Write an exhaustive, extremely detailed description. "
+            "Describe the subject, appearance, clothing, pose, expression, "
+            "lighting, background, colors, composition, and aesthetic style. "
+            "Use precise descriptive language. DO NOT stop early. "
+            "Keep writing until you have described every single visible detail."
         )
         if aspect_ratio:
-            user_msg += f" Aspect ratio: {aspect_ratio}."
+            user_msg += f" Resolution: {aspect_ratio}."
         max_tokens = 1024
     else:
         system_msg = (
+            system_prompt if system_prompt else
             "You are a description generator for image prompts. "
             f"Given these tags: {tag_prompt}\n\n"
             "Write ONLY a concise English description (1-3 sentences). "
@@ -395,13 +404,25 @@ def generate_nl_from_lm_studio(
         user_msg = "Description only, 1-3 sentences, English:"
         max_tokens = 512
 
+    if max_tokens_override > 0:
+        max_tokens = max_tokens_override
+
+    # Build user content: text-only or text + image for VL models
+    if image_b64:
+        user_content: Any = [
+            {"type": "text", "text": user_msg},
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_b64}"}},
+        ]
+    else:
+        user_content = user_msg
+
     payload: dict[str, Any] = {
         "model": model_name or "default",
         "messages": [
             {"role": "system", "content": system_msg},
-            {"role": "user", "content": user_msg},
+            {"role": "user", "content": user_content},
         ],
-        "temperature": 0.7,
+        "temperature": 0.85,
         "max_tokens": max_tokens,
         "stream": False,
         "enable_thinking": False,
@@ -424,6 +445,32 @@ def generate_nl_from_lm_studio(
         # 有些推理模型把输出放在 reasoning_content 而非 content
         if not content:
             content = message.get("reasoning_content", "").strip()
+
+        # ── Continuation: if model stopped very early, re-prompt ──
+        # Only fires when output is suspiciously short (< max_tokens * 0.15)
+        finish_reason = choices[0].get("finish_reason", "")
+        if finish_reason == "stop" and content and len(content.split()) < max_tokens * 0.15:
+            continuation_msg = (
+                f"{content}\n\nContinue from where you left off. "
+                "Keep writing in the same style. Do NOT repeat. "
+                "Do NOT stop until you've covered every detail."
+            )
+            cont_payload = dict(payload)
+            cont_payload["messages"] = [
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": continuation_msg},
+            ]
+            try:
+                resp2 = requests.post(url, json=cont_payload, headers=headers, timeout=timeout)
+                resp2.raise_for_status()
+                data2 = resp2.json()
+                choices2 = data2.get("choices", [])
+                if choices2:
+                    cont = choices2[0].get("message", {}).get("content", "").strip()
+                    if cont and cont not in content:
+                        content = content + " " + cont
+            except Exception:
+                pass
 
         # ═══ Extract description from reasoning preamble (BEFORE cleaning dashes) ═══
         # Some models output analysis steps like:
@@ -472,8 +519,8 @@ def generate_nl_from_lm_studio(
                     continue
                 else:
                     continue
-            # a) "1. **Title** — description text"
-            if " — " in line:
+            # a) "1. **Title** — description text" (ONLY when line starts with a numbered/bulleted header)
+            if " — " in line and any(line.lstrip().startswith(p) for p in ("1.", "2.", "3.", "4.", "5.", "6.", "1,", "2,", "3,", "1**", "2**", "**")):
                 _, after = line.split(" — ", 1)
                 after = after.strip().lstrip(",:; ")
                 if after and len(after) > 10 and not after.startswith(("The goal", "Task:", "Constraint")):
@@ -518,7 +565,9 @@ def generate_nl_from_lm_studio(
                 pass
             elif any(lower.startswith(s) for s in ("a ", "an ", "the ", "she ", "he ", "it ", "this ", "her ", "his ", "in ", "with ")):
                 desc_parts.append(line)
-            elif (len(stripped.split()) >= 5 and stripped[0].isupper() and stripped[-1] in ".!?"
+            elif (len(stripped.split()) >= 5
+                  and (stripped[0].isupper() or not stripped[0].isascii())
+                  and stripped[-1] in ".!?\u3002"
                   and not any(stripped.startswith(f"{n}.") for n in "0123456789")
                   and not stripped.startswith("*") and not stripped.startswith("-")):
                 desc_parts.append(line)
@@ -534,17 +583,19 @@ def generate_nl_from_lm_studio(
         content = content.replace("\u2014", "").replace("\u2013", "").replace("---", "").replace("--", "")
         # Clean up any leading non-alpha chars
         content = content.lstrip(",:; \t\n\r -*\"\u2014\u2013")
-        # Final pass: collapse to single paragraph, remove remaining meta clutter
-        content = " ".join(content.split())  # collapse all whitespace to single spaces
-        # Truncate detailed mode to 800 chars at sentence boundary
-        if detailed and len(content) > 800:
-            # Find the last sentence end within 800 chars
-            truncated = content[:800]
-            last_end = max(truncated.rfind(". "), truncated.rfind("! "), truncated.rfind("? "))
-            if last_end > 300:  # only truncate at a reasonable sentence boundary
-                content = content[:last_end + 1]
-            else:
-                content = truncated.rstrip(",; ") + "."
+
+        # Smart truncation: if finish_reason was "length", cut at last complete sentence
+        if finish_reason == "length":
+            last_period = max(content.rfind(". "), content.rfind("! "), content.rfind("? "),
+                              content.rfind("\u3002"), content.rfind("\uff01"), content.rfind("\uff1f"))
+            # Also check period at end of string (no trailing space)
+            if content.endswith(".") and content.rfind(".", 0, -1) > len(content) * 0.3:
+                content = content[:content.rfind(".", 0, -1) + 1]
+            elif content.endswith("\u3002") and content.rfind("\u3002", 0, -1) > len(content) * 0.3:
+                content = content[:content.rfind("\u3002", 0, -1) + 1]
+            elif last_period > len(content) * 0.3:
+                content = content[:last_period + 1]
+
         return content
     except requests.RequestException:
         return ""

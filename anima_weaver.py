@@ -108,40 +108,6 @@ class AnimaWeaver:
                     ],
                 ),
 
-                # ── 8 tag slots ───────────────────────────────────
-                "人数/身份": (
-                    "STRING",
-                    {"multiline": True, "default": "1girl, solo"},
-                ),
-                "外貌": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "服装": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "姿势/动作": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "表情": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "镜头": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "场景/环境": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "细节/氛围": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-
                 # ── Natural Language ──────────────────────────────
                 "自然语言来源": (
                     ["manual", "lm_studio"],
@@ -165,85 +131,80 @@ class AnimaWeaver:
                     {"default": 4096, "min": 512, "max": 32768},
                 ),
                 "API地址": (
-                    "STRING",
+                    ["http://localhost:1234/v1", "https://api.deepseek.com"],
                     {"default": "http://localhost:1234/v1"},
                 ),
-                "自然语言描述": (
+                "云端模型名": (
                     "STRING",
-                    {"multiline": True, "default": ""},
+                    {"default": "deepseek-chat", "tooltip": "云端模型名（如 deepseek-chat），填 API 密钥时此值会覆盖下拉框的模型选择"},
                 ),
                 "强制详细自然语言": (
                     "BOOLEAN",
-                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 1024 tokens）"},
+                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 512 tokens）"},
+                ),
+                "最大截断长度": (
+                    "INT",
+                    {"default": 0, "min": 0, "max": 1080, "step": 8,
+                     "tooltip": "0=自动（普通256/详细512），256~1080=手动设置最大 token 数"},
                 ),
 
                 # ── Artist ──────────────────────────────────────────
-                "随机抽取画师": (
-                    "BOOLEAN",
-                    {"default": False, "tooltip": "从 Anima2B 画师索引中随机抽取 1 个画师标签，放在提示词最末尾"},
-                ),
                 "画师种子": (
                     "INT",
-                    {"default": 0, "min": 0, "max": 0x7FFFFFFF},
+                    {"default": 0, "min": 0, "max": 0x7FFFFFFF,
+                     "tooltip": "接入「画师Seed」节点的输出，0=随机"},
                 ),
 
                 # ── Raffle random parameters ──────────────────────
-                "随机种子": (
-                    "INT",
-                    {"default": 0, "min": 0, "max": 0xFFFF_FFFF_FFFF_FFFF},
-                ),
-                "生成后控制": (
-                    ["randomize", "fixed", "increment", "decrement"],
-                    {"default": "randomize"},
-                ),
-                "通用标签": (
-                    "BOOLEAN",
-                    {"default": False},
-                ),
-                "争议标签": (
-                    "BOOLEAN",
-                    {"default": False},
-                ),
-                "敏感标签": (
-                    "BOOLEAN",
-                    {"default": True},
-                ),
-                "露骨标签": (
-                    "BOOLEAN",
-                    {"default": True},
-                ),
-                "标签列表必含": (
-                    "STRING",
-                    {"multiline": True, "default": "1girl"},
-                ),
-                "过滤标签": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "排除含标签列表": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
-                "排除标签分类": (
-                    "STRING",
-                    {"multiline": True, "default": ""},
-                ),
                 "冲突检查": (
                     "BOOLEAN",
                     {"default": True},
                 ),
             },
             "optional": {
-                "画幅比例": (
+                "随机种子": (
+                    "INT",
+                    {"forceInput": True, "default": 0, "min": 0, "max": 0xFFFF_FFFF_FFFF_FFFF,
+                     "tooltip": "从外部种子节点接入，不接则使用内部随机值"},
+                ),
+                "槽位数据": (
                     "STRING",
-                    {"default": "", "tooltip": "从「随机分辨率选择器」节点接入画幅比例，用于 NL 生成时描述构图"},
+                    {"forceInput": True, "tooltip": "从「提示词槽位」节点接入标签和自然语言描述"},
+                ),
+                "底部数据": (
+                    "STRING",
+                    {"forceInput": True, "tooltip": "从「底部控制」节点接入 Raffle 过滤参数"},
+                ),
+                "分辨率": (
+                    "STRING",
+                    {"forceInput": True, "tooltip": "从「随机分辨率选择器」节点接入分辨率（如 1024x768），用于 NL 生成时描述构图"}
+                ),
+                "种子串": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入批量种子串（每行一个种子），开启批量模式"},
+                ),
+                "画师串": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入画师串（每行一个画师），与种子串行对齐"},
+                ),
+                "分辨率串": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入分辨率串（每行一个），与种子串行对齐"},
+                ),
+                "反推串": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入反推串（每行一个），与种子串行对齐"},
                 ),
             },
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("生成的提示词", "调试信息")
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = ("生成的提示词", "调试信息", "提示词串", "画师串", "分辨率串", "反推串")
     FUNCTION = "compose"
     OUTPUT_NODE = True
 
@@ -257,57 +218,55 @@ class AnimaWeaver:
 
     @classmethod
     def IS_CHANGED(cls, **kwargs) -> float:
-        """
-        Control ComfyUI caching behaviour.
-
-        - ``randomize``: return a random value → always re-execute.
-        - ``increment``/``decrement``: mutate the cached seed → re-execute.
-        - ``fixed`` (or any other value): use the raw seed as-is.
-        """
-        control = kwargs.get("生成后控制", "fixed")
-        if control == "randomize":
-            # Force a fresh execution every time
-            return random.random()
-        if control in ("increment", "decrement"):
-            # Always re-execute so the node can mutate the seed
-            return random.random()
-        return float(kwargs.get("随机种子", 0))
+        """Always re-execute (seed is handled externally)."""
+        import random
+        return random.random()
 
     # ── Main composition entry point ──────────────────────────────
 
-    def compose(self, **kwargs) -> tuple[str, str]:
+    def compose(self, **kwargs) -> tuple[str, str, str, str, str, str]:
         """
-        Main node workflow.
-
-        Parameters
-        ----------
-        **kwargs
-            All widget values as keyword arguments.
-
-        Returns
-        -------
-        (final_prompt, debug_info)
+        Main node workflow. Returns 6-tuple (single_prompt, debug, +4 batch outs).
         """
         mode = kwargs.get("模式", "hybrid")
         tag_ratio = float(kwargs.get("标签比例", 0.6))
         nl_source = kwargs.get("自然语言来源", "manual")
         enable_conflict = bool(kwargs.get("冲突检查", True))
 
-        # ── Seed control ────────────────────────────────────────────
-        raw_seed = int(kwargs.get("随机种子", 0))
-        seed_control = kwargs.get("生成后控制", "randomize")
-        if seed_control == "randomize":
-            raw_seed = random.randint(0, 0xFFFF_FFFF_FFFF_FFFF)
-        elif seed_control == "increment":
-            raw_seed = (raw_seed + 1) % (0xFFFF_FFFF_FFFF_FFFF + 1)
-        elif seed_control == "decrement":
-            raw_seed = (raw_seed - 1) % (0xFFFF_FFFF_FFFF_FFFF + 1)
-        # Inject the controlled seed back so _run_raffle picks it up
-        kwargs["随机种子"] = raw_seed
+        # ── Mutually exclusive: 种子串 overrides 随机种子 ──────────────
+        batch_seeds_str = kwargs.get("种子串", "")
+        is_batch = bool(batch_seeds_str.strip())
+        if is_batch:
+            kwargs.pop("随机种子", None)  # 批量模式下忽略随机种子
 
-        debug_lines: list[str] = [f"Mode: {mode}", f"Seed: {raw_seed} ({seed_control})"]
+        # ── Mutually exclusive: 分辨率串 overrides 分辨率 ──────────────
+        res_str = kwargs.get("分辨率串", "")
+        if res_str.strip():
+            kwargs.pop("分辨率", None)  # 分辨率串模式下忽略分辨率
 
-        # ── 1. Collect manual slot tags ──────────────────────────
+        # ── Optional: merge slot data JSON ────────────────────────────
+        slot_json = kwargs.get("槽位数据", "")
+        if slot_json:
+            try:
+                slot_data = json.loads(slot_json)
+                for k, v in slot_data.items():
+                    if k not in kwargs or not str(kwargs.get(k, "")).strip():
+                        kwargs[k] = v
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        # ── Optional: merge bottom control JSON ────────────────────────
+        bottom_json = kwargs.get("底部数据", "")
+        if bottom_json:
+            try:
+                bottom_data = json.loads(bottom_json)
+                for k, v in bottom_data.items():
+                    if k not in kwargs or not str(kwargs.get(k, "")).strip():
+                        kwargs[k] = v
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+        # ── 1-5. Build tag prompt (seed-independent) ──────────────────
         manual_slots: dict[str, str] = {}
         slot_keys = [
             ("人数/身份", "count_identity"),
@@ -315,7 +274,7 @@ class AnimaWeaver:
             ("服装", "clothing"),
             ("姿势/动作", "pose_action"),
             ("表情", "expression"),
-            ("镜头", "camera"),          # note mapping
+            ("镜头", "camera"),
             ("场景/环境", "scene"),
             ("细节/氛围", "detail_mood"),
         ]
@@ -323,100 +282,108 @@ class AnimaWeaver:
             val = kwargs.get(kw_key, "").strip()
             manual_slots[slot_name] = val
 
-        # ── 2. Random / Hybrid: run Raffle extraction ────────────
         raffle_slots: dict[str, list[str]] = {}
         if mode in ("random", "hybrid"):
-            debug_lines.append("→ Running Raffle extraction …")
             raffle_slots = self._run_raffle(kwargs)
-            debug_lines.append(
-                f"  Raffle slots filled: "
-                f"{sum(1 for v in raffle_slots.values() if v)}"
-            )
 
-        # ── 3. Merge slots ───────────────────────────────────────
         merged = self._merge_slots(mode, manual_slots, raffle_slots)
-        debug_lines.append("Merged slots:")
-        for slot in SLOT_ORDER:
-            v = merged.get(slot, "")
-            n = len([x for x in v.split(",") if x.strip()]) if v else 0
-            debug_lines.append(f"  {slot}: {n} tags")
-
-        # ── 4. Build the tag-only prompt ─────────────────────────
         tag_prompt = self._slots_to_string(merged)
 
-        # ── 5. Conflict check & removal ──────────────────────────
+        # Conflict check & removal (single mode)
         if enable_conflict and tag_prompt.strip():
             all_tags = [t.strip() for t in tag_prompt.split(",") if t.strip()]
             conflicts = check_conflicts(all_tags)
             if conflicts:
-                debug_lines.append("⚠ Conflicts detected: " + "; ".join(conflicts))
-                # Remove Raffle-sourced conflicting tags, keeping manual
                 tag_prompt = self._remove_conflicts(tag_prompt, conflicts, manual_slots)
-                debug_lines.append("  → Conflicting Raffle tags removed")
-
-            # ── 5b. Deduplicate exact duplicate tags ──────────────
             seen: set[str] = set()
             deduped: list[str] = []
-            dupes_found = 0
             for t in tag_prompt.split(","):
                 t_clean = t.strip().lower().replace(" ", "_")
                 if not t_clean:
                     continue
                 if t_clean in seen:
-                    dupes_found += 1
                     continue
                 seen.add(t_clean)
                 deduped.append(t.strip())
-            if dupes_found:
+            if len(deduped) < len(all_tags):
                 tag_prompt = ", ".join(deduped)
-                debug_lines.append(f"⚠ Removed {dupes_found} duplicate tag(s)")
 
-            if not conflicts and not dupes_found:
-                debug_lines.append("✓ No conflicts")
+        # ── Batch mode (raffle runs PER SEED inside _compose_batch) ──
+        if is_batch:
+            return self._compose_batch(kwargs, manual_slots, batch_seeds_str,
+                                       mode, tag_ratio, enable_conflict, nl_source)
 
-        # ── 6. Generate NL part ──────────────────────────────────
+        # ── Single mode ─────────────────────────────────────────────────
+        seed_val = kwargs.get("随机种子", None)
+        if seed_val is None or str(seed_val) == "":
+            raw_seed = random.randint(0, 0xFFFF_FFFF_FFFF_FFFF)
+        else:
+            raw_seed = int(seed_val)
+
+        debug_lines: list[str] = [f"Mode: {mode}", f"Seed: {raw_seed}"]
+        seed_kwargs = dict(kwargs)
+        seed_kwargs["随机种子"] = raw_seed
+
+        final, nl_used = self._finish_prompt(seed_kwargs, tag_prompt, nl_source, tag_ratio)
+        # ── Final dedup: remove duplicate comma-separated tags ────────
+        final = self._dedup_final(final)
+        debug_lines.append(f"NL: {len(nl_used)} chars")
+        debug_lines.append(f"Tags: {len(tag_prompt)} chars")
+        return (final, "\n".join(debug_lines), "", "", "", "")
+
+    @staticmethod
+    def _dedup_final(text: str) -> str:
+        """Final pass dedup on comma-separated tags while preserving order and non-tag content."""
+        if not text.strip():
+            return text
+        parts = text.split(",")
+        seen: set[str] = set()
+        result: list[str] = []
+        for p in parts:
+            clean = p.strip().lower().replace(" ", "_").replace("-", "_")
+            if not clean or clean in seen:
+                continue
+            seen.add(clean)
+            result.append(p.strip())
+        return ", ".join(result)
+
+    # ── Finish prompt for one seed (steps 6-13) ─────────────────────
+
+    def _finish_prompt(self, kwargs: dict, tag_prompt: str, nl_source: str, tag_ratio: float) -> tuple[str, str]:
+        """NL generation, background reorder, assembly, artist. Returns (prompt, nl_used)."""
+        # Step 6: Generate NL
         nl_prompt = self._get_nl(kwargs, tag_prompt, nl_source)
 
-        # ── 6b. Reorder ALL background content to absolute end ──
+        # Step 6b: Reorder background content to end
         bg_tag_keywords = ["background", "outdoors", "outdoor"]
         bg_nl_keywords = [
             "background", "against a", "against the", "set in", "set against",
             "in the background", "in front of", "behind", "surrounded by",
             "scene is set", "environment",
         ]
-
-        # Split tags into bg / non-bg
         tag_items = [t.strip() for t in tag_prompt.split(",") if t.strip()]
         bg_tags = [t for t in tag_items
                    if any(kw in t.lower().replace("_", " ") for kw in bg_tag_keywords)]
         non_bg_tags = [t for t in tag_items if t not in bg_tags]
 
-        # Split NL into bg / non-bg
         import re
         nl_sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', nl_prompt) if s.strip()]
         bg_nl = [s for s in nl_sentences
                  if any(kw in s.lower() for kw in bg_nl_keywords)]
         non_bg_nl = [s for s in nl_sentences if s not in bg_nl]
 
-        # ── 7. Assemble: non-bg mixed first, then all bg at end ──
         main_part = mix_by_ratio(
             ", ".join(non_bg_tags),
             " ".join(non_bg_nl),
             tag_ratio,
         )
-        # Build bg_part respecting tag_ratio:
-        #   ratio=1.0 → only bg tags
-        #   ratio=0.0 → only bg NL
-        #   otherwise → both
         bg_tag_str = ", ".join(bg_tags)
         bg_nl_str = " ".join(bg_nl)
-
         bg_parts = []
         if bg_tag_str:
             bg_parts.append(bg_tag_str)
         if bg_nl_str and tag_ratio < 1.0:
             bg_parts.append(bg_nl_str)
-
         bg_part = ", ".join(bg_parts) if bg_parts else ""
 
         if bg_part:
@@ -424,27 +391,111 @@ class AnimaWeaver:
         else:
             final = main_part
 
-        # ── 8. Random artist pick (placed at absolute end) ──────
-        pick_artist = kwargs.get("随机抽取画师", False)
-        if pick_artist:
+        # Step 8: Artist
+        artist_seed_val = kwargs.get("画师种子", None)
+        if artist_seed_val is not None and str(artist_seed_val) != "":
+            s = int(artist_seed_val)
             artists = _load_artists()
             if artists:
-                artist_seed = int(kwargs.get("画师种子", 0))
-                rng_artist = random.Random(artist_seed)
-                chosen = rng_artist.choice(artists)
+                if s <= 0:
+                    s = random.randint(1, len(artists))
+                idx = max(0, min(s - 1, len(artists) - 1))
+                chosen = artists[idx]
                 if final:
                     final = final.rstrip(", ") + ", " + chosen
                 else:
                     final = chosen
-                debug_lines.append(f"Artist: {chosen}")
 
-        debug_lines.append(
-            f"Tag ratio: {tag_ratio}\n"
-            f"Tags: {len(tag_prompt)} chars\n"
-            f"NL:   {len(nl_prompt)} chars"
+        return (final, nl_prompt)
+
+    # ── Batch compose ─────────────────────────────────────────────────
+
+    def _compose_batch(self, kwargs: dict, manual_slots: dict, batch_seeds_str: str,
+                        mode: str, tag_ratio: float,
+                        enable_conflict: bool, nl_source: str) -> tuple[str, str, str, str, str, str]:
+        """Iterate over seeds, run raffle per seed, produce 4 aligned batch outputs."""
+        seeds = [s.strip() for s in batch_seeds_str.split("\n") if s.strip()]
+        artist_lines = [s.strip() for s in kwargs.get("画师串", "").split("\n") if s.strip()]
+        res_lines = [s.strip() for s in kwargs.get("分辨率串", "").split("\n") if s.strip()]
+        cap_lines = [s.strip() for s in kwargs.get("反推串", "").split("\n") if s.strip()]
+
+        prompts: list[str] = []
+        artists_out: list[str] = []
+        res_out: list[str] = []
+        caps_out: list[str] = []
+
+        should_unload = bool(kwargs.get("生成后卸载", False))
+        kwargs["生成后卸载"] = False
+
+        for i, seed_str in enumerate(seeds):
+            try:
+                raw_seed = int(seed_str)
+            except ValueError:
+                continue
+
+            seed_kwargs = dict(kwargs)
+            seed_kwargs["随机种子"] = raw_seed
+
+            # ── Per-seed raffle + tag_prompt ──────────────────────────
+            raffle = self._run_raffle(seed_kwargs) if mode in ("random", "hybrid") else {}
+            merged = self._merge_slots(mode, manual_slots, raffle)
+            tag_prompt = self._slots_to_string(merged)
+            if enable_conflict and tag_prompt.strip():
+                from .rules import check_conflicts
+                all_tags = [t.strip() for t in tag_prompt.split(",") if t.strip()]
+                conflicts = check_conflicts(all_tags)
+                if conflicts:
+                    tag_prompt = self._remove_conflicts(tag_prompt, conflicts, manual_slots)
+                # Dedup tag_prompt before NL generation
+                seen: set[str] = set()
+                deduped: list[str] = []
+                for t in tag_prompt.split(","):
+                    tc = t.strip().lower().replace(" ", "_").replace("-", "_")
+                    if not tc or tc in seen:
+                        continue
+                    seen.add(tc)
+                    deduped.append(t.strip())
+                if len(deduped) < len(all_tags):
+                    tag_prompt = ", ".join(deduped)
+
+            # ── Override artist if batch provides it ───────────────────
+            if i < len(artist_lines):
+                al = artist_lines[i]
+                if "[" in al and "]" in al:
+                    try:
+                        idx = int(al.split("[")[1].split("]")[0])
+                        seed_kwargs["画师种子"] = idx
+                    except (ValueError, IndexError):
+                        pass
+
+            # Per-seed resolution from 分辨率串
+            if i < len(res_lines):
+                seed_kwargs["分辨率"] = res_lines[i]
+
+            final, _ = self._finish_prompt(seed_kwargs, tag_prompt, nl_source, tag_ratio)
+            final = self._dedup_final(final)
+            prompts.append(final)
+            artists_out.append(artist_lines[i] if i < len(artist_lines) else "")
+            res_out.append(res_lines[i] if i < len(res_lines) else "")
+            caps_out.append(cap_lines[i] if i < len(cap_lines) else "")
+
+        if should_unload and prompts:
+            try:
+                from .lm_studio import unload_all
+                unload_all()
+            except Exception:
+                pass
+
+        debug = f"Batch: {len(seeds)} seeds, {len(prompts)} prompts"
+        out_prompts = "\n".join(prompts)
+        return (
+            prompts[0] if prompts else "",
+            debug,
+            out_prompts,
+            "\n".join(artists_out),
+            "\n".join(res_out),
+            "\n".join(caps_out),
         )
-
-        return (final, "\n".join(debug_lines))
 
     # ── Slot merging ───────────────────────────────────────────────
 
@@ -674,28 +725,41 @@ class AnimaWeaver:
                     api_key = kwargs.get("API密钥", "")
                     cloud_model = kwargs.get("云端模型名", "").strip()
                     detailed_nl = bool(kwargs.get("强制详细自然语言", False))
-                    aspect_ratio = str(kwargs.get("画幅比例", "") or "")
+                    aspect_ratio = str(kwargs.get("分辨率", "") or "")
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
                         model_for_api = cloud_model or lm_model
+                        custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("NL 系统提示词", "")
+                        max_tok = int(kwargs.get("最大截断长度", 0))
+                        if max_tok == 0:
+                            max_tok = 512 if detailed_nl else 256
                         nl = generate_nl_from_lm_studio(
                             tag_prompt, base_url,
                             api_key=api_key, model_name=model_for_api,
                             detailed=detailed_nl,
                             aspect_ratio=aspect_ratio,
                             timeout=180,
+                            system_prompt=custom_sp,
+                            max_tokens_override=max_tok,
                         )
                     else:
                         # 本地 LM Studio：先加载模型再调用 API
                         model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
                         if model_was_loaded:
+                            # Custom system prompt: detailed takes priority if in detailed mode
+                            custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("NL 系统提示词", "")
+                            max_tok = int(kwargs.get("最大截断长度", 0))
+                            if max_tok == 0:
+                                max_tok = 512 if detailed_nl else 256
                             nl = generate_nl_from_lm_studio(
                                 tag_prompt, base_url,
                                 model_name=lm_model,
                                 detailed=detailed_nl,
                                 aspect_ratio=aspect_ratio,
                                 timeout=180,
+                                system_prompt=custom_sp,
+                                max_tokens_override=max_tok,
                             )
 
                     if nl:

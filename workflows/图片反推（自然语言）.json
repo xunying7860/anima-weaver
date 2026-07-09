@@ -1,0 +1,408 @@
+{
+  "id": "6f31f43f-1366-46ce-b07d-87ccbfe76d81",
+  "revision": 0,
+  "last_node_id": 138,
+  "last_link_id": 310,
+  "nodes": [
+    {
+      "id": 134,
+      "type": "easy seed",
+      "pos": [
+        205.0104689305883,
+        5639.389120962264
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "随机种子",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "随机种子",
+          "name": "seed",
+          "type": "INT",
+          "links": [
+            303,
+            308
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy seed",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        112940923269504,
+        "randomize",
+        null
+      ]
+    },
+    {
+      "id": 115,
+      "type": "RandomResolution",
+      "pos": [
+        218.90062612159184,
+        5814.955228525801
+      ],
+      "size": [
+        270,
+        230
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": 303
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": []
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "宽度串",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "name": "高度串",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "RandomResolution",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        true,
+        1,
+        "1:1 (square)",
+        8
+      ]
+    },
+    {
+      "id": 137,
+      "type": "ImageCaption",
+      "pos": [
+        843.2110851392767,
+        5650.945381016493
+      ],
+      "size": [
+        377.4380633210294,
+        415.42439151938834
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "随机种子",
+          "shape": 7,
+          "type": "INT",
+          "link": 308
+        },
+        {
+          "name": "图像",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 309
+        },
+        {
+          "name": "WD14标签",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "自定义提示词",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "待润色文本",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "描述文本",
+          "type": "STRING",
+          "links": [
+            310
+          ]
+        },
+        {
+          "name": "提示词串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "画师串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "分辨率串",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "反推串",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "xunying7860/anima-weaver",
+        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
+        "Node name for S&R": "ImageCaption",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "huihui-qwen3-vl-4b-instruct-abliterated",
+        "http://localhost:1234/v1",
+        "",
+        "deepseek-chat",
+        4096,
+        1024,
+        "",
+        false
+      ]
+    },
+    {
+      "id": 133,
+      "type": "LoadImage",
+      "pos": [
+        533.6390012116672,
+        5612.435361216817
+      ],
+      "size": [
+        270,
+        314
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            309
+          ]
+        },
+        {
+          "label": "遮罩",
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.27.0",
+        "Node name for S&R": "LoadImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "33 (26).jpg",
+        "image"
+      ]
+    },
+    {
+      "id": 135,
+      "type": "easy showAnything",
+      "pos": [
+        1288.0332408549384,
+        5641.46248709653
+      ],
+      "size": [
+        638.6445552908476,
+        571.5345060894497
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 310
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "画面展现了一幅超精细的数字插画，描绘了一位兼具优雅与致命气息的女性角色，周身萦绕着空灵而神秘的氛围。作品采用高度风格化的动漫幻想艺术手法，融合传统东亚美学与现代数字写实元素。她有着笔直垂落的银色长发，柔顺披散在肩头并勾勒出左脸轮廓，发丝蓬松丰盈，在光线映照下泛起微光，仿佛由精炼金属丝线编织而成，泛着冷冽如月华般的莹润光泽；每根发丝都经过精雕细琢，展现清晰纹理与真实动态，有些发丝被无形的气流或微风轻轻拂起。齐刘海整齐修剪至眉上，衬托出自然弧度的眉毛，通过细腻的阴影晕染更显深邃灵动。面部轮廓堪称完美：精致的高颧骨，线条锐利对称的窄鼻梁，饱满的唇部涂着哑光深珊瑚粉色调，与白皙肤色形成鲜明对比。她有一双杏仁状的大眼睛，眼神锐利摄人——虹膜是令人惊艳的非自然深红色，宛如抛光血岩石或稀世宝石，四周环绕着粗重黑眼线，用哑光黑色颜料勾勒出夸张的晕染效果，在眼尾处更显深邃。睫毛浓密纤长，呈深粉至红色的渐变，每根睫毛都纤毫毕现——有些因动态或反光而略显模糊，其余则清晰映衬在肌肤之上。脖颈处戴着独特的项圈，由深红织物制成，看似手工缝制的皮革或奢华合成材料，边缘用黑绳完美收边加固，在脖颈根部下方系成不对称的绳结——绳结系得紧密却不复杂，既展现优雅又暗含功能性。项圈表面纹理繁复：外缘可见细密缝线，以及类似传统日本绳结或花卉图案的压纹浮雕，其亮面处理在光线照射下泛着柔和光泽。\n\n上半身穿着融合传统和服元素与现代战术设计的精致贴身服饰。主体为深红色缎面布料，以不对称方式斜披在胸前与肩头，展现出高度写实的织物肌理——表面看不到接缝或针脚，布料如液态丝绸般自然贴合身体曲线，边缘在光线映照下形成柔和的光晕，突出材质的奢华质感。领口呈深邃的V字形敞开，露出锁骨与胸线，既显脆弱感又充满力量；由数根细细的黑绳或系带在胸前交织成繁复图案，宛若为提升活动灵活性而设计的马具系统。织物表面浮现精巧的压花樱花纹样——柔粉花瓣搭配深褐枝干——巧妙融入织物质地，在保持视觉层次的同时不显突兀。外层套着宽大的绗缝肩甲，从右肩延伸至后腰中部，由深巧克力色厚垫布料制成。材质纹理极为精细：看似由紧密缝制的皮革或重型合成材料拼接而成，呈现繁复的菱形绗缝图案，缝线与针脚清晰可见——每处针脚都精细描摹，因光线折射产生微妙的色彩变化与逼真阴影。肩甲由数根黑色皮带固定，环绕手臂与躯干，饰有华丽金属扣环与垂挂的装饰流苏——这些流苏用红色细绳编成复杂绳结，松散垂落，仿佛在无形之风中飘摆。织物边缘略带半透明质感，隐约透出下方肌肤。双臂覆盖着延伸至肘部的黑色皮手套，工艺极度写实：每根手指都细致刻画自然弯曲弧度与真实关节角度——看似硬挺却具柔韧性，宛如为战斗或精密操作而设计。手套表面没有明显缝线，但在指节与腕部带有精致压纹，暗示加固衬垫或结构性支撑。手指内侧与手腕处点缀着少量红绳，编织成精巧绳结，推测具有实用功能而非纯粹装饰，或许是用于增强抓握力或固定武器与装备。左手优雅地置于颈侧，食指轻触项圈边缘，拇指搭在锁骨上——这个姿势传递出沉静或微妙的掌控感。"
+      ]
+    }
+  ],
+  "links": [
+    [
+      303,
+      134,
+      0,
+      115,
+      0,
+      "INT"
+    ],
+    [
+      308,
+      134,
+      0,
+      137,
+      0,
+      "INT"
+    ],
+    [
+      309,
+      133,
+      0,
+      137,
+      1,
+      "IMAGE"
+    ],
+    [
+      310,
+      137,
+      0,
+      135,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 0.9229599817706416,
+      "offset": [
+        146.2514779199879,
+        -5015.958764184709
+      ]
+    },
+    "qgn_navigation_groups": [],
+    "qgn_locked": false,
+    "links_added_by_ue": [],
+    "frontendVersion": "1.45.20",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
