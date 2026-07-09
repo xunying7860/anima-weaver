@@ -43,7 +43,13 @@
    pip install requests
    ```
 
-3. 重启 ComfyUI。
+3. 安装前置依赖：[ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use)（批量管线必需）
+   ```bash
+   cd ComfyUI/custom_nodes
+   git clone https://github.com/yolain/ComfyUI-Easy-Use.git
+   ```
+
+4. 重启 ComfyUI。
 
 ---
 
@@ -238,7 +244,7 @@
 | 依赖 | 用途 | 必需 |
 |------|------|------|
 | [LM Studio](https://lmstudio.ai/) | 本地 LLM 推理服务 | 仅 NL 增强/反推模式 |
-| [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | 提示词行节点（列表预览） | 批量管线必需 |
+| [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | 提示词行节点（列表预览） | **批量管线必需**，作为前置节点安装 |
 
 ---
 
