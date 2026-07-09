@@ -92,14 +92,7 @@
 
 **提示词优先级：** 自定义系统提示词 > 有图→图像反推 > 无图→润色扩写
 
-**批量模式：** 接 `种子串` 后每种子独立生成描述（不接图像和 WD14），LLM 加载一次跑 N 组后按需卸载。
-
-**推荐模型（GGUF，用于本地 LM Studio 反推）：**
-
-| 模型 | 量化 | 体积 | 下载 |
-|------|------|------|------|
-| Huihui-Qwen3-VL-4B-Instruct-abliterated | Q6_K | 3.2GB | [下载](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-4B-Instruct-abliterated-GGUF) |
-| Huihui-Qwen3-VL-8B-Instruct-abliterated | Q6_K | 5.8GB | [下载](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF) |
+**批量模式：** 接 `种子串` 后每种子独立生成描述（不接图像），LLM 加载一次跑 N 组后按需卸载。
 
 **输出：**
 
