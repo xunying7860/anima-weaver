@@ -1,170 +1,170 @@
-# Anima Weaver — 提示词编织器
+# Anima Weaver
 
-一个 ComfyUI 自定义节点包，基于结构化方式组装 AI 图像生成提示词，支持标签/自然语言混合输出、批量管线、图像反推/提示词润色、随机画师与随机分辨率。
-
----
-
-## 节点列表
-
-| 节点 | 分类 | 用途 |
-|------|------|------|
-| **提示词编织器** | Anima Weaver | 主节点：组装标签 → NL → 完整提示词 |
-| **图片反推描述** | Anima Weaver | 图像反推 / 润色扩写 |
-| **随机分辨率选择器** | Anima Weaver | 随机生成宽高比/分辨率文本 |
-| **提示词槽位** | Anima Weaver | 手动输入标签槽位 |
-| **底部控制** | Anima Weaver | Raffle标签过滤控制 |
-| **画师Seed** | Anima Weaver / Seed | 画师选择（随机/固定） |
-| **批量种子** | Anima Weaver / Seed | 生成 N 个种子 |
-| **同步串行** | Anima Weaver / Batch | 7 路输入合并为 JSON 多行输出 |
-| **串行拆分** | Anima Weaver / Batch | JSON 行拆回 7 路（INT + STRING） |
+A ComfyUI custom node package for structured AI image prompt assembly. Supports tag/NL hybrid output, batch pipelines, image captioning / prompt refinement, random artist selection, and random resolution generation.
 
 ---
 
-## 安装
+## Node Reference
 
-### 前提
+| Node | Category | Description |
+|------|----------|-------------|
+| **Prompt Weaver** | Anima Weaver | Core node: assembles tags → NL → complete prompt |
+| **Image Caption** | Anima Weaver | VL model-based image captioning / prompt refinement |
+| **Random Resolution** | Anima Weaver | Random aspect ratio & resolution generator |
+| **Prompt Slots** | Anima Weaver | Manual tag input slots |
+| **Bottom Controls** | Anima Weaver | Raffle tag filtering controls |
+| **Artist Seed** | Anima Weaver / Seed | Artist selector (random / fixed) |
+| **Batch Seed** | Anima Weaver / Seed | N-seed generator for batch pipelines |
+| **Sync Passthrough** | Anima Weaver / Batch | Merges 7 channels into JSON-per-line output |
+| **Passthrough Split** | Anima Weaver / Batch | Splits one JSON line back to 7 typed outputs (INT + STRING) |
+
+---
+
+## Installation
+
+### Prerequisites
 
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
-- 可选：[LM Studio](https://lmstudio.ai/)（用于 NL 增强模式/反推节点）
+- Optional: [LM Studio](https://lmstudio.ai/) (for NL enhancement / Image Caption node)
 
-### 步骤
+### Steps
 
-1. 克隆或复制本仓库到 ComfyUI 的 `custom_nodes` 目录：
+1. Clone or copy this repository into ComfyUI's `custom_nodes` directory:
    ```bash
    cd ComfyUI/custom_nodes
    git clone https://github.com/xunying7860/anima-weaver.git
    ```
 
-2. 安装依赖：
+2. Install dependencies:
    ```bash
    pip install requests
    ```
 
-3. 安装前置依赖：[ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use)（批量管线必需）
+3. Install the required prerequisite: [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) (mandatory for batch pipelines)
    ```bash
    cd ComfyUI/custom_nodes
    git clone https://github.com/yolain/ComfyUI-Easy-Use.git
    ```
 
-4. 重启 ComfyUI。
+4. Restart ComfyUI.
 
 ---
 
-## 节点详解
+## Node Details
 
-### 提示词编织器
+### Prompt Weaver
 
-三种工作模式：
+Three operation modes:
 
-| 模式 | 说明 |
-|------|------|
-| `manual`（手动） | 手填 8 个插槽标签输出 |
-| `random`（随机） | 从 40 万条 Danbooru taglist 中随机抽取 |
-| `hybrid`（混合） | 随机填充 + 手填标签追加，互斥时保留手填的 |
+| Mode | Description |
+|------|-------------|
+| `manual` | User fills 8 tag slots manually, output ordered by Anima slot specification |
+| `random` | Randomly samples ~400K Danbooru tag entries, auto-classifies into slots |
+| `hybrid` | Raffle fills slots + manual tags appended; conflicting manual tags take precedence |
 
-**标签比例**滑块控制输出中标签与自然语言的比例（0.0=纯自然语言 ↔ 1.0=纯标签）。
+**Tag Ratio** slider controls the tag-to-NL proportion (0.0 = pure NL ↔ 1.0 = pure tags).
 
-支持 LM Studio NL 增强，调用本地 LLM 将标签转为英文描述。
+LM Studio NL enhancement: calls a local LLM to convert tags into fluent English descriptions.
 
-**批量模式：** 接入 `种子串`（批量种子节点的输出）后，每种子独立 Raffle + NL 生成，LLM 加载一次跑完 N 组后按需卸载才会进入下一流程。
+**Batch mode:** When a `种子串` (seed string) from the Batch Seed node is connected, each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes all N seeds, and unloads on completion.
 
-**冲突检查：** 内置 23 对互斥表，自动检测冲突标签并移除 Raffle 来源的冲突项，保留手动标签。
+**Conflict checking:** Built-in 23-pair mutual exclusion table. Automatically detects conflicting tags and removes raffle-sourced conflicts while preserving manually-entered tags.
 
-**输出：**
+**Outputs:**
 
-| 输出 | 类型 | 说明 |
-|------|------|------|
-| `生成的提示词` | STRING | 最终组合的提示词 |
-| `调试信息` | STRING | 模式、种子、冲突检查结果等 |
-| `提示词串` | STRING | 批量模式下的多行提示词 |
-| `画师串` | STRING | 批量模式下的多行画师 |
-| `分辨率串` | STRING | 批量模式下的多行分辨率 |
-| `反推串` | STRING | 批量模式下的多行反推 |
-
----
-
-### 图片反推描述
-
-接入图像时调用 VL 模型进行图像反推描述；不接图像时使用润色扩写提示词。
-
-**提示词优先级：** 自定义系统提示词 > 有图→图像反推 > 无图→润色扩写
-
-**批量模式：** 接 `种子串` 后每种子独立生成描述（不接图像），LLM 加载一次跑 N 组后按需卸载。
-
-**输出：**
-
-| 输出 | 类型 | 说明 |
-|------|------|------|
-| `描述文本` | STRING | 生成的描述/润色文本 |
-| `提示词串` | STRING | 批量透传 |
-| `画师串` | STRING | 批量透传 |
-| `分辨率串` | STRING | 批量透传 |
-| `反推串` | STRING | 批量模式下的多行反推描述 |
+| Output | Type | Description |
+|--------|------|-------------|
+| `生成的提示词` | STRING | Final assembled prompt |
+| `调试信息` | STRING | Debug info: mode, seed, conflict results |
+| `提示词串` | STRING | Multiline prompts (batch mode) |
+| `画师串` | STRING | Multiline artists (batch mode) |
+| `分辨率串` | STRING | Multiline resolutions (batch mode) |
+| `反推串` | STRING | Multiline captions (batch mode) |
 
 ---
 
-### 随机分辨率选择器
+### Image Caption
 
-生成随机分辨率的独立节点。
+When an image input is connected, invokes a VL (vision-language) model for image captioning. Without an image, operates in prompt refinement mode.
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `随机画幅` | 开关 | 从 8 种比例中随机选择 |
-| `百万像素` | 滑块 | 目标像素数，自动计算接近的宽高 |
-| `固定比例` | 下拉 | 随机画幅关闭时使用的固定比例 |
-| `种子串` | STRING | 接入批量种子，每种子独立分辨率 |
+**Prompt priority:** Custom system prompt > Image connected → caption mode > No image → refinement mode
 
-**输出：**
+**Batch mode:** Accepts `种子串` for per-seed independent generation (no image input in batch mode). LLM loads once, processes N seeds, unloads on completion.
 
-| 输出 | 类型 | 说明 |
-|------|------|------|
-| `宽度` | INT | 计算后的宽度 |
-| `高度` | INT | 计算后的高度 |
-| `分辨率` | STRING | 格式 `1024x768` |
-| `分辨率串` | STRING | 批量模式多行 |
-| `宽度串` | STRING | 批量模式多行宽度值 |
-| `高度串` | STRING | 批量模式多行高度值 |
+**Outputs:**
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `描述文本` | STRING | Generated caption / refined text |
+| `提示词串` | STRING | Batch passthrough |
+| `画师串` | STRING | Batch passthrough |
+| `分辨率串` | STRING | Batch passthrough |
+| `反推串` | STRING | Multiline captions (batch mode) |
 
 ---
 
-### 画师Seed
+### Random Resolution
 
-画师选择节点，基于 `Anima2B_Artist_59k_numbered.txt`（约 5.9 万画师索引）。
+Independent node for random resolution generation.
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `artist_seed` | 整数 | 0=随机画师，非0=对应序号画师 |
-| `种子串` | STRING | 接入批量种子，每种子独立抽画师 |
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `随机画幅` | BOOLEAN | Randomly selects from 8 aspect ratios |
+| `百万像素` | FLOAT | Target megapixels; automatically computes nearest width/height |
+| `固定比例` | COMBO | Fixed aspect ratio when random is disabled |
+| `种子串` | STRING | Accepts batch seeds for per-seed independent resolutions |
 
-**输出：** `artist_seed`(INT) + `状态`(STRING `[序号] @画师名`)
+**Outputs:**
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `宽度` | INT | Computed width |
+| `高度` | INT | Computed height |
+| `分辨率` | STRING | Formatted as `1024x768` |
+| `分辨率串` | STRING | Multiline resolutions (batch mode) |
+| `宽度串` | STRING | Multiline width values (batch mode) |
+| `高度串` | STRING | Multiline height values (batch mode) |
 
 ---
 
-### 批量种子
+### Artist Seed
 
-生成 N 个随机种子供批量管线使用。
+Artist selection node backed by `Anima2B_Artist_59k_numbered.txt` (~59K indexed artists).
 
-### 同步串行
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `artist_seed` | INT | 0 = random artist; non-zero = fixed artist by index |
+| `种子串` | STRING | Accepts batch seeds for per-seed independent artist selection |
 
-将 7 路多行 STRING 合并为 JSON 多行（每行一个完整的数据组），支持行选择。配合提示词行节点使用。
+**Outputs:** `artist_seed` (INT) + `状态` (STRING, formatted as `[index] @artist_name`)
 
-| 参数 | 说明 |
-|------|------|
-| `start_index` | 起始行号 |
-| `max_rows` | 最大输出行数 |
-| `remove_empty_lines` | 是否移除空行 |
+---
 
-**输出格式（每行一个 JSON）：**
+### Batch Seed
+
+Generates N random seeds for batch pipeline consumption.
+
+### Sync Passthrough
+
+Merges 7 multiline STRING inputs into a single multiline JSON output (one complete data group per line). Supports row selection. Designed for use with Easy-Use Prompt Line node.
+
+| Parameter | Description |
+|-----------|-------------|
+| `start_index` | Starting row index |
+| `max_rows` | Maximum number of rows to output |
+| `remove_empty_lines` | Whether to filter out empty lines |
+
+**Output format (one JSON object per line):**
 ```json
 {"种子":"42","提示词":"1girl,solo...","画师":"@artist","分辨率":"1024x768","反推":"A girl...","宽度":"1024","高度":"768"}
 ```
 
-### 串行拆分
+### Passthrough Split
 
-接收提示词行输出的单个 JSON 行，拆回 7 路独立信号：
+Receives a single JSON line from the Prompt Line node and splits it into 7 independent typed outputs:
 
-| 输出 | 类型 |
-|------|------|
+| Output | Type |
+|--------|------|
 | 种子 | INT |
 | 提示词 | STRING |
 | 画师 | STRING |
@@ -175,71 +175,71 @@
 
 ---
 
-## 批量管线架构
+## Batch Pipeline Architecture
 
 ```
-批量种子(N个)
-  │ 种子串 STRING (N行)
-  ├──→ 画师Seed → 画师串
-  ├──→ 随机分辨率 → 分辨率串
-  ├──→ 主节点 → 提示词串/画师串/分辨率串/反推串
+Batch Seed(N)
+  │  Seed String STRING (N lines)
+  ├──→ Artist Seed → Artist String
+  ├──→ Random Resolution → Resolution String
+  ├──→ Prompt Weaver → Prompt/Artist/Res/Caption Strings
   │
   ▼
-同步串行 ──合并JSON──→ 提示词行(easy-use) ──→ 串行拆分
-                                                          │ 种子(INT) → KSampler
-                                                          │ 宽度(INT) → 空Latent
-                                                          │ 高度(INT) → 空Latent
-                                                          │ 提示词(STR) → CLIP
+Sync Passthrough ──Merge JSON──→ Prompt Line (Easy-Use) ──→ Passthrough Split
+                                                                  │ Seed (INT) → KSampler
+                                                                  │ Width (INT) → Empty Latent
+                                                                  │ Height (INT) → Empty Latent
+                                                                  │ Prompt (STR) → CLIP
 ```
 
-每种子独立 Raffle + NL，LLM 加载一次跑 N 组，跑完后按需卸载，才会统一进入采样器采样，不额外占用显存。
+Each seed undergoes independent Raffle + NL generation. The LLM loads once, processes N seeds, and unloads on completion — all seeds are then fed to the sampler in a single batch, minimizing VRAM overhead.
 
 ---
 
-## 推荐模型
+## Recommended Models
 
-### NL 增强（提示词编织器）
+### NL Enhancement (Prompt Weaver)
 
-| 模型 | 量化 | 体积 | 备注 |
-|------|------|------|------|
-| L3.2-Rogue-Creative-Uncensored-Abliterated-7B | Q6_K | 5.8GB | [下载](https://hf-mirror.com/DavidAU/L3.2-Rogue-Creative-Instruct-Uncensored-Abliterated-7B-GGUF) |
-| Yi-1.5-9B-Chat-abliterated | Q6_K | 6.8GB | [下载](https://hf-mirror.com/byroneverson/Yi-1.5-9B-Chat-16K-abliterated) |
-| WizardLM-1.0-Uncensored-Llama2-13B | Q4_K_M | 7.4GB | [下载](https://hf-mirror.com/TheBloke/WizardLM-1.0-Uncensored-Llama2-13B-GGUF) |
-| Qwen2.5-14B-Instruct-abliterated | Q4_K_M | 8.4GB | [下载](https://hf-mirror.com/bartowski/Qwen2.5-Coder-14B-Instruct-abliterated-GGUF) |
+| Model | Quant | Size | Download |
+|-------|-------|------|----------|
+| L3.2-Rogue-Creative-Uncensored-Abliterated-7B | Q6_K | 5.8GB | [Download](https://hf-mirror.com/DavidAU/L3.2-Rogue-Creative-Instruct-Uncensored-Abliterated-7B-GGUF) |
+| Yi-1.5-9B-Chat-abliterated | Q6_K | 6.8GB | [Download](https://hf-mirror.com/byroneverson/Yi-1.5-9B-Chat-16K-abliterated) |
+| WizardLM-1.0-Uncensored-Llama2-13B | Q4_K_M | 7.4GB | [Download](https://hf-mirror.com/TheBloke/WizardLM-1.0-Uncensored-Llama2-13B-GGUF) |
+| Qwen2.5-14B-Instruct-abliterated | Q4_K_M | 8.4GB | [Download](https://hf-mirror.com/bartowski/Qwen2.5-Coder-14B-Instruct-abliterated-GGUF) |
 
-### 图像反推（图片反推描述）
+### Image Caption
 
-| 模型 | 量化 | 体积 | 下载 |
-|------|------|------|------|
-| Huihui-Qwen3-VL-4B-Instruct-abliterated | Q6_K | 3.2GB | [下载](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-4B-Instruct-abliterated-GGUF) |
-| Huihui-Qwen3-VL-8B-Instruct-abliterated | Q6_K | 5.8GB | [下载](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF) |
-
----
-
-## 标签库来源
-
-- **Anima 标签库** — 从 `anima提示词规则.md` 提取的 2,176 个标签，按 9 个分类保存
-- **Danbooru 分类标签** — `categorized_tags.txt`（59,575 条），来自 [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle)
-- **Raffle taglist** — 4 个分级 taglist 文件（各 10 万行），同上来源
-- **画师索引** — `Anima2B_Artist_59k_numbered.txt`（约 5.9 万画师）
+| Model | Quant | Size | Download |
+|-------|-------|------|----------|
+| Huihui-Qwen3-VL-4B-Instruct-abliterated | Q6_K | 3.2GB | [Download](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-4B-Instruct-abliterated-GGUF) |
+| Huihui-Qwen3-VL-8B-Instruct-abliterated | Q6_K | 5.8GB | [Download](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF) |
 
 ---
 
-## 依赖
+## Tag Data Sources
 
-| 依赖 | 用途 | 必需 |
-|------|------|------|
-| [LM Studio](https://lmstudio.ai/) | 本地 LLM 推理服务 | 仅 NL 增强/反推模式 |
-| [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | 提示词行节点（列表预览） | **批量管线必需**，作为前置节点安装 |
+- **Anima tag library** — 2,176 tags extracted from `anima提示词规则.md`, organized into 9 categories
+- **Danbooru categorized tags** — `categorized_tags.txt` (59,575 entries), sourced from [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle)
+- **Raffle tag lists** — 4 tiered taglist files (~100K lines each), same source
+- **Artist index** — `Anima2B_Artist_59k_numbered.txt` (~59K artists)
+
+---
+
+## Dependencies
+
+| Dependency | Purpose | Required |
+|------------|---------|----------|
+| [LM Studio](https://lmstudio.ai/) | Local LLM inference server | NL enhancement / caption mode only |
+| [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | Prompt Line node (list preview) | **Mandatory** for batch pipelines (install as prerequisite) |
 
 ---
 
 ## Credits
 
-- **节点编写：** DeepSeek V4 Flash
-- **Danbooru 标签数据：** 来自 [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle)（rainlizard）
-- **ComfyUI 集成：** 标准 ComfyUI 自定义节点接口
-- **画师索引：** 基于 Danbooru 标签数据构建
+- **Node implementation:** DeepSeek V4 Flash
+- **Danbooru tag data:** Sourced from [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle) by rainlizard
+- **ComfyUI integration:** Standard ComfyUI custom node interface
+- **Artist index:** Built from Danbooru tag data
 
 ---
 
