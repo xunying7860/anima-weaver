@@ -69,6 +69,7 @@ def _get_lms_path() -> Optional[str]:
             os.path.join(os.environ.get("PROGRAMFILES", ""), "LM Studio", "lms.exe"),
             os.path.join(os.environ.get("PROGRAMFILES(X86)", ""), "LM Studio", "lms.exe"),
             os.path.join(home, "AppData", "Local", "LM Studio", "lms.exe"),
+            os.path.join(home, ".lmstudio", "bin", "lms.exe"),  # 用户目录安装
         ]
     elif system == "Darwin":
         candidates = [
