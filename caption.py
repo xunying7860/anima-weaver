@@ -10,42 +10,48 @@ def _build_system_prompt(fmt: str = "") -> str:
     """Build system prompt. If fmt is empty, use generic description without prefix."""
     if not fmt.strip():
         return (
-            "根据所给分辨率和tag，用极其详细的方式描述对应的图像内容，"
-            "包括主体外观、身材服装、姿势、表情、背景元素、光线、摄影角度、构图、色彩搭配和整体美学风格。"
-            "使用适合 AI 图像生成提示的精确描述性语言。不要使用模糊的词语。不描述角色名字。"
-            "你必须生成大量详细的描述内容，尽可能延伸细节，不要过早结束。"
-            "输出为英文，无换行。仅返回描述本身。不要包含分辨率信息。"
+            "Based on the given resolution and tags, describe the image content in extremely "
+            "detailed English. Include the subject's appearance, physique, clothing, pose, expression, "
+            "background elements, lighting, camera angle, composition, color palette, and overall "
+            "aesthetic style. Use precise terminology suitable for AI image generation prompts. "
+            "Avoid vague or abstract words. Do not describe character names. "
+            "Output in English, single line without line breaks. Return only the description itself. "
+            "Do NOT include resolution or dimension information."
         )
     if ":" in fmt:
         desc_type, _, content = fmt.partition(":")
-        desc_type = desc_type.strip() or "描述"
+        desc_type = desc_type.strip() or "description"
         content = content.strip()
     else:
         content = ""
-        desc_type = fmt.strip() or "描述"
+        desc_type = fmt.strip() or "description"
     return (
         f"「{content}」({desc_type})"
-        "根据所给分辨率和tag，用极其详细的方式描述对应的图像内容，"
-        "包括主体外观、身材服装、姿势、表情、背景元素、光线、摄影角度、构图、色彩搭配和整体美学风格。"
-        "使用适合 AI 图像生成提示的精确描述性语言。不要使用模糊的词语。不描述角色名字。"
-        f"「{content}」({desc_type})不得少字、多字，有且仅有该{desc_type}描述，放在开头。"
-        "不得出现其他任何描述。除该表述外的其他部分输出为英文，无换行。仅返回提示本身。不要包含分辨率信息。"
-        "你必须生成大量详细的描述内容，尽可能延伸细节，不要过早结束。"
+        "Based on the given resolution and tags, describe the image content in extremely "
+        "detailed English. Include the subject's appearance, physique, clothing, pose, expression, "
+        "background elements, lighting, camera angle, composition, color palette, and overall "
+        "aesthetic style. Use precise terminology suitable for AI image generation prompts. "
+        "Avoid vague or abstract words. Do not describe character names. "
+        f"Output in English, single line without line breaks. Return only the {desc_type} text "
+        "prefixed by the format above. Do NOT include resolution or dimension information."
     )
 
 
 def _build_batch_prompt(fmt: str = "") -> str:
-    """Build system prompt for batch mode (refine input content)."""
+    """Build system prompt for batch/seed-driven mode (no image, pure NL generation)."""
     if fmt.strip():
         return _build_system_prompt(fmt)
     return (
-        "根据所给的内容和分辨率，对内容进行润色和扩写，生成极其详细、高质量的英文自然语言描述，"
-        "用于 AI 图像生成提示词。保留原有标签的同时，增加主体外观、身材服装、姿势动作、面部表情、"
-        "背景环境、光线效果、摄影视角、构图方式和整体艺术风格的详细描述。"
-        "使用精确、具体的描述性语言，适合作为 Stable Diffusion 等模型的正面提示词。"
-        "不要使用模糊或抽象的词语。不描述角色名字。"
-        "务必输出为英文，无换行。仅返回润色后的内容，不要包含任何其他内容（包括不要包含分辨率信息）。"
-        "你必须生成大量详细的描述内容，尽可能延伸细节，不要过早结束。"
+        "Based on the given content and resolution, refine and expand the content into an extremely "
+        "detailed, high-quality English natural language description suitable for AI image generation "
+        "prompts. Preserve the original tags while adding detailed descriptions of the subject's "
+        "appearance, physique, clothing, pose, expression, background environment, lighting, camera "
+        "perspective, composition, and overall artistic style. Use precise, specific terminology "
+        "appropriate for models such as Stable Diffusion. Avoid vague or abstract words. "
+        "Do not describe character names. "
+        "Output in English, single line without line breaks. Return only the refined content, "
+        "nothing else. Do NOT include resolution or dimension information. "
+        "Generate extensive detail and do not stop prematurely."
     )
 
 
@@ -305,7 +311,7 @@ class ImageCaption:
         else:
             system_prompt = _build_batch_prompt(desc_fmt)
         if aspect_ratio:
-            system_prompt += f"\n目标分辨率: {aspect_ratio}"
+            system_prompt += f"\nTarget resolution: {aspect_ratio}"
         user_parts = []
         if wd14_tags:
             user_parts.append(f"Tags: {wd14_tags}")
