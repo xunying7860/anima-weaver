@@ -161,6 +161,11 @@ class AnimaWeaver:
                     "BOOLEAN",
                     {"default": True},
                 ),
+                "并发数": (
+                    "INT",
+                    {"default": 4, "min": 1, "max": 128, "step": 1,
+                     "tooltip": "批量模式下 LLM 请求的并发数（默认 4，最大 128）"},
+                ),
             },
             "optional": {
                 "随机种子": (
@@ -199,6 +204,11 @@ class AnimaWeaver:
                     "STRING",
                     {"forceInput": True, "multiline": True,
                      "tooltip": "接入反推串（每行一个），与种子串行对齐"},
+                ),
+                "NL 系统提示词": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "可选。自定义系统提示词，留空使用默认提示词"},
                 ),
             },
         }
@@ -436,6 +446,12 @@ class AnimaWeaver:
         should_unload = bool(kwargs.get("生成后卸载", False))
         kwargs["生成后卸载"] = False
 
+        # Phase 1: Sequential raffle + tag assembly per seed
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        concurrency = int(kwargs.get("并发数", 4))
+        seed_task_data: list[tuple[dict, str, int]] = []  # (seed_kwargs, tag_prompt, index)
+
         for i, seed_str in enumerate(seeds):
             try:
                 raw_seed = int(seed_str)
@@ -481,12 +497,39 @@ class AnimaWeaver:
             if i < len(res_lines):
                 seed_kwargs["分辨率"] = res_lines[i]
 
-            final, _ = self._finish_prompt(seed_kwargs, tag_prompt, nl_source, tag_ratio)
-            final = self._dedup_final(final)
-            prompts.append(final)
-            artists_out.append(artist_lines[i] if i < len(artist_lines) else "")
-            res_out.append(res_lines[i] if i < len(res_lines) else "")
-            caps_out.append(cap_lines[i] if i < len(cap_lines) else "")
+            seed_task_data.append((seed_kwargs, tag_prompt, i))
+
+        # Phase 2: Parallel NL generation + final assembly
+        prompts = [""] * len(seeds)
+        artists_out = [""] * len(seeds)
+        res_out = [""] * len(seeds)
+        caps_out = [""] * len(seeds)
+        seed_index_to_i: dict[int, int] = {}  # maps task index to original seed index
+        for task_idx, (_, _, orig_i) in enumerate(seed_task_data):
+            seed_index_to_i[task_idx] = orig_i
+
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+            fut_to_idx: dict = {}
+            for task_idx, (sk, tp, orig_i) in enumerate(seed_task_data):
+                fut = executor.submit(self._finish_prompt, sk, tp, nl_source, tag_ratio)
+                fut_to_idx[fut] = task_idx
+
+            for future in as_completed(fut_to_idx):
+                task_idx = fut_to_idx[future]
+                orig_i = seed_index_to_i[task_idx]
+                try:
+                    final, _ = future.result()
+                    final = self._dedup_final(final)
+                    prompts[orig_i] = final
+                except Exception as e:
+                    print(f"[AnimaWeaver] batch seed {orig_i} error: {e}")
+                    prompts[orig_i] = ""
+                artists_out[orig_i] = artist_lines[orig_i] if orig_i < len(artist_lines) else ""
+                res_out[orig_i] = res_lines[orig_i] if orig_i < len(res_lines) else ""
+                caps_out[orig_i] = cap_lines[orig_i] if orig_i < len(cap_lines) else ""
+
+        # Filter out empty results
+        prompts = [p for p in prompts if p]
 
         if should_unload and prompts:
             try:

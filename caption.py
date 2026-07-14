@@ -123,6 +123,11 @@ class ImageCaption:
                     "BOOLEAN",
                     {"default": False},
                 ),
+                "并发数": (
+                    "INT",
+                    {"default": 4, "min": 1, "max": 128, "step": 1,
+                     "tooltip": "批量模式下 LLM 请求的并发数（默认 4，最大 128）"},
+                ),
             },
             "optional": {
                 "随机种子": (
@@ -254,31 +259,42 @@ class ImageCaption:
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
 
-            results: list[str] = []
-            for i, s in enumerate(seeds):
-                try:
-                    seed_val = int(s)
-                except ValueError:
-                    continue
-                seed_kwargs = dict(kwargs)
-                seed_kwargs["随机种子"] = seed_val
-                # Per-seed resolution from 分辨率串
-                res_line = ""
-                if i < len(cap_res.split("\n")):
-                    res_line = cap_res.split("\n")[i].strip()
-                user_parts: list[str] = []
-                if refine_text:
-                    user_parts.append(refine_text)
-                if res_line:
-                    user_parts.append(f"Resolution: {res_line}")
-                elif aspect_ratio:
-                    user_parts.append(f"Resolution: {aspect_ratio}")
-                if not user_parts:
-                    user_parts.append("Describe in detail.")
-                if res_line:
-                    seed_kwargs["分辨率"] = res_line
-                nl = self._generate_one(seed_kwargs, "\n".join(user_parts), system_prompt)
-                results.append(nl or "")
+            results: list[str] = [""] * len(seeds)
+            concurrency = int(kwargs.get("并发数", 4))
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+            with ThreadPoolExecutor(max_workers=concurrency) as executor:
+                fut_map = {}
+                for i, s in enumerate(seeds):
+                    try:
+                        seed_val = int(s)
+                    except ValueError:
+                        continue
+                    seed_kwargs = dict(kwargs)
+                    seed_kwargs["随机种子"] = seed_val
+                    # Per-seed resolution from 分辨率串
+                    res_line = ""
+                    if i < len(cap_res.split("\n")):
+                        res_line = cap_res.split("\n")[i].strip()
+                    user_parts: list[str] = []
+                    if refine_text:
+                        user_parts.append(refine_text)
+                    if res_line:
+                        user_parts.append(f"Resolution: {res_line}")
+                    elif aspect_ratio:
+                        user_parts.append(f"Resolution: {aspect_ratio}")
+                    if not user_parts:
+                        user_parts.append("Describe in detail.")
+                    if res_line:
+                        seed_kwargs["分辨率"] = res_line
+                    fut = executor.submit(self._generate_one, seed_kwargs, "\n".join(user_parts), system_prompt)
+                    fut_map[fut] = i
+                for future in as_completed(fut_map):
+                    i = fut_map[future]
+                    try:
+                        results[i] = future.result() or ""
+                    except Exception as e:
+                        print(f"[Caption] batch seed {i} error: {e}")
+                        results[i] = ""
 
             if should_unload and results:
                 try:

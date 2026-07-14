@@ -13,7 +13,7 @@ class BatchSeedNode:
     def INPUT_TYPES(cls) -> dict[str, Any]:
         return {
             "required": {
-                "数量": ("INT", {"default": 1, "min": 1, "max": 256, "step": 1,
+                "数量": ("INT", {"default": 1, "min": 1, "max": 4096, "step": 1,
                                 "tooltip": "生成的种子数量"}),
             },
         }
