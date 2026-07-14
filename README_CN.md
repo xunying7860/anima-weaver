@@ -9,14 +9,15 @@
 | 节点 | 分类 | 用途 |
 |------|------|------|
 | **提示词编织器** | Anima Weaver | 主节点：组装标签 → NL → 完整提示词 |
-| **图片反推描述** | Anima Weaver | 图像反推 / 润色扩写 |
+| **图片反推描述** | Anima Weaver | VL 模型图像反推 / 润色扩写 |
 | **随机分辨率选择器** | Anima Weaver | 随机生成宽高比/分辨率文本 |
 | **提示词槽位** | Anima Weaver | 手动输入标签槽位 |
 | **底部控制** | Anima Weaver | Raffle标签过滤控制 |
-| **画师Seed** | Anima Weaver / Seed | 画师选择（随机/固定） |
-| **批量种子** | Anima Weaver / Seed | 生成 N 个种子 |
+| **画师Seed** | Anima Weaver / Seed | 画师选择（随机/无/固定） |
+| **批量种子** | Anima Weaver / Seed | 生成 N 个种子（上限 4096） |
 | **同步串行** | Anima Weaver / Batch | 7 路输入合并为 JSON 多行输出 |
 | **串行拆分** | Anima Weaver / Batch | JSON 行拆回 7 路（INT + STRING） |
+| **STRING转INT** | Anima Weaver / Utils | 多行 STRING 取第一行转 INT |
 
 ---
 
@@ -66,7 +67,11 @@
 
 支持 LM Studio NL 增强，调用本地 LLM 将标签转为英文描述。
 
-**批量模式：** 接入 `种子串`（批量种子节点的输出）后，每种子独立 Raffle + NL 生成，LLM 加载一次跑完 N 组后按需卸载才会进入下一流程。
+**自定义系统提示词**（左上角可选 forceInput 端口）：接入后覆盖默认 NL 生成提示词，逻辑同反推节点。
+
+**批量模式：** 接入 `种子串`（批量种子节点的输出）后，每种子独立 Raffle + NL 生成。LLM 加载一次，然后 N 组请求并发执行（通过 `并发数` 参数控制并发量），全部完成后按需卸载。
+
+**并发批量 LLM：** 提示词编织器和反推节点均支持 `并发数` 参数（默认 4，最大 128）。模型加载一次，然后 N 个线程同时发 HTTP 请求，本地 LM Studio 和云端 API 均适用。
 
 **冲突检查：** 内置 23 对互斥表，自动检测冲突标签并移除 Raffle 来源的冲突项，保留手动标签。
 
@@ -89,7 +94,7 @@
 
 **提示词优先级：** 自定义系统提示词 > 有图→图像反推 > 无图→润色扩写
 
-**批量模式：** 接 `种子串` 后每种子独立生成描述（不接图像），LLM 加载一次跑 N 组后按需卸载。
+**批量模式：** 接 `种子串` 后每种子独立生成描述（不接图像），LLM 加载一次，N 组并发执行，跑完后按需卸载。
 
 **输出：**
 
@@ -133,7 +138,7 @@
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
-| `artist_seed` | 整数 | 0=随机画师，非0=对应序号画师 |
+| `artist_seed` | 整数 | -1=随机画师，0=无画师，≥1=对应序号画师 |
 | `种子串` | STRING | 接入批量种子，每种子独立抽画师 |
 
 **输出：** `artist_seed`(INT) + `状态`(STRING `[序号] @画师名`)
@@ -142,7 +147,7 @@
 
 ### 批量种子
 
-生成 N 个随机种子供批量管线使用。
+生成 N 个随机种子供批量管线使用（上限 4096）。
 
 ### 同步串行
 
@@ -192,7 +197,7 @@
                                                           │ 提示词(STR) → CLIP
 ```
 
-每种子独立 Raffle + NL，LLM 加载一次跑 N 组，跑完后按需卸载，才会统一进入采样器采样，不额外占用显存。
+每种子独立 Raffle + NL，LLM 加载一次，N 组并发执行，跑完后按需卸载，统一进入采样器采样，不额外占用显存。
 
 ---
 
@@ -200,7 +205,7 @@
 
 ### NL 增强（提示词编织器）
 
-| 模型 | 量化 | 体积 | 备注 |
+| 模型 | 量化 | 体积 | 下载 |
 |------|------|------|------|
 | L3.2-Rogue-Creative-Uncensored-Abliterated-7B | Q6_K | 5.8GB | [下载](https://hf-mirror.com/DavidAU/L3.2-Rogue-Creative-Instruct-Uncensored-Abliterated-7B-GGUF) |
 | Yi-1.5-9B-Chat-abliterated | Q6_K | 6.8GB | [下载](https://hf-mirror.com/byroneverson/Yi-1.5-9B-Chat-16K-abliterated) |
@@ -213,6 +218,10 @@
 |------|------|------|------|
 | Huihui-Qwen3-VL-4B-Instruct-abliterated | Q6_K | 3.2GB | [下载](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-4B-Instruct-abliterated-GGUF) |
 | Huihui-Qwen3-VL-8B-Instruct-abliterated | Q6_K | 5.8GB | [下载](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF) |
+
+### 云端 API 兼容
+
+所有节点均支持任意兼容 OpenAI 格式的 API 提供商（SiliconFlow、DeepSeek、OpenAI 等）。填写 `API地址`、`API密钥`、`云端模型名` 即可使用。调用云端 API 时自动跳过 `enable_thinking` 参数。
 
 ---
 
