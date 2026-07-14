@@ -426,8 +426,10 @@ def generate_nl_from_lm_studio(
         "temperature": 0.85,
         "max_tokens": max_tokens,
         "stream": False,
-        "enable_thinking": False,
     }
+    # enable_thinking only for LM Studio local API (not supported by cloud providers)
+    if not api_key:
+        payload["enable_thinking"] = False
 
     url = f"{base_url.rstrip('/')}/chat/completions"
     headers = {"Content-Type": "application/json"}
@@ -435,9 +437,19 @@ def generate_nl_from_lm_studio(
         headers["Authorization"] = f"Bearer {api_key}"
 
     try:
+        print(f"[LM Studio Debug] POST {url} model={model_name}")
+        print(f"[LM Studio Debug] payload keys: {list(payload.keys())}, user_msg_len={len(str(payload['messages'][1].get('content', '')))}")
         resp = requests.post(url, json=payload, headers=headers, timeout=timeout)
+        print(f"[LM Studio Debug] response status: {resp.status_code}")
         resp.raise_for_status()
         data = resp.json()
+        print(f"[LM Studio Debug] response keys: {list(data.keys())}")
+        if "choices" in data:
+            print(f"[LM Studio Debug] choices count: {len(data['choices'])}")
+            if data['choices']:
+                msg = data['choices'][0].get('message', {})
+                print(f"[LM Studio Debug] content len: {len(msg.get('content', '') or '')}")
+                print(f"[LM Studio Debug] finish_reason: {data['choices'][0].get('finish_reason', '')}")
         choices = data.get("choices", [])
         if not choices:
             err_msg = data.get("error", {}).get("message", str(data)[:200])
@@ -600,7 +612,13 @@ def generate_nl_from_lm_studio(
                 content = content[:last_period + 1]
 
         return content
-    except requests.RequestException:
+    except requests.RequestException as e:
+        try:
+            body = e.response.text[:500] if hasattr(e, 'response') and e.response is not None else ""
+        except Exception:
+            body = ""
+        print(f"[LM Studio] API request error: {e} | Body: {body}")
         return ""
-    except (json.JSONDecodeError, KeyError, IndexError):
+    except (json.JSONDecodeError, KeyError, IndexError) as e:
+        print(f"[LM Studio] Response parsing error: {e}")
         return ""
