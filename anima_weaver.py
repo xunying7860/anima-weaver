@@ -119,8 +119,8 @@ class AnimaWeaver:
                     {"default": False},
                 ),
                 "API密钥": (
-                    "STRING",
-                    {"default": "", "password": True},
+                    "PASSWORD",
+                    {"default": ""},
                 ),
                 "云端模型名": (
                     "STRING",

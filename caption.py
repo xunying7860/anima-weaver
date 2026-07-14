@@ -98,8 +98,8 @@ class ImageCaption:
                      "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
                 ),
                 "API密钥": (
-                    "STRING",
-                    {"default": "", "password": True},
+                    "PASSWORD",
+                    {"default": ""},
                 ),
                 "云端模型名": (
                     "STRING",
@@ -337,7 +337,9 @@ class ImageCaption:
             from .lm_studio import ensure_model_loaded, generate_nl_from_lm_studio, unload_all
             if api_key:
                 model_for_api = cloud_model or lm_model
+                print(f"[Caption Debug] api_key={bool(api_key)}, cloud_model={cloud_model}, lm_model={lm_model}, model_for_api={model_for_api}")
                 if model_for_api and model_for_api != "(no models found)":
+                    print(f"[Caption Debug] Calling API: {base_url}, model={model_for_api}")
                     nl = generate_nl_from_lm_studio(
                         user_msg, base_url,
                         api_key=api_key, model_name=model_for_api,
