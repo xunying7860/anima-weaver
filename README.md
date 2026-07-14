@@ -13,10 +13,11 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 | **Random Resolution** | Anima Weaver | Random aspect ratio & resolution generator |
 | **Prompt Slots** | Anima Weaver | Manual tag input slots |
 | **Bottom Controls** | Anima Weaver | Raffle tag filtering controls |
-| **Artist Seed** | Anima Weaver / Seed | Artist selector (random / fixed) |
+| **Artist Seed** | Anima Weaver / Seed | Artist selector (random / none / fixed) |
 | **Batch Seed** | Anima Weaver / Seed | N-seed generator for batch pipelines |
 | **Sync Passthrough** | Anima Weaver / Batch | Merges 7 channels into JSON-per-line output |
 | **Passthrough Split** | Anima Weaver / Batch | Splits one JSON line back to 7 typed outputs (INT + STRING) |
+| **STRING to INT** | Anima Weaver / Utils | Converts multiline STRING to INT (first line) |
 
 ---
 
@@ -66,7 +67,11 @@ Three operation modes:
 
 LM Studio NL enhancement: calls a local LLM to convert tags into fluent English descriptions.
 
-**Batch mode:** When a `种子串` (seed string) from the Batch Seed node is connected, each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes all N seeds, and unloads on completion.
+**Custom System Prompt** (optional forceInput port, top-left): When connected, overrides the default NL generation system prompt. Behaves identically to the Image Caption node's custom prompt.
+
+**Batch mode:** When a `种子串` (seed string) from the Batch Seed node is connected, each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes all N seeds in parallel (configurable concurrency), and unloads on completion.
+
+**Concurrent Batch LLM:** Both Prompt Weaver and Image Caption support the `并发数` parameter (default 4, max 128). In batch mode, the model is loaded once, then N HTTP requests run concurrently via `ThreadPoolExecutor`. This applies to both local LM Studio and cloud API endpoints.
 
 **Conflict checking:** Built-in 23-pair mutual exclusion table. Automatically detects conflicting tags and removes raffle-sourced conflicts while preserving manually-entered tags.
 
@@ -89,7 +94,7 @@ When an image input is connected, invokes a VL (vision-language) model for image
 
 **Prompt priority:** Custom system prompt > Image connected → caption mode > No image → refinement mode
 
-**Batch mode:** Accepts `种子串` for per-seed independent generation (no image input in batch mode). LLM loads once, processes N seeds, unloads on completion.
+**Batch mode:** Accepts `种子串` for per-seed independent generation (no image input in batch mode). LLM loads once, processes N seeds concurrently (configurable via `并发数`), unloads on completion.
 
 **Outputs:**
 
@@ -133,7 +138,7 @@ Artist selection node backed by `Anima2B_Artist_59k_numbered.txt` (~59K indexed 
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `artist_seed` | INT | 0 = random artist; non-zero = fixed artist by index |
+| `artist_seed` | INT | `-1` = random artist, `0` = no artist (skip), `≥1` = fixed artist by index |
 | `种子串` | STRING | Accepts batch seeds for per-seed independent artist selection |
 
 **Outputs:** `artist_seed` (INT) + `状态` (STRING, formatted as `[index] @artist_name`)
@@ -142,7 +147,7 @@ Artist selection node backed by `Anima2B_Artist_59k_numbered.txt` (~59K indexed 
 
 ### Batch Seed
 
-Generates N random seeds for batch pipeline consumption.
+Generates N random seeds for batch pipeline consumption (max 4096).
 
 ### Sync Passthrough
 
@@ -192,7 +197,7 @@ Sync Passthrough ──Merge JSON──→ Prompt Line (Easy-Use) ──→ Pass
                                                                   │ Prompt (STR) → CLIP
 ```
 
-Each seed undergoes independent Raffle + NL generation. The LLM loads once, processes N seeds, and unloads on completion — all seeds are then fed to the sampler in a single batch, minimizing VRAM overhead.
+Each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes N seeds in parallel (configurable via `并发数`, default 4), and unloads on completion — all seeds are then fed to the sampler in a single batch, minimizing VRAM overhead.
 
 ---
 
@@ -213,6 +218,10 @@ Each seed undergoes independent Raffle + NL generation. The LLM loads once, proc
 |-------|-------|------|----------|
 | Huihui-Qwen3-VL-4B-Instruct-abliterated | Q6_K | 3.2GB | [Download](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-4B-Instruct-abliterated-GGUF) |
 | Huihui-Qwen3-VL-8B-Instruct-abliterated | Q6_K | 5.8GB | [Download](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF) |
+
+### Cloud API Compatible Models
+
+These nodes support any OpenAI-compatible API provider (SiliconFlow, DeepSeek, OpenAI, etc.). Set `API地址` to the provider's base URL, provide an `API密钥`, and specify the `云端模型名`. The `enable_thinking` parameter is automatically omitted for cloud API calls.
 
 ---
 
