@@ -440,6 +440,8 @@ def generate_nl_from_lm_studio(
         data = resp.json()
         choices = data.get("choices", [])
         if not choices:
+            err_msg = data.get("error", {}).get("message", str(data)[:200])
+            print(f"[LM Studio] API returned no choices. Error: {err_msg}")
             return ""
         message = choices[0].get("message", {})
         content = message.get("content", "").strip()

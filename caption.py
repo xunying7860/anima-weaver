@@ -360,7 +360,10 @@ class ImageCaption:
                             image_b64=image_b64,
                         )
         except Exception as e:
+            import traceback
             print(f"ImageCaption error: {e}")
+            traceback.print_exc()
+            nl = f"[API Error: {e}]"
 
         if kwargs.get("生成后卸载", False) and model_was_loaded:
             try:
