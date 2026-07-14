@@ -98,7 +98,7 @@ class ImageCaption:
                      "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
                 ),
                 "API密钥": (
-                    "PASSWORD",
+                    "STRING",
                     {"default": ""},
                 ),
                 "云端模型名": (
