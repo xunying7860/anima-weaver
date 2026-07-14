@@ -1,5 +1,9 @@
 # Anima Weaver
 
+<p align="right">
+  <a href="README_CN.md">中文</a> | <b>English</b>
+</p>
+
 A ComfyUI custom node package for structured AI image prompt assembly. Supports tag/NL hybrid output, batch pipelines, image captioning / prompt refinement, random artist selection, and random resolution generation.
 
 ---

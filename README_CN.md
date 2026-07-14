@@ -1,5 +1,9 @@
 # Anima Weaver — 提示词编织器
 
+<p align="right">
+  <b>中文</b> | <a href="README.md">English</a>
+</p>
+
 一个 ComfyUI 自定义节点包，基于结构化方式组装 AI 图像生成提示词，支持标签/自然语言混合输出、批量管线、图像反推/提示词润色、随机画师与随机分辨率。
 
 ---
