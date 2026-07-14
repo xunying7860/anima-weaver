@@ -446,6 +446,20 @@ class AnimaWeaver:
         should_unload = bool(kwargs.get("生成后卸载", False))
         kwargs["生成后卸载"] = False
 
+        # ── Preload model once before parallel NL generation ──
+        _model_preloaded = False
+        if nl_source == "lm_studio" and not kwargs.get("API密钥", ""):
+            lm_model_name = str(kwargs.get("模型", ""))
+            if lm_model_name and lm_model_name != "(no models found)":
+                try:
+                    from .lm_studio import ensure_model_loaded
+                    ctx = int(kwargs.get("上下文长度", 4096))
+                    if ensure_model_loaded(lm_model_name, context_length=ctx):
+                        _model_preloaded = True
+                        print(f"[AnimaWeaver] Preloaded model: {lm_model_name}")
+                except Exception as e:
+                    print(f"[AnimaWeaver] Preload failed: {e}")
+
         # Phase 1: Sequential raffle + tag assembly per seed
         from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -498,6 +512,11 @@ class AnimaWeaver:
                 seed_kwargs["分辨率"] = res_lines[i]
 
             seed_task_data.append((seed_kwargs, tag_prompt, i))
+
+        # Mark all seed_kwargs as preloaded for parallel phase
+        if _model_preloaded:
+            for sk, _, _ in seed_task_data:
+                sk["_preloaded"] = True
 
         # Phase 2: Parallel NL generation + final assembly
         prompts = [""] * len(seeds)
@@ -797,7 +816,11 @@ class AnimaWeaver:
                         )
                     else:
                         # 本地 LM Studio：先加载模型再调用 API
-                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
+                        # 如果已在外部加载过（批量并发），跳过重复加载
+                        if not kwargs.get("_preloaded"):
+                            model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
+                        else:
+                            model_was_loaded = True
                         if model_was_loaded:
                             # Custom system prompt: detailed takes priority if in detailed mode
                             custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("NL 系统提示词", "")

@@ -259,6 +259,20 @@ class ImageCaption:
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
 
+            # ── Preload model once before parallel NL generation ──
+            _model_preloaded = False
+            _lm_model = str(kwargs.get("模型", ""))
+            _api_key = str(kwargs.get("API密钥", "")).strip()
+            if not _api_key and _lm_model and _lm_model != "(no models found)":
+                try:
+                    from .lm_studio import ensure_model_loaded
+                    ctx = int(kwargs.get("上下文长度", 4096))
+                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                        _model_preloaded = True
+                        print(f"[Caption] Preloaded model: {_lm_model}")
+                except Exception as e:
+                    print(f"[Caption] Preload failed: {e}")
+
             results: list[str] = [""] * len(seeds)
             concurrency = int(kwargs.get("并发数", 4))
             from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -271,6 +285,8 @@ class ImageCaption:
                         continue
                     seed_kwargs = dict(kwargs)
                     seed_kwargs["随机种子"] = seed_val
+                    if _model_preloaded:
+                        seed_kwargs["_preloaded"] = True
                     # Per-seed resolution from 分辨率串
                     res_line = ""
                     if i < len(cap_res.split("\n")):
@@ -364,8 +380,11 @@ class ImageCaption:
                     )
             else:
                 if lm_model and lm_model != "(no models found)":
-                    ctx = int(kwargs.get("上下文长度", 4096))
-                    model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
+                    if not kwargs.get("_preloaded"):
+                        ctx = int(kwargs.get("上下文长度", 4096))
+                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
+                    else:
+                        model_was_loaded = True
                     if model_was_loaded:
                         nl = generate_nl_from_lm_studio(
                             user_msg, base_url,
