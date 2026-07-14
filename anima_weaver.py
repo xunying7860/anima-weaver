@@ -152,8 +152,8 @@ class AnimaWeaver:
                 # ── Artist ──────────────────────────────────────────
                 "画师种子": (
                     "INT",
-                    {"default": 0, "min": 0, "max": 0x7FFFFFFF,
-                     "tooltip": "接入「画师Seed」节点的输出，0=随机"},
+                    {"default": 0, "min": -1, "max": 0x7FFFFFFF,
+                     "tooltip": "-1=随机画师，0=无画师，1~=固定画师序号"},
                 ),
 
                 # ── Raffle random parameters ──────────────────────
@@ -398,14 +398,22 @@ class AnimaWeaver:
             s = int(artist_seed_val)
             artists = _load_artists()
             if artists:
-                if s <= 0:
+                if s == -1:
                     s = random.randint(1, len(artists))
-                idx = max(0, min(s - 1, len(artists) - 1))
-                chosen = artists[idx]
-                if final:
-                    final = final.rstrip(", ") + ", " + chosen
-                else:
-                    final = chosen
+                    idx = max(0, min(s - 1, len(artists) - 1))
+                    chosen = artists[idx]
+                    if final:
+                        final = final.rstrip(", ") + ", " + chosen
+                    else:
+                        final = chosen
+                elif s > 0:
+                    idx = max(0, min(s - 1, len(artists) - 1))
+                    chosen = artists[idx]
+                    if final:
+                        final = final.rstrip(", ") + ", " + chosen
+                    else:
+                        final = chosen
+                # s == 0: 无画师，跳过
 
         return (final, nl_prompt)
 

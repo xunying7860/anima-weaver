@@ -1,6 +1,6 @@
 """
 Anima Weaver — Artist Seed Node
-Single slider: 0=随机, 1~max=固定画师.
+-1 = 随机画师, 0 = 无画师, 1~max = 固定画师.
 Optional 种子串 input for batch mode.
 """
 
@@ -58,8 +58,8 @@ class ArtistSeed:
             "required": {
                 "artist_seed": (
                     "INT",
-                    {"default": 0, "min": 0, "max": max_a, "step": 1,
-                     "tooltip": "0=随机画师, 1~59676=固定画师序号"},
+                    {"default": 0, "min": -1, "max": max_a, "step": 1,
+                     "tooltip": "-1=随机画师, 0=无画师, 1~59676=固定画师序号"},
                 ),
             },
             "optional": {
@@ -78,6 +78,22 @@ class ArtistSeed:
     def IS_CHANGED(cls, **kwargs) -> float:
         return random.random()
 
+    def _pick_one(self, artist_seed: int) -> tuple[int, str, str]:
+        """Single artist selection: returns (index, status_line, single_line)."""
+        max_a = _get_artist_count()
+        if artist_seed == 0:
+            # 无画师
+            return (0, "", "")
+        if artist_seed == -1:
+            # 随机画师
+            s = random.randint(1, max_a)
+        else:
+            # 固定画师
+            s = max(1, min(artist_seed, max_a))
+        name = _get_artist_name(s)
+        line = f"[{s}] {name}"
+        return (s, line, line)
+
     def pick(self, artist_seed: int, 种子串: str = "") -> tuple[int, str, str]:
         max_a = _get_artist_count()
 
@@ -90,27 +106,31 @@ class ArtistSeed:
                     seed_val = int(s)
                 except ValueError:
                     continue
-                # Use the batch seed as a random seed to pick artist
-                rng = random.Random(seed_val)
-                idx = rng.randint(1, max_a)
-                name = _get_artist_name(idx)
-                lines.append(f"[{idx}] {name}")
-            # Single mode output uses the first seed's result
+                if artist_seed == 0:
+                    # 无画师：所有行空
+                    lines.append("")
+                elif artist_seed == -1:
+                    # 随机：每个种子独立抽
+                    rng = random.Random(seed_val)
+                    idx = rng.randint(1, max_a)
+                    name = _get_artist_name(idx)
+                    lines.append(f"[{idx}] {name}")
+                else:
+                    # 固定画师：所有行相同
+                    idx = max(1, min(artist_seed, max_a))
+                    name = _get_artist_name(idx)
+                    lines.append(f"[{idx}] {name}")
             if lines:
                 first_line = lines[0]
-                first_idx = int(first_line.split("]")[0].strip("["))
-                name = _get_artist_name(first_idx)
-                return (first_idx, first_line, "\n".join(lines))
-            return (0, "[]", "")
+                if first_line:
+                    first_idx = int(first_line.split("]")[0].strip("["))
+                    name = _get_artist_name(first_idx)
+                    return (first_idx, first_line, "\n".join(lines))
+                return (0, "", "\n".join(lines))
+            return (0, "", "")
 
         # Single mode
-        if artist_seed <= 0:
-            s = random.randint(1, max_a)
-        else:
-            s = max(1, min(artist_seed, max_a))
-        name = _get_artist_name(s)
-        status = f"[{s}] {name}"
-        return (s, status, f"[{s}] {name}")
+        return self._pick_one(artist_seed)
 
 
 NODE_CLASS_MAPPINGS = {"ArtistSeedNode": ArtistSeed}
