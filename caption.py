@@ -93,8 +93,9 @@ class ImageCaption:
             "required": {
                 "模型": (model_list,),
                 "API地址": (
-                    ["http://localhost:1234/v1", "https://api.deepseek.com"],
-                    {"default": "http://localhost:1234/v1"},
+                    "STRING",
+                    {"default": "http://localhost:1234/v1", "multiline": False,
+                     "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
                 ),
                 "API密钥": (
                     "STRING",

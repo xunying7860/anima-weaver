@@ -131,8 +131,9 @@ class AnimaWeaver:
                     {"default": 4096, "min": 512, "max": 32768},
                 ),
                 "API地址": (
-                    ["http://localhost:1234/v1", "https://api.deepseek.com"],
-                    {"default": "http://localhost:1234/v1"},
+                    "STRING",
+                    {"default": "http://localhost:1234/v1", "multiline": False,
+                     "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
                 ),
                 "云端模型名": (
                     "STRING",
