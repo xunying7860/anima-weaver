@@ -18,7 +18,6 @@ import subprocess
 import sys
 import time
 from typing import Any, Optional
-import threading
 
 # ── Multi-instance round-robin ───────────────────────────────────
 _api_url_index = 0
@@ -449,7 +448,7 @@ def generate_nl_from_lm_studio(
     if not api_key:
         payload["enable_thinking"] = False
 
-    url = f"{_pick_api_url(base_url)}/chat/completions"
+    url = f"{base_url.rstrip("/")}/chat/completions"
     headers = {"Content-Type": "application/json"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
