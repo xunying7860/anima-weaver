@@ -103,8 +103,8 @@ class ImageCaption:
             models = get_models()
             if models:
                 model_list = models
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[ImageCaption] get_models error: {e}")
         if not model_list:
             model_list = ["(no models found)"]
 
