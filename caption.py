@@ -364,7 +364,9 @@ class ImageCaption:
             _model_preloaded = False
             _lm_model = str(kwargs.get("模型", ""))
             _api_key = str(kwargs.get("API密钥", "")).strip()
-            if not _api_key and _lm_model and _lm_model != "(no models found)":
+            _use_llama = bool(kwargs.get("启用 llama-server", False))
+            # Skip LM Studio preload when using llama-server (API already overridden to its port)
+            if not _use_llama and not _api_key and _lm_model and _lm_model != "(no models found)":
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
@@ -372,6 +374,8 @@ class ImageCaption:
                         _model_preloaded = True
                 except Exception as e:
                     print(f"[Caption] Preload failed: {e}")
+            elif _use_llama:
+                _model_preloaded = True  # llama-server handles its own model loading
 
             # Pre-encode image once to avoid repeated base64 encoding per thread
             _batch_image_b64 = _tensor_to_b64(kwargs.get("图像"))
@@ -490,7 +494,7 @@ class ImageCaption:
             _model_preloaded = False
             _lm_model = str(kwargs.get("模型", ""))
             _api_key = str(kwargs.get("API密钥", "")).strip()
-            if not _api_key and _lm_model and _lm_model != "(no models found)":
+            if not _use_llama and not _api_key and _lm_model and _lm_model != "(no models found)":
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
@@ -498,6 +502,8 @@ class ImageCaption:
                         _model_preloaded = True
                 except Exception:
                     pass
+            elif _use_llama:
+                _model_preloaded = True
 
             results: list[str] = [""] * img_batch_count
             concurrency = int(kwargs.get("并发数", 4))
