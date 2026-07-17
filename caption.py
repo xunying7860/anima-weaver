@@ -349,6 +349,7 @@ class ImageCaption:
             _use_llama = bool(kwargs.get("启用 llama-server", False))
             _llama_parallel = int(kwargs.get("llama-server 并行数", 4))
             _orig_api_url = str(kwargs.get("API地址", "http://localhost:1234/v1"))
+            print(f"[Caption] _use_llama={_use_llama}, model_path='{str(kwargs.get('模型路径','')).strip()}'")
             if _use_llama:
                 model_path = str(kwargs.get("模型路径", "")).strip()
                 if model_path:
@@ -357,7 +358,10 @@ class ImageCaption:
                         print(f"[Caption] Launching llama-server on port {port}, parallel={_llama_parallel}")
                         _llama_proc = _launch_llama_server(model_path, _llama_parallel, port)
                         kwargs["API地址"] = f"http://127.0.0.1:{port}/v1"
+                        print(f"[Caption] API address overridden to: {kwargs['API地址']}")
                     except Exception as e:
+                        import traceback
+                        traceback.print_exc()
                         print(f"[Caption] llama-server launch failed: {e}")
 
             # ── Preload model once before parallel NL generation ──
