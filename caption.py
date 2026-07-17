@@ -147,6 +147,21 @@ class ImageCaption:
                     {"default": 4, "min": 1, "max": 128, "step": 1,
                      "tooltip": "批量模式下 LLM 请求的并发数（默认 4，最大 128）"},
                 ),
+                "启用 llama-server": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用 llama-server 直连（绕过 LM Studio），需指定模型路径"},
+                ),
+                "模型路径": (
+                    "STRING",
+                    {"default": "", "multiline": False,
+                     "tooltip": "GGUF 模型文件路径，启用 llama-server 时必填"},
+                ),
+                "llama-server 并行数": (
+                    "INT",
+                    {"default": 4, "min": 1, "max": 128, "step": 1,
+                     "tooltip": "llama-server 的 --parallel 参数"},
+                ),
             },
             "optional": {
                 "随机种子": (
@@ -317,6 +332,22 @@ class ImageCaption:
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
 
+            # ── Optional: launch llama-server instead of LM Studio ──
+            _llama_proc = None
+            _use_llama = bool(kwargs.get("启用 llama-server", False))
+            _llama_parallel = int(kwargs.get("llama-server 并行数", 4))
+            _orig_api_url = str(kwargs.get("API地址", "http://localhost:1234/v1"))
+            if _use_llama:
+                model_path = str(kwargs.get("模型路径", "")).strip()
+                if model_path:
+                    try:
+                        port = _find_free_port()
+                        print(f"[Caption] Launching llama-server on port {port}, parallel={_llama_parallel}")
+                        _llama_proc = _launch_llama_server(model_path, _llama_parallel, port)
+                        kwargs["API地址"] = f"http://127.0.0.1:{port}/v1"
+                    except Exception as e:
+                        print(f"[Caption] llama-server launch failed: {e}")
+
             # ── Preload model once before parallel NL generation ──
             _model_preloaded = False
             _lm_model = str(kwargs.get("模型", ""))
@@ -382,12 +413,25 @@ class ImageCaption:
                         print(f"[Caption] batch seed {i} error: {e}")
                         results[i] = ""
 
+            # Restore original API URL if llama-server was used
+            if _llama_proc:
+                kwargs["API地址"] = _orig_api_url
+
             if should_unload and results:
                 try:
                     from .lm_studio import unload_all
                     unload_all()
                 except Exception:
                     pass
+
+            # Kill llama-server if launched
+            if _llama_proc:
+                try:
+                    _llama_proc.kill()
+                    _llama_proc.wait(timeout=5)
+                    print(f"[Caption] llama-server stopped")
+                except Exception as e:
+                    print(f"[Caption] llama-server cleanup: {e}")
 
             out_reverse = "\n".join(results)
             return (results[0] if results else "", cap_prompt, cap_artist, cap_res, out_reverse)
@@ -413,6 +457,22 @@ class ImageCaption:
 
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
+
+            # ── Optional: launch llama-server instead of LM Studio ──
+            _llama_proc = None
+            _use_llama = bool(kwargs.get("启用 llama-server", False))
+            _llama_parallel = int(kwargs.get("llama-server 并行数", 4))
+            _orig_api_url = str(kwargs.get("API地址", "http://localhost:1234/v1"))
+            if _use_llama:
+                model_path = str(kwargs.get("模型路径", "")).strip()
+                if model_path:
+                    try:
+                        port = _find_free_port()
+                        print(f"[Caption] Launching llama-server on port {port}, parallel={_llama_parallel}")
+                        _llama_proc = _launch_llama_server(model_path, _llama_parallel, port)
+                        kwargs["API地址"] = f"http://127.0.0.1:{port}/v1"
+                    except Exception as e:
+                        print(f"[Caption] llama-server launch failed: {e}")
 
             # ── Preload model once ──
             _model_preloaded = False
@@ -459,12 +519,25 @@ class ImageCaption:
                         print(f"[Caption] image batch frame {i} error: {e}")
                         results[i] = ""
 
+            # Restore original API URL if llama-server was used
+            if _llama_proc:
+                kwargs["API地址"] = _orig_api_url
+
             if should_unload and results:
                 try:
                     from .lm_studio import unload_all
                     unload_all()
                 except Exception:
                     pass
+
+            # Kill llama-server if launched
+            if _llama_proc:
+                try:
+                    _llama_proc.kill()
+                    _llama_proc.wait(timeout=5)
+                    print(f"[Caption] llama-server stopped")
+                except Exception as e:
+                    print(f"[Caption] llama-server cleanup: {e}")
 
             out_reverse = "\n".join(results)
             return (results[0] if results else "", cap_prompt, cap_artist, cap_res, out_reverse)
@@ -558,4 +631,63 @@ class ImageCaption:
 
 
 NODE_CLASS_MAPPINGS = {"ImageCaption": ImageCaption}
+
+
+import subprocess as _subprocess
+import socket as _socket
+
+def _find_llama_server() -> str:
+    """Locate the llama-server binary bundled with LM Studio."""
+    import os, glob
+    home = os.path.expanduser("~")
+    base = os.path.join(home, ".lmstudio", "extensions", "backends")
+    # Search for CUDA versions, pick the latest
+    candidates = sorted(glob.glob(os.path.join(base, "llama.cpp-win-x86_64-nvidia-cuda*", "llama-server.exe")))
+    if candidates:
+        return candidates[-1]  # latest version
+    candidates = sorted(glob.glob(os.path.join(base, "llama.cpp-win-x86_64-*", "llama-server.exe")))
+    if candidates:
+        return candidates[-1]
+    return ""
+
+def _find_free_port() -> int:
+    """Find a free TCP port."""
+    with _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+def _launch_llama_server(model_path: str, parallel: int, port: int) -> _subprocess.Popen:
+    """Launch llama-server as a subprocess, return the Popen handle."""
+    exe = _find_llama_server()
+    if not exe:
+        raise FileNotFoundError("llama-server not found in LM Studio backends")
+    cmd = [
+        exe,
+        "-m", model_path,
+        "--port", str(port),
+        "--parallel", str(parallel),
+        "--n-gpu-layers", "99",
+        "--host", "127.0.0.1",
+    ]
+    proc = _subprocess.Popen(
+        cmd,
+        stdout=_subprocess.DEVNULL,
+        stderr=_subprocess.DEVNULL,
+        creationflags=_subprocess.CREATE_NO_WINDOW if hasattr(_subprocess, "CREATE_NO_WINDOW") else 0,
+    )
+    # Wait for server to be ready
+    import time, requests
+    url = f"http://127.0.0.1:{port}/v1/models"
+    for _ in range(60):  # up to 60s
+        try:
+            r = requests.get(url, timeout=2)
+            if r.status_code == 200:
+                return proc
+        except Exception:
+            pass
+        time.sleep(1)
+    # Timeout - kill and raise
+    proc.kill()
+    raise TimeoutError("llama-server failed to start within 60s")
+
 NODE_DISPLAY_NAME_MAPPINGS = {"ImageCaption": "图片反推描述"}
