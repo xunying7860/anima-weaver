@@ -82,6 +82,19 @@ def _tensor_to_b64(image_tensor, frame: int = 0) -> str:
     except Exception:
         return ""
     
+def _scan_gguf_models() -> list[str]:
+    """Scan H:\AI_models for GGUF model files."""
+    import os, glob
+    models: list[str] = []
+    base = r"H:\AI_models"
+    if os.path.isdir(base):
+        for root, dirs, files in os.walk(base):
+            for f in files:
+                if f.endswith(".gguf") and "mmproj" not in f.lower():
+                    full = os.path.join(root, f)
+                    models.append(full)
+    return sorted(models) if models else [""]
+
 def _image_batch_count(image_tensor) -> int:
     """Return number of frames in an IMAGE tensor (1 if single image)."""
     if image_tensor is None:
@@ -153,9 +166,8 @@ class ImageCaption:
                      "tooltip": "启用 llama-server 直连（绕过 LM Studio），需指定模型路径"},
                 ),
                 "模型路径": (
-                    "STRING",
-                    {"default": "", "multiline": False,
-                     "tooltip": "GGUF 模型文件路径，启用 llama-server 时必填"},
+                    _scan_gguf_models(),
+                    {"tooltip": "选择 GGUF 模型文件，启用 llama-server 时必填"},
                 ),
                 "llama-server 并行数": (
                     "INT",
@@ -656,6 +668,15 @@ def _find_free_port() -> int:
         s.bind(("127.0.0.1", 0))
         return s.getsockname()[1]
 
+def _find_mmproj(model_path: str) -> str:
+    """Find the mmproj file for a VL model (same dir, contains 'mmproj')."""
+    import os, glob
+    dir_path = os.path.dirname(model_path)
+    pattern = os.path.join(dir_path, "*mmproj*")
+    matches = sorted(glob.glob(pattern))
+    return matches[0] if matches else ""
+
+
 def _launch_llama_server(model_path: str, parallel: int, port: int) -> _subprocess.Popen:
     """Launch llama-server as a subprocess, return the Popen handle."""
     exe = _find_llama_server()
@@ -669,6 +690,11 @@ def _launch_llama_server(model_path: str, parallel: int, port: int) -> _subproce
         "--n-gpu-layers", "99",
         "--host", "127.0.0.1",
     ]
+    # Auto-detect mmproj for VL models
+    mmproj = _find_mmproj(model_path)
+    if mmproj:
+        cmd.extend(["--mmproj", mmproj])
+        print(f"[Caption] Using mmproj: {mmproj}")
     proc = _subprocess.Popen(
         cmd,
         stdout=_subprocess.DEVNULL,
