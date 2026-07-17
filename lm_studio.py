@@ -19,21 +19,6 @@ import sys
 import time
 from typing import Any, Optional
 
-# ── Multi-instance round-robin ───────────────────────────────────
-_api_url_index = 0
-_api_url_lock = threading.Lock()
-
-def _pick_api_url(base_url: str) -> str:
-    """Pick next API URL from comma-separated list (round-robin)."""
-    urls = [u.strip() for u in base_url.split(",") if u.strip()]
-    if len(urls) <= 1:
-        return base_url.rstrip("/")
-    global _api_url_index
-    with _api_url_lock:
-        idx = _api_url_index
-        _api_url_index = (idx + 1) % len(urls)
-    return urls[idx].rstrip("/")
-
 import requests
 
 # ── Constants ──────────────────────────────────────────────────────
