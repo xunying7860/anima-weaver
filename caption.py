@@ -565,6 +565,23 @@ class ImageCaption:
             return (results[0] if results else "", cap_prompt, cap_artist, cap_res, out_reverse)
 
         # ── Single mode ──────────────────────────────────────────────
+        # Optional: launch llama-server for single mode too
+        _llama_proc_single = None
+        if bool(kwargs.get("启用 llama-server", False)):
+            model_path = str(kwargs.get("模型路径", "")).strip()
+            _llama_parallel = int(kwargs.get("llama-server 并行数", 4))
+            _orig_api_url_single = str(kwargs.get("API地址", "http://localhost:1234/v1"))
+            if model_path:
+                try:
+                    port = _find_free_port()
+                    print(f"[Caption] Single mode: launching llama-server on port {port}")
+                    _llama_proc_single = _launch_llama_server(model_path, _llama_parallel, port)
+                    kwargs["API地址"] = f"http://127.0.0.1:{port}/v1"
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    print(f"[Caption] Single mode: llama-server launch failed: {e}")
+
         seed_val = kwargs.get("随机种子", None)
         if seed_val is None or str(seed_val) == "":
             raw_seed = random.randint(0, 0xFFFF_FFFF_FFFF_FFFF)
@@ -641,6 +658,15 @@ class ImageCaption:
             print(f"ImageCaption error: {e}")
             traceback.print_exc()
             nl = f"[API Error: {e}]"
+
+        # Restore API URL and kill llama-server if launched
+        if _llama_proc_single:
+            kwargs["API地址"] = _orig_api_url_single
+            try:
+                _llama_proc_single.kill()
+                _llama_proc_single.wait(timeout=5)
+            except Exception as e:
+                print(f"[Caption] Single mode: llama-server cleanup: {e}")
 
         if kwargs.get("生成后卸载", False) and model_was_loaded:
             try:
