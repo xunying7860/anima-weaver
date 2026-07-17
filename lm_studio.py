@@ -119,9 +119,11 @@ def _run_lms(args: list[str], timeout: int = 60) -> tuple[int, str, str]:
             cmd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout,
         )
-        return (proc.returncode, proc.stdout, proc.stderr)
+        return (proc.returncode, proc.stdout or "", proc.stderr or "")
     except FileNotFoundError:
         return (1, "", f"lms binary not found at {lms_path}")
     except subprocess.TimeoutExpired:
