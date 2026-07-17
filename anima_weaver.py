@@ -133,7 +133,7 @@ class AnimaWeaver:
                 "API地址": (
                     "STRING",
                     {"default": "http://localhost:1234/v1", "multiline": False,
-                     "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
+                     "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）。用逗号分隔多个地址可实现本地并发：http://127.0.0.1:1234/v1,http://127.0.0.1:1235/v1"},
                 ),
                 "云端模型名": (
                     "STRING",
