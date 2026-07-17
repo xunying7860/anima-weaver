@@ -327,9 +327,11 @@ class ImageCaption:
                     ctx = int(kwargs.get("上下文长度", 4096))
                     if ensure_model_loaded(_lm_model, context_length=ctx):
                         _model_preloaded = True
-                        print(f"[Caption] Preloaded model: {_lm_model}")
                 except Exception as e:
                     print(f"[Caption] Preload failed: {e}")
+
+            # Pre-encode image once to avoid repeated base64 encoding per thread
+            _batch_image_b64 = _tensor_to_b64(kwargs.get("图像"))
 
             results: list[str] = [""] * len(seeds)
             concurrency = int(kwargs.get("并发数", 4))
@@ -360,7 +362,17 @@ class ImageCaption:
                         user_parts.append("Describe in detail.")
                     if res_line:
                         seed_kwargs["分辨率"] = res_line
-                    fut = executor.submit(self._generate_one, seed_kwargs, "\n".join(user_parts), system_prompt)
+                    # Use pre-encoded image to avoid per-thread tensor→b64 conversion
+                    if _batch_image_b64:
+                        fut = executor.submit(
+                            self._generate_one_with_b64,
+                            system_prompt, "\n".join(user_parts), _batch_image_b64,
+                            _lm_model=_lm_model, _api_key=_api_key,
+                            _preloaded=_model_preloaded,
+                            kwargs_raw=kwargs,
+                        )
+                    else:
+                        fut = executor.submit(self._generate_one, seed_kwargs, "\n".join(user_parts), system_prompt)
                     fut_map[fut] = i
                 for future in as_completed(fut_map):
                     i = fut_map[future]
