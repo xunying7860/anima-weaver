@@ -55,8 +55,8 @@ def _build_batch_prompt(fmt: str = "") -> str:
     )
 
 
-def _tensor_to_b64(image_tensor) -> str:
-    """Convert ComfyUI IMAGE tensor (B,H,W,3) to base64 JPEG string."""
+def _tensor_to_b64(image_tensor, frame: int = 0) -> str:
+    """Convert a single frame from ComfyUI IMAGE tensor to base64 JPEG."""
     if image_tensor is None:
         return ""
     try:
@@ -64,15 +64,34 @@ def _tensor_to_b64(image_tensor) -> str:
         from PIL import Image
         import io
         import base64
-        img = image_tensor[0]  # first frame
+        if image_tensor.dim() < 3:
+            return ""
+        # Handle single image [1,H,W,3] or batched [N,H,W,3]
+        frame_idx = min(frame, image_tensor.shape[0] - 1) if image_tensor.dim() >= 4 else 0
+        if image_tensor.dim() >= 4:
+            img = image_tensor[frame_idx]
+        else:
+            img = image_tensor
         img = (img * 255).to(torch.uint8)
         img_np = img.cpu().numpy()
-        pil_img = Image.fromarray(img_np)
+        from PIL import Image as PILImage
+        pil_img = PILImage.fromarray(img_np)
         buf = io.BytesIO()
         pil_img.save(buf, format="JPEG", quality=95)
         return base64.b64encode(buf.getvalue()).decode("utf-8")
     except Exception:
         return ""
+    
+def _image_batch_count(image_tensor) -> int:
+    """Return number of frames in an IMAGE tensor (1 if single image)."""
+    if image_tensor is None:
+        return 0
+    try:
+        if image_tensor.dim() >= 4:
+            return image_tensor.shape[0]
+        return 1
+    except Exception:
+        return 0
 
 
 class ImageCaption:
@@ -190,6 +209,45 @@ class ImageCaption:
     @classmethod
     def IS_CHANGED(cls, **kwargs) -> float:
         return random.random()
+
+    def _generate_one_with_b64(self,
+                                 system_prompt: str,
+                                 user_msg: str,
+                                 image_b64: str,
+                                 _lm_model: str,
+                                 _api_key: str,
+                                 _preloaded: bool,
+                                 kwargs_raw: dict) -> str:
+        """Generate NL from a pre-encoded base64 image. Avoids re-encoding per frame."""
+        from .lm_studio import generate_nl_from_lm_studio
+        base_url = str(kwargs_raw.get("API地址", "http://localhost:1234/v1"))
+        cloud_model = str(kwargs_raw.get("云端模型名", "deepseek-chat")).strip()
+        if _api_key:
+            model_for_api = cloud_model or _lm_model
+            if model_for_api and model_for_api != "(no models found)":
+                return generate_nl_from_lm_studio(
+                    user_msg, base_url,
+                    api_key=_api_key, model_name=model_for_api,
+                    detailed=True, timeout=180,
+                    system_prompt=system_prompt,
+                    max_tokens_override=int(kwargs_raw.get("最大截断长度", 1024)),
+                    image_b64=image_b64,
+                ) or ""
+        else:
+            if _lm_model and _lm_model != "(no models found)":
+                if not _preloaded:
+                    from .lm_studio import ensure_model_loaded
+                    ctx = int(kwargs_raw.get("上下文长度", 4096))
+                    ensure_model_loaded(_lm_model, context_length=ctx)
+                return generate_nl_from_lm_studio(
+                    user_msg, base_url,
+                    model_name=_lm_model,
+                    detailed=True, timeout=180,
+                    system_prompt=system_prompt,
+                    max_tokens_override=int(kwargs_raw.get("最大截断长度", 1024)),
+                    image_b64=image_b64,
+                ) or ""
+        return ""
 
     def _generate_one(self, kwargs: dict, user_msg: str, system_prompt: str) -> str:
         from .lm_studio import generate_nl_from_lm_studio
@@ -310,6 +368,83 @@ class ImageCaption:
                         results[i] = future.result() or ""
                     except Exception as e:
                         print(f"[Caption] batch seed {i} error: {e}")
+                        results[i] = ""
+
+            if should_unload and results:
+                try:
+                    from .lm_studio import unload_all
+                    unload_all()
+                except Exception:
+                    pass
+
+            out_reverse = "\n".join(results)
+            return (results[0] if results else "", cap_prompt, cap_artist, cap_res, out_reverse)
+
+        # ── Image-batch mode: single IMAGE tensor with multiple frames ──
+        image_tensor = kwargs.get("图像")
+        img_batch_count = _image_batch_count(image_tensor)
+        if img_batch_count > 1:
+            # Auto-batch per image frame, no 种子串 needed
+            cap_prompt = kwargs.get("提示词串", "")
+            cap_artist = kwargs.get("画师串", "")
+            cap_res = kwargs.get("分辨率串", "")
+            aspect_ratio = str(kwargs.get("分辨率", "")).strip()
+            desc_fmt = str(kwargs.get("描述格式", "")).strip()
+            custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
+
+            if custom_prompt:
+                system_prompt = custom_prompt
+            else:
+                system_prompt = _build_system_prompt(desc_fmt)
+            if aspect_ratio:
+                system_prompt += f"\nTarget resolution: {aspect_ratio}"
+
+            should_unload = bool(kwargs.get("生成后卸载", False))
+            kwargs["生成后卸载"] = False
+
+            # ── Preload model once ──
+            _model_preloaded = False
+            _lm_model = str(kwargs.get("模型", ""))
+            _api_key = str(kwargs.get("API密钥", "")).strip()
+            if not _api_key and _lm_model and _lm_model != "(no models found)":
+                try:
+                    from .lm_studio import ensure_model_loaded
+                    ctx = int(kwargs.get("上下文长度", 4096))
+                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                        _model_preloaded = True
+                except Exception:
+                    pass
+
+            results: list[str] = [""] * img_batch_count
+            concurrency = int(kwargs.get("并发数", 4))
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+            with ThreadPoolExecutor(max_workers=concurrency) as executor:
+                fut_map = {}
+                for i in range(img_batch_count):
+                    image_b64 = _tensor_to_b64(image_tensor, i)
+                    if not image_b64:
+                        continue
+                    user_parts: list[str] = []
+                    if aspect_ratio:
+                        user_parts.append(f"Resolution: {aspect_ratio}")
+                    if not user_parts:
+                        user_parts.append("Describe the image in detail.")
+                    user_msg = "\n".join(user_parts)
+
+                    fut = executor.submit(
+                        self._generate_one_with_b64,
+                        system_prompt, user_msg, image_b64,
+                        _lm_model=_lm_model, _api_key=_api_key,
+                        _preloaded=_model_preloaded,
+                        kwargs_raw=kwargs,
+                    )
+                    fut_map[fut] = i
+                for future in as_completed(fut_map):
+                    i = fut_map[future]
+                    try:
+                        results[i] = future.result() or ""
+                    except Exception as e:
+                        print(f"[Caption] image batch frame {i} error: {e}")
                         results[i] = ""
 
             if should_unload and results:
