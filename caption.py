@@ -715,9 +715,12 @@ def _find_mmproj(model_path: str) -> str:
 
 def _launch_llama_server(model_path: str, parallel: int, port: int) -> _subprocess.Popen:
     """Launch llama-server as a subprocess, return the Popen handle."""
+    import os as _os
     exe = _find_llama_server()
     if not exe:
         raise FileNotFoundError("llama-server not found in LM Studio backends")
+    # Use the exe's directory as working directory so DLLs are found
+    workdir = _os.path.dirname(exe)
     cmd = [
         exe,
         "-m", model_path,
@@ -725,31 +728,53 @@ def _launch_llama_server(model_path: str, parallel: int, port: int) -> _subproce
         "--parallel", str(parallel),
         "--n-gpu-layers", "99",
         "--host", "127.0.0.1",
+        "--no-warmup",  # skip warmup, load model directly
     ]
     # Auto-detect mmproj for VL models
     mmproj = _find_mmproj(model_path)
     if mmproj:
         cmd.extend(["--mmproj", mmproj])
         print(f"[Caption] Using mmproj: {mmproj}")
+    import tempfile as _tempfile
+    log_file = _os.path.join(_tempfile.gettempdir(), f"llama-server-port{port}.log")
+    print(f"[Caption] Launching: {' '.join(cmd)}")
+    print(f"[Caption] Work dir: {workdir}, Log: {log_file}")
     proc = _subprocess.Popen(
         cmd,
-        stdout=_subprocess.DEVNULL,
-        stderr=_subprocess.DEVNULL,
+        stdout=open(log_file, "w"),
+        stderr=_subprocess.STDOUT,
+        cwd=workdir,
         creationflags=_subprocess.CREATE_NO_WINDOW if hasattr(_subprocess, "CREATE_NO_WINDOW") else 0,
     )
     # Wait for server to be ready
     import time, requests
     url = f"http://127.0.0.1:{port}/v1/models"
-    for _ in range(60):  # up to 60s
+    for _ in range(120):  # up to 120s
         try:
             r = requests.get(url, timeout=2)
             if r.status_code == 200:
+                # Check that model is actually loaded
+                models_data = r.json()
+                models_list = models_data.get("data", [])
+                if models_list:
+                    print(f"[Caption] llama-server ready, model: {models_list[0].get('id', 'unknown')}")
+                else:
+                    print(f"[Caption] llama-server ready (no models reported)")
                 return proc
-        except Exception:
+        except requests.ConnectionError:
             pass
+        except Exception as e:
+            print(f"[Caption] llama-server health check: {e}")
         time.sleep(1)
-    # Timeout - kill and raise
+    # Timeout - capture log and kill
     proc.kill()
-    raise TimeoutError("llama-server failed to start within 60s")
+    proc.wait(timeout=5)
+    try:
+        with open(log_file, "r") as f:
+            last = f.read()[-2000:]
+        print(f"[Caption] llama-server log tail:\n{last}")
+    except Exception:
+        pass
+    raise TimeoutError("llama-server failed to start within 120s")
 
 NODE_DISPLAY_NAME_MAPPINGS = {"ImageCaption": "图片反推描述"}
