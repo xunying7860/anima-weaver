@@ -270,6 +270,21 @@ def ensure_model_loaded(
     # Fast path — quick check without lock
     loaded = get_loaded_models()
     if model_name in loaded:
+        # If parallel is specified and slot count doesn't match, force reload
+        if parallel is not None and parallel > 0:
+            try:
+                info = _run_lms(["ps", "--json"], timeout=10)
+                if info[0] == 0 and info[1]:
+                    import json as _jj
+                    models_info = _jj.loads(info[1])
+                    for m in models_info if isinstance(models_info, list) else []:
+                        if m.get("instance_ref", "") == model_name or m.get("id", "") == model_name:
+                            cur_parallel = m.get("parallel", 0)
+                            if cur_parallel and cur_parallel != parallel:
+                                print(f"[LM Studio] Slot mismatch: current={cur_parallel}, desired={parallel}, reloading...")
+                                break
+            except Exception:
+                pass
         return True
 
     # Unload any other loaded model before switching

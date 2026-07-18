@@ -133,7 +133,7 @@ class AnimaWeaver:
                 "自动上下文长度": (
                     "BOOLEAN",
                     {"default": False,
-                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 1684，仅本地模型有效"},
+                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 2048，仅本地模型有效"},
                 ),
                 "API地址": (
                     "STRING",
