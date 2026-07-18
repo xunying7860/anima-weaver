@@ -113,6 +113,10 @@ class AnimaWeaver:
                     ["manual", "lm_studio"],
                     {"default": "manual"},
                 ),
+                "强制详细自然语言": (
+                    "BOOLEAN",
+                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 512 tokens）"},
+                ),
                 "模型": (model_list,),
                 "生成后卸载": (
                     "BOOLEAN",
@@ -140,14 +144,18 @@ class AnimaWeaver:
                     {"default": "http://localhost:1234/v1", "multiline": False,
                      "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
                 ),
-                "云端模型名": (
-                    "STRING",
-                    {"default": "deepseek-chat", "tooltip": "云端模型名（如 deepseek-chat），填 API 密钥时此值会覆盖下拉框的模型选择"},
+                "请求数": (
+                    "INT",
+                    {"default": 4, "min": 1, "max": 128, "step": 1,
+                     "tooltip": "批量模式并发请求数。本地模型建议保持 4（默认）或更低，显存足够/云端模型可尝试更高的值，可能有其他未知问题"},
                 ),
-                "强制详细自然语言": (
-                    "BOOLEAN",
-                    {"default": False, "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 512 tokens）"},
+                "最大并发数": (
+                    "INT",
+                    {"default": 4, "min": 1, "max": 128, "step": 1,
+                     "tooltip": "控制本地模型加载时的 Max Concurrent Predictions（--parallel 参数），仅自动上下文长度开启时生效"},
                 ),
+
+
                 "最大截断长度": (
                     "INT",
                     {"default": 0, "min": 0, "max": 1080, "step": 8,
@@ -166,11 +174,7 @@ class AnimaWeaver:
                     "BOOLEAN",
                     {"default": True},
                 ),
-                "请求数": (
-                    "INT",
-                    {"default": 4, "min": 1, "max": 128, "step": 1,
-                     "tooltip": "批量模式并发请求数。本地模型建议保持 4（默认）或更低，显存足够/云端模型可尝试更高的值，可能有其他未知问题"},
-                ),
+
             },
             "optional": {
                 "随机种子": (
