@@ -1,11 +1,10 @@
 """
 Anima Weaver — Text List to JSON Array Node.
 Uses INPUT_IS_LIST to receive ALL batch items in a single execution.
-Outputs one complete JSON array, NOT per-batch fragments.
+Outputs one complete multiline text.
 """
 
 from __future__ import annotations
-import json as _json
 
 
 class AnimaTextListToMultiline:
@@ -27,14 +26,14 @@ class AnimaTextListToMultiline:
 
     CATEGORY = "Anima Weaver"
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("JSON数组",)
+    RETURN_NAMES = ("多行文本",)
     FUNCTION = "convert"
     OUTPUT_NODE = False
 
     def convert(self, 文本列表: list[str]) -> tuple[str]:
         # Receive ALL batch items as a list, output one complete JSON array
         items = [t.strip() for t in 文本列表 if t and t.strip()]
-        return (_json.dumps(items, ensure_ascii=False),)
+        return ("\n".join(items),)
 
 
 NODE_CLASS_MAPPINGS = {"AnimaTextListToMultiline": AnimaTextListToMultiline}
