@@ -215,6 +215,11 @@ class AnimaImageCaption:
                     {"default": "", "multiline": False,
                      "tooltip": "自定义描述前缀，放在每段描述最前面（末尾自动加逗号）。例：masterpiece, best quality"},
                 ),
+                "对齐倍数": (
+                    "INT",
+                    {"default": 16, "min": 1, "max": 256, "step": 1,
+                     "tooltip": "将图片宽高对齐到该值的倍数，避免视觉编码器崩溃。默认16，Qwen-VL系用14"},
+                ),
             },
         }
 
@@ -490,10 +495,11 @@ class AnimaImageCaption:
             for fp in image_files:
                 try:
                     pil = PILImage.open(fp).convert("RGB")
-                    # Ensure dimensions are multiples of 14 (Qwen-VL patch size)
+                    # 对齐宽高到指定倍数，避免视觉编码器崩溃
+                    align = int(kwargs.get("对齐倍数", 16))
                     w, h = pil.size
-                    new_w = (w + 13) // 14 * 14
-                    new_h = (h + 13) // 14 * 14
+                    new_w = (w + align - 1) // align * align
+                    new_h = (h + align - 1) // align * align
                     if new_w != w or new_h != h:
                         pil = pil.resize((new_w, new_h), PILImage.LANCZOS)
                     import io, base64 as _b64
