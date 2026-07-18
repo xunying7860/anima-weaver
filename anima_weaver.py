@@ -122,6 +122,11 @@ class AnimaWeaver:
                     "BOOLEAN",
                     {"default": False},
                 ),
+                "API地址": (
+                    "STRING",
+                    {"default": "http://localhost:1234/v1", "multiline": False,
+                     "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
+                ),
                 "API密钥": (
                     "STRING",
                     {"default": ""},
@@ -139,11 +144,7 @@ class AnimaWeaver:
                     {"default": False,
                      "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 2048，仅本地模型有效"},
                 ),
-                "API地址": (
-                    "STRING",
-                    {"default": "http://localhost:1234/v1", "multiline": False,
-                     "tooltip": "LM Studio API 地址（或兼容 OpenAI 的 API 地址）"},
-                ),
+
                 "请求数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 128, "step": 1,
