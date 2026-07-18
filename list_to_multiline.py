@@ -1,13 +1,15 @@
 """
 Anima Weaver — Text List to Multiline Node.
-Converts a text list (STRING is_list) to a single multiline STRING.
+Accumulates text items across batch executions into a single multiline STRING.
 """
 
 from __future__ import annotations
 
 
 class AnimaTextListToMultiline:
-    """Convert a text list input to multiline STRING output."""
+    """Accumulate text items across batch into one multiline text."""
+
+    _accumulator: list[str] = []  # class-level cache shared across batch calls
 
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, object]:
@@ -15,8 +17,8 @@ class AnimaTextListToMultiline:
             "required": {
                 "文本列表": (
                     "STRING",
-                    {"forceInput": True, "multiline": True, "is_list": True,
-                     "tooltip": "接入 WD14 等节点的文本列表输出"},
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入 WD14 等节点的文本输出"},
                 ),
             },
         }
@@ -27,12 +29,17 @@ class AnimaTextListToMultiline:
     FUNCTION = "convert"
     OUTPUT_NODE = False
 
-    def convert(self, 文本列表: str | list[str]) -> tuple[str]:
-        # is_list=True passes items one per batch execution as separate strings
-        # ComfyUI collects them into a list when batch count > 1
-        if isinstance(文本列表, list):
-            return ("\n".join(文本列表),)
-        return (文本列表,)
+    @classmethod
+    def IS_CHANGED(cls, **kwargs) -> float:
+        # Reset accumulator at the start of each new batch queue
+        cls._accumulator = []
+        return 0.0
+
+    def convert(self, 文本列表: str) -> tuple[str]:
+        if 文本列表 and 文本列表.strip():
+            if 文本列表 not in self._accumulator:
+                self._accumulator.append(文本列表.strip())
+        return ("\n".join(self._accumulator),)
 
 
 NODE_CLASS_MAPPINGS = {"AnimaTextListToMultiline": AnimaTextListToMultiline}
