@@ -207,6 +207,11 @@ class AnimaImageCaption:
                     {"default": "", "multiline": False,
                      "tooltip": "自定义描述前缀，放在每段描述最前面（末尾自动加逗号）。例：masterpiece, best quality"},
                 ),
+                "变化文本": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "可变文本，每行对应一张图片，与固定前缀和描述文本组合后保存到 txt"},
+                ),
                 "图片路径": (
                     "STRING",
                     {"default": "", "multiline": False,
@@ -449,8 +454,19 @@ class AnimaImageCaption:
                     pass
 
             out_reverse = "\n".join(results)
-            prefix = str(kwargs.get("固定前缀", "")).strip()
-            out_reverse = "\n".join(_apply_prefix(r, prefix) for r in results) if prefix else "\n".join(results)
+            _prefix_seed = str(kwargs.get("固定前缀", "")).strip()
+            _var_seed = [v.strip() for v in str(kwargs.get("变化文本", "")).split("\n")]
+            _combined_seed = []
+            for idx, r in enumerate(results):
+                parts = []
+                if _prefix_seed:
+                    parts.append(_prefix_seed)
+                if idx < len(_var_seed) and _var_seed[idx]:
+                    parts.append(_var_seed[idx])
+                if r:
+                    parts.append(r)
+                _combined_seed.append(", ".join(parts) if parts else "")
+            out_reverse = "\n".join(_combined_seed)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Folder batch mode: load images from a folder path ──
@@ -584,27 +600,34 @@ class AnimaImageCaption:
                 except Exception:
                     pass
 
-            # ── Apply prefix & save to .txt files if enabled ──
-            prefix_txt = str(kwargs.get("固定前缀", "")).strip()
-            if prefix_txt:
-                prefixed_results = [_apply_prefix(r, prefix_txt) for r in results]
-            else:
-                prefixed_results = results
+            # ── Apply prefix + variable text & save to .txt files if enabled ──
+            _prefix = str(kwargs.get("固定前缀", "")).strip()
+            _var_lines = [v.strip() for v in str(kwargs.get("变化文本", "")).split("\n")]
+            _combined = []
+            for idx, r in enumerate(results):
+                parts = []
+                if _prefix:
+                    parts.append(_prefix)
+                if idx < len(_var_lines) and _var_lines[idx]:
+                    parts.append(_var_lines[idx])
+                if r:
+                    parts.append(r)
+                _combined.append(", ".join(parts) if parts else "")
 
             if bool(kwargs.get("保存为txt", False)):
                 saved = 0
                 for i, fp in enumerate(image_files):
-                    if i < len(prefixed_results) and prefixed_results[i]:
+                    if i < len(_combined) and _combined[i]:
                         txt_path = os.path.splitext(fp)[0] + ".txt"
                         try:
                             with open(txt_path, "w", encoding="utf-8") as tf:
-                                tf.write(prefixed_results[i])
+                                tf.write(_combined[i])
                             saved += 1
                         except Exception as e:
                             print(f"[Caption] Failed to save txt for {fp}: {e}")
                 print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
 
-            out_reverse = "\n".join(prefixed_results)
+            out_reverse = "\n".join(_combined)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Single mode ──────────────────────────────────────────────
