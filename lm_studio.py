@@ -197,6 +197,7 @@ def load_model(
     model_name: str,
     identifier: Optional[str] = None,
     context_length: int = 4096,
+    parallel: Optional[int] = None,
 ) -> bool:
     """
     Load a model via ``lms load``.
@@ -219,6 +220,8 @@ def load_model(
         ``True`` if the model was loaded successfully (returncode 0).
     """
     args = ["load", model_name, "--context-length", str(context_length)]
+    if parallel is not None and parallel > 0:
+        args.extend(["--parallel", str(parallel)])
     if identifier:
         args.extend(["--identifier", identifier])
 
@@ -262,6 +265,7 @@ def get_loaded_models() -> list[str]:
 def ensure_model_loaded(
     model_name: str,
     context_length: int = 4096,
+    parallel: Optional[int] = None,
 ) -> bool:
     """
     Ensure a model is loaded in LM Studio memory.
@@ -293,7 +297,7 @@ def ensure_model_loaded(
 
     # Try loading with retries
     for attempt in range(_LMS_MAX_RETRIES):
-        ok = load_model(model_name, context_length=context_length)
+        ok = load_model(model_name, context_length=context_length, parallel=parallel)
         if ok:
             time.sleep(2.0)
             # Verify it actually loaded

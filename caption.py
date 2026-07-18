@@ -145,8 +145,8 @@ class AnimaImageCaption:
                 ),
                 "并发数": (
                     "INT",
-                    {"default": 4, "min": 1, "max": 128, "step": 1,
-                     "tooltip": "批量模式下 LLM 请求的并发数（默认 4，最大 128）"},
+                    {"default": 4, "min": 1, "max": 8, "step": 1,
+                     "tooltip": "批量模式下 LLM 请求的并发数。本地 LM Studio 建议 4~8，云端 API 可设更高"},
                 ),
             },
             "optional": {
@@ -263,7 +263,7 @@ class AnimaImageCaption:
                 if not _preloaded:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs_raw.get("上下文长度", 4096))
-                    ensure_model_loaded(_lm_model, context_length=ctx)
+                    ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
                     model_name=_lm_model,
@@ -298,7 +298,7 @@ class AnimaImageCaption:
             if lm_model and lm_model != "(no models found)":
                 ctx = int(kwargs.get("上下文长度", 4096))
                 from .lm_studio import ensure_model_loaded
-                ensure_model_loaded(lm_model, context_length=ctx)
+                ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
                 nl = generate_nl_from_lm_studio(
                     user_msg, base_url,
                     model_name=lm_model,
@@ -350,7 +350,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4))):
                         _model_preloaded = True
                 except Exception as e:
                     print(f"[Caption] Preload failed: {e}")
@@ -452,7 +452,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4))):
                         _model_preloaded = True
                 except Exception as e:
                     print(f"[Caption] Image batch preload failed: {e}")
@@ -546,7 +546,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4))):
                         _model_preloaded = True
                         print(f"[Caption] Folder batch: preloaded {_lm_model}")
                 except Exception as e:
@@ -668,7 +668,7 @@ class AnimaImageCaption:
                 if lm_model and lm_model != "(no models found)":
                     if not kwargs.get("_preloaded"):
                         ctx = int(kwargs.get("上下文长度", 4096))
-                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
+                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
                     else:
                         model_was_loaded = True
                     if model_was_loaded:
