@@ -150,6 +150,11 @@ class AnimaImageCaption:
                     {"default": 4, "min": 1, "max": 128, "step": 1,
                      "tooltip": ""},
                 ),
+                "最大并发数": (
+                    "INT",
+                    {"default": 4, "min": 1, "max": 128, "step": 1,
+                     "tooltip": "控制 LM Studio 的 Max Concurrent Predictions（模型加载时 --parallel 参数）"},
+                ),
             },
             "optional": {
                 "随机种子": (
@@ -202,7 +207,7 @@ class AnimaImageCaption:
                     {"default": "", "multiline": False,
                      "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
                 ),
-                "强制缩放": (
+                "自动上下文长度": (
                     "BOOLEAN",
                     {"default": False,
                      "tooltip": "启用后将图片缩放到约 100 万像素（Lanczos），降低显存压力"},
@@ -283,7 +288,7 @@ class AnimaImageCaption:
                 if not _preloaded:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs_raw.get("上下文长度", 4096))
-                    ensure_model_loaded(_lm_model, context_length=ctx)
+                    ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)))
                 print(f"[Caption] Requesting{tag} via local model {_lm_model}")
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
@@ -319,7 +324,7 @@ class AnimaImageCaption:
             if lm_model and lm_model != "(no models found)":
                 ctx = int(kwargs.get("上下文长度", 4096))
                 from .lm_studio import ensure_model_loaded
-                ensure_model_loaded(lm_model, context_length=ctx)
+                ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)))
                 nl = generate_nl_from_lm_studio(
                     user_msg, base_url,
                     model_name=lm_model,
@@ -370,7 +375,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4))):
                         _model_preloaded = True
                 except Exception as e:
                     print(f"[Caption] Preload failed: {e}")
@@ -480,7 +485,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4))):
                         _model_preloaded = True
                         print(f"[Caption] Folder batch: preloaded {_lm_model}")
                 except Exception as e:
@@ -493,7 +498,7 @@ class AnimaImageCaption:
                 try:
                     pil = PILImage.open(fp).convert("RGB")
                     # 强制缩放到约 100 万像素（Lanczos）
-                    if bool(kwargs.get("强制缩放", False)):
+                    if bool(kwargs.get("自动上下文长度", False)):
                         w, h = pil.size
                         mp = w * h
                         target_mp = 1_000_000
@@ -647,7 +652,7 @@ class AnimaImageCaption:
                 if lm_model and lm_model != "(no models found)":
                     if not kwargs.get("_preloaded"):
                         ctx = int(kwargs.get("上下文长度", 4096))
-                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
+                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)))
                     else:
                         model_was_loaded = True
                     if model_was_loaded:
