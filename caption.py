@@ -445,8 +445,7 @@ class AnimaImageCaption:
                     pass
 
             out_reverse = "\n".join(results)
-            prefix = str(kwargs.get("固定前缀", "")).strip()
-            out_reverse = "\n".join(_apply_prefix(r, prefix) for r in results) if prefix else "\n".join(results)
+            out_reverse = "\n".join(results)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Folder batch mode: load images from a folder path ──
@@ -589,7 +588,7 @@ class AnimaImageCaption:
 
 
 
-            out_reverse = "\n".join(prefixed_results)
+            out_reverse = "\n".join(results)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Single mode ──────────────────────────────────────────────
@@ -677,9 +676,7 @@ class AnimaImageCaption:
             except Exception:
                 pass
 
-        prefix_single = str(kwargs.get("固定前缀", "")).strip()
-        nl_out = _apply_prefix(nl or "", prefix_single)
-        return (nl_out, "", "", "")
+        return (nl or "", "", "", "")
 
 
 NODE_CLASS_MAPPINGS = {"AnimaImageCaption": AnimaImageCaption}
