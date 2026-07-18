@@ -181,7 +181,7 @@ class AnimaWeaver:
                     "STRING",
                     {"forceInput": True, "tooltip": "从「底部控制」节点接入 Raffle 过滤参数"},
                 ),
-                "NL 系统提示词": (
+                "系统提示词": (
                     "STRING",
                     {"forceInput": True, "multiline": True,
                      "tooltip": "可选。自定义系统提示词，留空使用默认提示词"},
@@ -798,7 +798,7 @@ class AnimaWeaver:
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
                         model_for_api = cloud_model or lm_model
-                        custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("NL 系统提示词", "")
+                        custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("系统提示词", "")
                         max_tok = int(kwargs.get("最大截断长度", 0))
                         if max_tok == 0:
                             max_tok = 512 if detailed_nl else 256
@@ -820,7 +820,7 @@ class AnimaWeaver:
                             model_was_loaded = True
                         if model_was_loaded:
                             # Custom system prompt: detailed takes priority if in detailed mode
-                            custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("NL 系统提示词", "")
+                            custom_sp = kwargs.get("详细 NL 系统提示词", "") if detailed_nl else kwargs.get("系统提示词", "")
                             max_tok = int(kwargs.get("最大截断长度", 0))
                             if max_tok == 0:
                                 max_tok = 512 if detailed_nl else 256
