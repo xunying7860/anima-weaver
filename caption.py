@@ -192,25 +192,25 @@ class AnimaImageCaption:
                      "tooltip": "接入画师串（透传）"},
                 ),
 
-                "图片路径": (
-                    "STRING",
-                    {"default": "", "multiline": False,
-                     "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
-                ),
-                "保存为txt": (
-                    "BOOLEAN",
-                    {"default": False,
-                     "tooltip": "启用后将每张图的描述保存为同名的 .txt 文件到同一目录"},
-                ),
                 "固定前缀": (
                     "STRING",
                     {"default": "", "multiline": False,
                      "tooltip": "自定义描述前缀，放在每段描述最前面（末尾自动加逗号）。例：masterpiece, best quality"},
                 ),
+                "图片路径": (
+                    "STRING",
+                    {"default": "", "multiline": False,
+                     "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
+                ),
                 "对齐倍数": (
                     "INT",
                     {"default": 16, "min": 1, "max": 256, "step": 1,
                      "tooltip": "将图片宽高对齐到该值的倍数，避免视觉编码器崩溃。默认16，Qwen-VL系用14"},
+                ),
+                "保存为txt": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用后将每张图的描述保存为同名的 .txt 文件到同一目录"},
                 ),
             },
         }
