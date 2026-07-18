@@ -538,49 +538,12 @@ class AnimaImageCaption:
                         print(f"[Caption] File {i} [{fname}]: error — {e}")
                         results[i] = ""
 
-            # ── Retry failed images with degraded concurrency ──
-            failed_indices = [i for i, r in enumerate(results) if not r]
-            if failed_indices and concurrency > 1:
-                from .lm_studio import ensure_model_loaded
-                retry_conc = max(1, concurrency - 1)
-                print(f"[Caption] Retrying {len(failed_indices)} failed images with concurrency={retry_conc}...")
-                km = str(kwargs.get("模型", ""))
-                ak = str(kwargs.get("API密钥", "")).strip()
-                with ThreadPoolExecutor(max_workers=retry_conc) as retry_exec:
-                    retry_futs = {}
-                    for idx in failed_indices:
-                        if idx < len(_batch_b64_folder) and _batch_b64_folder[idx]:
-                            fut = retry_exec.submit(
-                                self._generate_one_with_b64,
-                                system_prompt, 
-                                "\n".join([
-                                    f"Resolution: {aspect_ratio}" if aspect_ratio else "",
-                                    "Describe the image in detail."
-                                ]).strip() or "Describe the image in detail.",
-                                _batch_b64_folder[idx],
-                                _lm_model=km, _api_key=ak,
-                                _preloaded=False,
-                                kwargs_raw=kwargs,
-                                _file_tag=os.path.basename(image_files[idx]),
-                            )
-                            retry_futs[fut] = idx
-                    for future in as_completed(retry_futs):
-                        i = retry_futs[future]
-                        try:
-                            r2 = future.result() or ""
-                            if r2:
-                                results[i] = r2
-                        except Exception:
-                            pass
-                retry_failed = [i for i, r in enumerate(results) if not r]
-                print(f"[Caption] Retry complete: {len(retry_failed)} still failed")
-
             # ── Summary: which files failed ──
             failed_indices = [i for i, r in enumerate(results) if not r]
             if failed_indices:
                 failed_names = [os.path.basename(image_files[i]) for i in failed_indices]
-                print(f"[Caption] Folder batch complete: {len(results) - len(failed_indices)}/{len(results)} OK, "
-                      f"{len(failed_indices)} failed — {failed_names}")
+                print(f"[Caption] ⚠️ {len(failed_indices)}/{len(results)} images failed — {failed_names}")
+                print(f"[Caption] ⚠️ Tip: try reducing '并发数' or adjust '对齐倍数' parameter")
 
             if should_unload:
                 try:
