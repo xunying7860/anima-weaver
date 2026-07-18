@@ -214,8 +214,8 @@ class AnimaWeaver:
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("生成的提示词", "调试信息", "提示词串", "画师串", "分辨率串", "反推串")
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = ("生成的提示词", "调试信息", "画师串", "分辨率串", "反推串")
     FUNCTION = "compose"
     OUTPUT_NODE = True
 
@@ -340,7 +340,7 @@ class AnimaWeaver:
         final = self._dedup_final(final)
         debug_lines.append(f"NL: {len(nl_used)} chars")
         debug_lines.append(f"Tags: {len(tag_prompt)} chars")
-        return (final, "\n".join(debug_lines), "", "", "", "")
+        return (final, "\n".join(debug_lines), "", "", "")
 
     @staticmethod
     def _dedup_final(text: str) -> str:
@@ -560,9 +560,8 @@ class AnimaWeaver:
         debug = f"Batch: {len(seeds)} seeds, {len(prompts)} prompts"
         out_prompts = "\n".join(prompts)
         return (
-            prompts[0] if prompts else "",
-            debug,
             out_prompts,
+            debug,
             "\n".join(artists_out),
             "\n".join(res_out),
             "\n".join(caps_out),
