@@ -11,6 +11,7 @@ from .artist_seed import ArtistSeed
 from .batch_seed import BatchSeedNode
 from .sync_passthrough import SyncPassthrough
 from .passthrough_split import PassthroughSplit
+from .load_images import AnimaLoadImages
 
 NODE_CLASS_MAPPINGS = {
     "AnimaWeaver": AnimaWeaver,
@@ -22,6 +23,7 @@ NODE_CLASS_MAPPINGS = {
     "BatchSeedNode": BatchSeedNode,
     "SyncPassthrough": SyncPassthrough,
     "PassthroughSplit": PassthroughSplit,
+    "AnimaLoadImages": AnimaLoadImages,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AnimaWeaver": "Anima随机提示词",
