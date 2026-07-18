@@ -143,6 +143,7 @@ When an image input is connected, invokes a VL (vision-language) model for image
 | 请求数 | INT | Number of requests to generate (1–128, default 4) |
 | 最大并发数 | INT | Max concurrent predictions (1–128, default 4) |
 | 固定前缀 | STRING | Custom prefix prepended to each description |
+| 变化文本 | STRING (forceInput) | Variable text, one line per image, combined with prefix + description before saving to txt |
 | 图片路径 | STRING | Folder path to batch-process images (lower priority than 种子串) |
 | 对齐倍数 | INT | Align image dimensions to this multiple (default 14) |
 | 保存为txt | BOOLEAN | Save each description as a `.txt` file next to the source image |
@@ -250,6 +251,16 @@ Batch Seed(N)
 ```
 
 Each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes N seeds in parallel (configurable via `请求数` and `最大并发数`, default 4 each), and unloads on completion — all seeds are then fed to the sampler in a single batch, minimizing VRAM overhead.
+
+---
+
+## Workflows
+
+Workflow files are located in the `workflows/` directory:
+
+| File | Description |
+|------|-------------|
+| `anima批量自动打标.json` | Batch image auto-tagging workflow (WD14 + Anima反推 + save txt) |
 
 ---
 
