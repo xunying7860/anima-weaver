@@ -257,14 +257,17 @@ class AnimaImageCaption:
                                  _lm_model: str,
                                  _api_key: str,
                                  _preloaded: bool,
-                                 kwargs_raw: dict) -> str:
+                                 kwargs_raw: dict,
+                                 _file_tag: str = "") -> str:
         """Generate NL from a pre-encoded base64 image. Avoids re-encoding per frame."""
         from .lm_studio import generate_nl_from_lm_studio
         base_url = str(kwargs_raw.get("API地址", "http://localhost:1234/v1"))
         cloud_model = str(kwargs_raw.get("云端模型名", "deepseek-chat")).strip()
+        tag = f" [{_file_tag}]" if _file_tag else ""
         if _api_key:
             model_for_api = cloud_model or _lm_model
             if model_for_api and model_for_api != "(no models found)":
+                print(f"[Caption] Requesting{tag} via cloud model {model_for_api}")
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
                     api_key=_api_key, model_name=model_for_api,
@@ -279,6 +282,7 @@ class AnimaImageCaption:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs_raw.get("上下文长度", 4096))
                     ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
+                print(f"[Caption] Requesting{tag} via local model {_lm_model}")
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
                     model_name=_lm_model,
@@ -516,14 +520,18 @@ class AnimaImageCaption:
                         _api_key=str(kwargs.get("API密钥", "")).strip(),
                         _preloaded=_model_preloaded,
                         kwargs_raw=kwargs,
+                        _file_tag=os.path.basename(image_files[i]),
                     )
                     fut_map[fut] = i
                 for future in as_completed(fut_map):
                     i = fut_map[future]
+                    fname = os.path.basename(image_files[i]) if i < len(image_files) else f"index_{i}"
                     try:
                         results[i] = future.result() or ""
+                        if not results[i]:
+                            print(f"[Caption] File {i} [{fname}]: returned empty")
                     except Exception as e:
-                        print(f"[Caption] folder batch file {i} error: {e}")
+                        print(f"[Caption] File {i} [{fname}]: error — {e}")
                         results[i] = ""
 
             if should_unload:
@@ -532,6 +540,13 @@ class AnimaImageCaption:
                     unload_all()
                 except Exception:
                     pass
+
+            # ── Summary: which files failed ──
+            failed_indices = [i for i, r in enumerate(results) if not r]
+            if failed_indices:
+                failed_names = [os.path.basename(image_files[i]) for i in failed_indices]
+                print(f"[Caption] Folder batch complete: {len(results) - len(failed_indices)}/{len(results)} OK, "
+                      f"{len(failed_indices)} failed — {failed_names}")
 
             out_reverse = "\n".join(results)
 
