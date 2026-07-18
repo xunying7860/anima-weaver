@@ -83,6 +83,20 @@ def _tensor_to_b64(image_tensor, frame: int = 0) -> str:
     except Exception:
         return ""
     
+def _parse_var_text(var_text: str) -> list[str]:
+    """Parse 变化文本 input: JSON array or multiline string."""
+    import json
+    t = var_text.strip() if var_text else ""
+    if t.startswith("["):
+        try:
+            parsed = json.loads(t)
+            if isinstance(parsed, list):
+                return [str(x).strip() for x in parsed]
+        except Exception:
+            pass
+    return [v.strip() for v in t.split("\n")] if t else []
+
+
 def _apply_prefix(text: str, prefix: str) -> str:
     """Prepend prefix to text if non-empty."""
     if prefix.strip():
@@ -455,7 +469,7 @@ class AnimaImageCaption:
 
             out_reverse = "\n".join(results)
             _prefix_seed = str(kwargs.get("固定前缀", "")).strip()
-            _var_seed = [v.strip() for v in str(kwargs.get("变化文本", "")).split("\n")]
+            _var_seed = _parse_var_text(str(kwargs.get("变化文本", "")))
             _combined_seed = []
             for idx, r in enumerate(results):
                 parts = []
@@ -602,7 +616,7 @@ class AnimaImageCaption:
 
             # ── Apply prefix + variable text & save to .txt files if enabled ──
             _prefix = str(kwargs.get("固定前缀", "")).strip()
-            _var_lines = [v.strip() for v in str(kwargs.get("变化文本", "")).split("\n")]
+            _var_lines = _parse_var_text(str(kwargs.get("变化文本", "")))
             _combined = []
             for idx, r in enumerate(results):
                 parts = []
