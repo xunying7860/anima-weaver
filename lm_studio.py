@@ -24,6 +24,7 @@ import requests
 
 # ── Module-level settings for crash recovery ──
 _last_model_parallel: Optional[int] = None
+_last_model_ctx: int = 4096
 _load_lock = threading.Lock()
 
 # ── Constants ──────────────────────────────────────────────────────
@@ -205,9 +206,10 @@ def load_model(
     bool
         ``True`` if the model was loaded successfully (returncode 0).
     """
-    global _last_model_parallel
+    global _last_model_parallel, _last_model_ctx
     if parallel is not None:
         _last_model_parallel = parallel
+    _last_model_ctx = context_length
     args = ["load", model_name, "--context-length", str(context_length)]
     if parallel is not None and parallel > 0:
         args.extend(["--parallel", str(parallel)])
@@ -611,14 +613,12 @@ def generate_nl_from_lm_studio(
             # Serialise under the same lock that ensure_model_loaded uses,
             # so concurrent threads don't each load a separate instance.
             with _load_lock:
-                print(f"[LM Studio] Model crashed/reloaded, reloading with parallel={_last_model_parallel}...")
+                print(f"[LM Studio] Model crashed/reloaded, reloading with context_length={_last_model_ctx} parallel={_last_model_parallel}...")
                 try:
                     unload_all()
-                    time.sleep(1)
-                    load_model(model_name, context_length=max_tokens, parallel=_last_model_parallel)
+                    load_model(model_name, context_length=_last_model_ctx, parallel=_last_model_parallel)
                 except Exception as exc:
                     print(f"[LM Studio] Reload failed: {exc}")
-                time.sleep(3)
             # Retry the request once after reload
             try:
                 resp2 = requests.post(url, json=payload, headers=headers, timeout=timeout)
