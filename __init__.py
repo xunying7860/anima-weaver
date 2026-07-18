@@ -35,6 +35,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "BatchSeedNode": "批量种子",
     "SyncPassthrough": "同步串行",
     "PassthroughSplit": "串行拆分",
+    "AnimaLoadImages": "Anima加载图像",
 }
 
 __all__ = [

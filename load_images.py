@@ -26,7 +26,7 @@ class AnimaLoadImages:
             },
         }
 
-    CATEGORY = "Anima Weaver / Utils"
+    CATEGORY = "Anima Weaver"
     RETURN_TYPES = ("IMAGE", "MASK", "STRING")
     RETURN_NAMES = ("图像", "遮罩", "文件路径")
     OUTPUT_IS_LIST = (True, True, False)
