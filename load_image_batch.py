@@ -24,8 +24,6 @@ class LoadImageBatch:
                 "文件夹路径": ("STRING", {"default": "", "multiline": False}),
                 "图像上限": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 1,
                                       "tooltip": "0=不限制"}),
-                "统一尺寸": ("BOOLEAN", {"default": True,
-                                          "tooltip": "开启后将所有图缩放到统一尺寸（取第一张图的尺寸），否则每个 frame 独立尺寸"}),
             },
         }
 
@@ -39,7 +37,7 @@ class LoadImageBatch:
     def IS_CHANGED(cls, **kwargs) -> float:
         return random.random()
 
-    def load(self, 文件夹路径: str, 图像上限: int = 0, 统一尺寸: bool = True) -> tuple[torch.Tensor, int]:
+    def load(self, 文件夹路径: str, 图像上限: int = 0) -> tuple[torch.Tensor, int]:
         folder = str(文件夹路径).strip()
         if not folder or not os.path.isdir(folder):
             print(f"[LoadImageBatch] Invalid folder: {folder}")
@@ -65,16 +63,11 @@ class LoadImageBatch:
 
         print(f"[LoadImageBatch] Loading {len(files)} images from {folder}")
 
-        # Load all images as PIL
+        # Load all images as PIL, pad to max dimensions for batch compatibility
         pil_images: list[Image.Image] = []
-        target_size = None
         for fp in files:
             try:
                 pil = Image.open(fp).convert("RGB")
-                if target_size is None and 统一尺寸:
-                    target_size = pil.size  # (width, height) of first image
-                if 统一尺寸 and target_size:
-                    pil = pil.resize(target_size, Image.LANCZOS)
                 pil_images.append(pil)
             except Exception as e:
                 print(f"[LoadImageBatch] Failed to load {fp}: {e}")
@@ -83,17 +76,26 @@ class LoadImageBatch:
             dummy = torch.zeros((1, 64, 64, 3), dtype=torch.float32)
             return (dummy, 0)
 
-        # Convert to batched tensor [N, H, W, 3]
-        tensors: list[torch.Tensor] = []
-        for pil in pil_images:
-            arr = torch.tensor(
-                list(pil.getdata()),
-                dtype=torch.float32,
-            ).reshape(pil.size[1], pil.size[0], 3) / 255.0
-            tensors.append(arr)
+        # Find max width and height
+        max_w = max(p.size[0] for p in pil_images)
+        max_h = max(p.size[1] for p in pil_images)
 
-        batch = torch.stack(tensors, dim=0)  # [N, H, W, 3]
-        print(f"[LoadImageBatch] Output shape: {list(batch.shape)}")
+        # Pad each image to (max_w, max_h) center with black borders
+        padded: list[torch.Tensor] = []
+        for pil in pil_images:
+            pw, ph = pil.size
+            left = (max_w - pw) // 2
+            top = (max_h - ph) // 2
+            canvas = Image.new("RGB", (max_w, max_h), (0, 0, 0))
+            canvas.paste(pil, (left, top))
+            arr = torch.tensor(
+                list(canvas.getdata()),
+                dtype=torch.float32,
+            ).reshape(max_h, max_w, 3) / 255.0
+            padded.append(arr)
+
+        batch = torch.stack(padded, dim=0)  # [N, H, W, 3]
+        print(f"[LoadImageBatch] Output shape: {list(batch.shape)} (padded to {max_w}x{max_h})")
         return (batch, batch.shape[0])
 
 
