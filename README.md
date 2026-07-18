@@ -56,6 +56,9 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 
 ## Node Details
 
+![Uploading image.png…]()
+
+
 ### Anima随机提示词
 
 Three operation modes:
