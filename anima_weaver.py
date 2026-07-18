@@ -130,6 +130,11 @@ class AnimaWeaver:
                     "INT",
                     {"default": 8192, "min": 0, "max": 262144},
                 ),
+                "自动上下文长度": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 1684，仅本地模型有效"},
+                ),
                 "API地址": (
                     "STRING",
                     {"default": "http://localhost:1234/v1", "multiline": False,
@@ -180,11 +185,6 @@ class AnimaWeaver:
                 "底部数据": (
                     "STRING",
                     {"forceInput": True, "tooltip": "从「底部控制」节点接入 Raffle 过滤参数"},
-                ),
-                "自动上下文长度": (
-                    "BOOLEAN",
-                    {"default": False,
-                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 1684，仅本地模型有效"},
                 ),
                 "系统提示词": (
                     "STRING",

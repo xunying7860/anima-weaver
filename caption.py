@@ -137,6 +137,11 @@ class AnimaImageCaption:
                     "INT",
                     {"default": 8192, "min": 0, "max": 262144},
                 ),
+                "自动上下文长度": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 1684，并强制缩放图片到约 100 万像素，仅本地模型有效"},
+                ),
                 "最大截断长度": (
                     "INT",
                     {"default": 1024, "min": 128, "max": 1024, "step": 8},
@@ -206,11 +211,6 @@ class AnimaImageCaption:
                     "STRING",
                     {"default": "", "multiline": False,
                      "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
-                ),
-                "自动上下文长度": (
-                    "BOOLEAN",
-                    {"default": False,
-                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 1684，并强制缩放图片到约 100 万像素，仅本地模型有效"},
                 ),
                 "对齐倍数": (
                     "INT",
