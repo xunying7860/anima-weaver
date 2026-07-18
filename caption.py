@@ -160,17 +160,13 @@ class AnimaImageCaption:
                     "IMAGE",
                     {"tooltip": "接入图像（可选），不接则仅基于 tag 生成描述"},
                 ),
-                "WD14标签": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True, "default": "",
-                     "tooltip": "WD14 tagger 输出的标签"},
-                ),
+
                 "分辨率": (
                     "STRING",
                     {"forceInput": True, "default": "",
                      "tooltip": "从「随机分辨率选择器」接入分辨率（如 1024x768）"},
                 ),
-                "自定义提示词": (
+                "系统提示词": (
                     "STRING",
                     {"forceInput": True, "multiline": True, "default": "",
                      "tooltip": "自定义系统提示词，留空使用默认"},
@@ -190,17 +186,13 @@ class AnimaImageCaption:
                     {"forceInput": True, "multiline": True,
                      "tooltip": "接入画师串（透传）"},
                 ),
-                "分辨率串": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True,
-                     "tooltip": "接入分辨率串（透传），每行一个分辨率"},
-                ),
-                "待润色文本": (
+
+                "用户提示词": (
                     "STRING",
                     {"forceInput": True, "multiline": True, "default": "",
                      "tooltip": "接入要润色的文本内容（批量模式下使用）"},
                 ),
-                "文件夹路径": (
+                "图片路径": (
                     "STRING",
                     {"default": "", "multiline": False,
                      "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
@@ -232,7 +224,7 @@ class AnimaImageCaption:
     @classmethod
     def IS_CHANGED(cls, **kwargs) -> float:
         # Return fixed value for folder batch to avoid unnecessary re-execution
-        if kwargs.get("文件夹路径", "") and os.path.isdir(str(kwargs.get("文件夹路径", ""))):
+        if kwargs.get("图片路径", "") and os.path.isdir(str(kwargs.get("图片路径", ""))):
             return 0.0
         return random.random()
 
@@ -339,20 +331,20 @@ class AnimaImageCaption:
         # ── Mutual exclusion ────────────────────────────────────────────
         if seed_str:
             kwargs.pop("随机种子", None)
-        cap_res_batch = kwargs.get("分辨率串", "")
+        cap_res_batch = kwargs.get("分辨率", "")
         if cap_res_batch.strip():
             kwargs.pop("分辨率", None)
 
         cap_prompt = kwargs.get("提示词串", "")
         cap_artist = kwargs.get("画师串", "")
-        cap_res = kwargs.get("分辨率串", "")
+        cap_res = kwargs.get("分辨率", "")
 
         if seed_str:
             # ── Batch mode ──────────────────────────────────────────
             seeds = [s.strip() for s in seed_str.split("\n") if s.strip()]
             aspect_ratio = str(kwargs.get("分辨率", "")).strip()
-            custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
-            refine_text = str(kwargs.get("待润色文本", "")).strip()
+            custom_prompt = str(kwargs.get("系统提示词", "")).strip()
+            refine_text = str(kwargs.get("用户提示词", "")).strip()
 
             # Determine system prompt: custom > image → system > no-image → batch
             has_image = kwargs.get("图像") is not None
@@ -443,13 +435,13 @@ class AnimaImageCaption:
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Folder batch mode: load images from a folder path ──
-        folder_path = str(kwargs.get("文件夹路径", "")).strip()
+        folder_path = str(kwargs.get("图片路径", "")).strip()
         if folder_path and os.path.isdir(folder_path):
             cap_prompt = kwargs.get("提示词串", "")
             cap_artist = kwargs.get("画师串", "")
-            cap_res = kwargs.get("分辨率串", "")
+            cap_res = kwargs.get("分辨率", "")
             aspect_ratio = str(kwargs.get("分辨率", "")).strip()
-            custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
+            custom_prompt = str(kwargs.get("系统提示词", "")).strip()
 
             if custom_prompt:
                 system_prompt = custom_prompt
@@ -546,12 +538,42 @@ class AnimaImageCaption:
                         print(f"[Caption] File {i} [{fname}]: error — {e}")
                         results[i] = ""
 
-            if should_unload:
-                try:
-                    from .lm_studio import unload_all
-                    unload_all()
-                except Exception:
-                    pass
+            # ── Retry failed images with degraded concurrency ──
+            failed_indices = [i for i, r in enumerate(results) if not r]
+            if failed_indices and concurrency > 1:
+                from .lm_studio import ensure_model_loaded
+                retry_conc = max(1, concurrency - 1)
+                print(f"[Caption] Retrying {len(failed_indices)} failed images with concurrency={retry_conc}...")
+                km = str(kwargs.get("模型", ""))
+                ak = str(kwargs.get("API密钥", "")).strip()
+                with ThreadPoolExecutor(max_workers=retry_conc) as retry_exec:
+                    retry_futs = {}
+                    for idx in failed_indices:
+                        if idx < len(_batch_b64_folder) and _batch_b64_folder[idx]:
+                            fut = retry_exec.submit(
+                                self._generate_one_with_b64,
+                                system_prompt, 
+                                "\n".join([
+                                    f"Resolution: {aspect_ratio}" if aspect_ratio else "",
+                                    "Describe the image in detail."
+                                ]).strip() or "Describe the image in detail.",
+                                _batch_b64_folder[idx],
+                                _lm_model=km, _api_key=ak,
+                                _preloaded=False,
+                                kwargs_raw=kwargs,
+                                _file_tag=os.path.basename(image_files[idx]),
+                            )
+                            retry_futs[fut] = idx
+                    for future in as_completed(retry_futs):
+                        i = retry_futs[future]
+                        try:
+                            r2 = future.result() or ""
+                            if r2:
+                                results[i] = r2
+                        except Exception:
+                            pass
+                retry_failed = [i for i, r in enumerate(results) if not r]
+                print(f"[Caption] Retry complete: {len(retry_failed)} still failed")
 
             # ── Summary: which files failed ──
             failed_indices = [i for i, r in enumerate(results) if not r]
@@ -560,7 +582,12 @@ class AnimaImageCaption:
                 print(f"[Caption] Folder batch complete: {len(results) - len(failed_indices)}/{len(results)} OK, "
                       f"{len(failed_indices)} failed — {failed_names}")
 
-            out_reverse = "\n".join(results)
+            if should_unload:
+                try:
+                    from .lm_studio import unload_all
+                    unload_all()
+                except Exception:
+                    pass
 
             # ── Apply prefix & save to .txt files if enabled ──
             prefix_txt = str(kwargs.get("固定前缀", "")).strip()
@@ -593,9 +620,8 @@ class AnimaImageCaption:
             raw_seed = int(seed_val)
         kwargs["随机种子"] = raw_seed
 
-        wd14_tags = str(kwargs.get("WD14标签", "")).strip()
         aspect_ratio = str(kwargs.get("分辨率", "")).strip()
-        custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
+        custom_prompt = str(kwargs.get("系统提示词", "")).strip()
         desc_fmt = str(kwargs.get("描述格式", "")).strip()
 
         # Determine system prompt: custom > image → system > no-image → batch
@@ -609,8 +635,6 @@ class AnimaImageCaption:
         if aspect_ratio:
             system_prompt += f"\nTarget resolution: {aspect_ratio}"
         user_parts = []
-        if wd14_tags:
-            user_parts.append(f"Tags: {wd14_tags}")
         if aspect_ratio:
             user_parts.append(f"Resolution: {aspect_ratio}")
         user_parts.append(
