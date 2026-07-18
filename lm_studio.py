@@ -21,6 +21,9 @@ from typing import Any, Optional
 
 import requests
 
+# ── Module-level settings for crash recovery ──
+_last_model_parallel: Optional[int] = None
+
 # ── Constants ──────────────────────────────────────────────────────
 
 _DEFAULT_BASE_URL = "http://localhost:1234/v1"
@@ -213,12 +216,17 @@ def load_model(
         Optional specific identifier (e.g. the full path or huggingface id).
     context_length : int
         Context length in tokens.
+    parallel : int or None
+        Max concurrent predictions.
 
     Returns
     -------
     bool
         ``True`` if the model was loaded successfully (returncode 0).
     """
+    global _last_model_parallel
+    if parallel is not None:
+        _last_model_parallel = parallel
     args = ["load", model_name, "--context-length", str(context_length)]
     if parallel is not None and parallel > 0:
         args.extend(["--parallel", str(parallel)])
