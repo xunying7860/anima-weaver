@@ -1,26 +1,25 @@
 """
-Anima Weaver — Text List to Multiline Node.
-Joins multiple text inputs into a single multiline STRING.
+Anima Weaver — Text to Multiline Node.
+Passes a text string through as multiline output.
 """
 
 from __future__ import annotations
 
 
 class AnimaTextJoin:
-    """Join multiple text inputs into a single multiline STRING."""
+    """Convert a text string to multiline output."""
 
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, object]:
-        inputs = {
-            "required": {},
-            "optional": {},
+        return {
+            "required": {
+                "文本": (
+                    "STRING",
+                    {"multiline": True, "forceInput": True,
+                     "tooltip": "输入文本"},
+                ),
+            },
         }
-        for i in range(1, 9):
-            inputs["optional"][f"文本{i}"] = (
-                "STRING",
-                {"forceInput": True, "multiline": True},
-            )
-        return inputs
 
     CATEGORY = "Anima Weaver / Utils"
     RETURN_TYPES = ("STRING",)
@@ -28,13 +27,8 @@ class AnimaTextJoin:
     FUNCTION = "join"
     OUTPUT_NODE = False
 
-    def join(self, **kwargs) -> tuple[str]:
-        lines = []
-        for i in range(1, 9):
-            val = kwargs.get(f"文本{i}", "")
-            if val and val.strip():
-                lines.append(val.strip())
-        return ("\n".join(lines),)
+    def join(self, 文本: str) -> tuple[str]:
+        return (文本,)
 
 
 NODE_CLASS_MAPPINGS = {"AnimaTextJoin": AnimaTextJoin}
