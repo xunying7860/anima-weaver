@@ -12,6 +12,7 @@ from .batch_seed import BatchSeedNode
 from .sync_passthrough import SyncPassthrough
 from .passthrough_split import PassthroughSplit
 from .load_images import AnimaLoadImages
+from .list_to_multiline import AnimaTextListToMultiline
 
 NODE_CLASS_MAPPINGS = {
     "AnimaWeaver": AnimaWeaver,
