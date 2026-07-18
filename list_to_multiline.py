@@ -1,21 +1,17 @@
 """
 Anima Weaver — Text List to JSON Array Node.
-Stores accumulated data in module-level shared dict for Anima反推 to read directly.
+Uses INPUT_IS_LIST to receive ALL batch items in a single execution.
+Outputs one complete JSON array, NOT per-batch fragments.
 """
 
 from __future__ import annotations
-import time
 import json as _json
-
-# ── Shared storage: Anima反推 reads from here ──
-shared_json_data: list[str] = []
 
 
 class AnimaTextListToMultiline:
-    """Accumulate text items across batch, stores in shared_json_data."""
+    """Convert batch text list to JSON array in a single execution."""
 
-    _acc: list[str] = []
-    _prev: str = ""
+    INPUT_IS_LIST = True
 
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, object]:
@@ -35,18 +31,10 @@ class AnimaTextListToMultiline:
     FUNCTION = "convert"
     OUTPUT_NODE = False
 
-    @classmethod
-    def IS_CHANGED(cls, **kwargs) -> float:
-        return time.time()
-
-    def convert(self, 文本列表: str) -> tuple[str]:
-        global shared_json_data
-        txt = 文本列表.strip() if 文本列表 else ""
-        if txt and txt != self._prev:
-            self._prev = txt
-            self._acc.append(txt)
-            shared_json_data = list(self._acc)  # sync to shared
-        return (_json.dumps(self._acc, ensure_ascii=False),)
+    def convert(self, 文本列表: list[str]) -> tuple[str]:
+        # Receive ALL batch items as a list, output one complete JSON array
+        items = [t.strip() for t in 文本列表 if t and t.strip()]
+        return (_json.dumps(items, ensure_ascii=False),)
 
 
 NODE_CLASS_MAPPINGS = {"AnimaTextListToMultiline": AnimaTextListToMultiline}
