@@ -257,6 +257,7 @@ def ensure_model_loaded(
     model_name: str,
     context_length: int = 4096,
     parallel: Optional[int] = None,
+    force: bool = False,
 ) -> bool:
     """
     Ensure a model is loaded in LM Studio memory.
@@ -270,7 +271,25 @@ def ensure_model_loaded(
     # Fast path — quick check without lock
     loaded = get_loaded_models()
     if model_name in loaded:
-        # If parallel is specified and slot count doesn't match, force reload
+        if parallel is not None and parallel > 0:
+            cur_p = 0
+            try:
+                info = _run_lms(["ps", "--json"], timeout=10)
+                if info[0] == 0 and info[1]:
+                    import json as _jj
+                    for m in _jj.loads(info[1]) if isinstance(_jj.loads(info[1]), list) else []:
+                        if m.get("id", "") == model_name:
+                            cur_p = m.get("parallel", 0)
+            except Exception:
+                pass
+            if cur_p and cur_p != parallel and not force:
+                print(f"[LM Studio] Slot mismatch: current={cur_p}, desired={parallel}, force reload...")
+            elif cur_p and cur_p == parallel and not force:
+                return True
+            elif cur_p and cur_p != parallel and force:
+                pass  # fall through to reload
+        else:
+            return True
         if parallel is not None and parallel > 0:
             try:
                 info = _run_lms(["ps", "--json"], timeout=10)
