@@ -24,7 +24,6 @@ import requests
 
 # ── Module-level settings for crash recovery ──
 _last_model_parallel: Optional[int] = None
-_degraded_parallel: Optional[int] = None  # reduced parallel after crash
 _last_model_ctx: int = 4096
 _load_lock = threading.Lock()
 
@@ -360,8 +359,6 @@ def generate_nl_from_lm_studio(
     if not tag_prompt.strip():
         return ""
 
-    # Reset degradation counter on each new batch
-    _degraded_parallel = None
 
     if detailed:
         system_msg = (
