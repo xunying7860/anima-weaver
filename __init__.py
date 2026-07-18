@@ -12,6 +12,7 @@ from .batch_seed import BatchSeedNode
 from .sync_passthrough import SyncPassthrough
 from .passthrough_split import PassthroughSplit
 from .string_to_int import StringToInt
+from .load_image_batch import LoadImageBatch
 
 NODE_CLASS_MAPPINGS = {
     "AnimaWeaver": AnimaWeaver,
@@ -24,6 +25,7 @@ NODE_CLASS_MAPPINGS = {
     "SyncPassthrough": SyncPassthrough,
     "PassthroughSplit": PassthroughSplit,
     "StringToInt": StringToInt,
+    "LoadImageBatch": LoadImageBatch,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AnimaWeaver": "提示词编织器",
@@ -36,6 +38,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SyncPassthrough": "同步串行",
     "PassthroughSplit": "串行拆分",
     "StringToInt": "STRING转INT",
+    "LoadImageBatch": "加载图像批次",
 }
 
 __all__ = [
