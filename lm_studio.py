@@ -607,7 +607,7 @@ def generate_nl_from_lm_studio(
             body = ""
         # Model crash/reload: wait and retry once
         if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded", "decode image", "attention ubatches"]):
-            with _reload_lock:
+            with _load_lock:
                 # Double-check: another thread may have already recovered the model
                 loaded_now = get_loaded_models()
                 if model_name in loaded_now:
