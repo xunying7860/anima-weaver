@@ -1,14 +1,18 @@
 """
 Anima Weaver — Text List to Multiline Node.
-Passes through text items, one per batch execution.
-Each batch item gets its own line, naturally aligned with image order.
+Accumulates text items across ALL batch executions into a single multiline STRING.
+Uses OUTPUT_NODE to capture all batch outputs, then merges them.
 """
 
 from __future__ import annotations
+import time
 
 
 class AnimaTextListToMultiline:
-    """Pass text through, one line per batch execution."""
+    """Accumulate text items across batch into one multiline text."""
+
+    _acc: list[str] = []
+    _batch_key: str = ""
 
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, object]:
@@ -26,10 +30,19 @@ class AnimaTextListToMultiline:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("多行文本",)
     FUNCTION = "convert"
-    OUTPUT_NODE = False
+    OUTPUT_NODE = True
+
+    @classmethod
+    def IS_CHANGED(cls, **kwargs) -> float:
+        # Return current time to force execution every time
+        return time.time()
 
     def convert(self, 文本列表: str) -> tuple[str]:
-        return (文本列表,)
+        txt = 文本列表.strip() if 文本列表 else ""
+        if txt and (not self._acc or txt != self._acc[-1]):
+            self._acc.append(txt)
+        result = "\n".join(self._acc)
+        return (result,)
 
 
 NODE_CLASS_MAPPINGS = {"AnimaTextListToMultiline": AnimaTextListToMultiline}
