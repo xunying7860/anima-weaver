@@ -20,9 +20,9 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 | **画师Seed** | Anima Weaver / Seed | Artist selector (random / none / fixed) |
 | **批量种子** | Anima Weaver / Seed | N-seed generator for batch pipelines |
 | **同步串行** | Anima Weaver / Batch | Merges 7 channels into JSON-per-line output |
-|| **串行拆分** | Anima Weaver / Batch | Splits one JSON line back to 7 typed outputs (INT + STRING) |
-|| **Anima加载图像** | Anima Weaver | Load images from folder → IMAGE list + MASK + file paths |
-|| **Anima列表转多行** | Anima Weaver | Merge batch text items into multiline STRING (INPUT_IS_LIST) |
+| **串行拆分** | Anima Weaver / Batch | Splits one JSON line back to 7 typed outputs (INT + STRING) |
+| **Anima加载图像** | Anima Weaver | Load images from folder → IMAGE list + MASK + file paths |
+| **Anima列表转多行** | Anima Weaver | Merge batch text items into multiline STRING (INPUT_IS_LIST) |
 
 ---
 
