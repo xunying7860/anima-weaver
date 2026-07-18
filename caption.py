@@ -278,7 +278,7 @@ class AnimaImageCaption:
                 if not _preloaded:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs_raw.get("上下文长度", 4096))
-                    ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
+                    ensure_model_loaded(_lm_model, context_length=ctx)
                 print(f"[Caption] Requesting{tag} via local model {_lm_model}")
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
@@ -314,7 +314,7 @@ class AnimaImageCaption:
             if lm_model and lm_model != "(no models found)":
                 ctx = int(kwargs.get("上下文长度", 4096))
                 from .lm_studio import ensure_model_loaded
-                ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
+                ensure_model_loaded(lm_model, context_length=ctx)
                 nl = generate_nl_from_lm_studio(
                     user_msg, base_url,
                     model_name=lm_model,
@@ -365,7 +365,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4))):
+                    if ensure_model_loaded(_lm_model, context_length=ctx):
                         _model_preloaded = True
                 except Exception as e:
                     print(f"[Caption] Preload failed: {e}")
@@ -475,7 +475,7 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4))):
+                    if ensure_model_loaded(_lm_model, context_length=ctx):
                         _model_preloaded = True
                         print(f"[Caption] Folder batch: preloaded {_lm_model}")
                 except Exception as e:
@@ -543,7 +543,7 @@ class AnimaImageCaption:
             if failed_indices:
                 failed_names = [os.path.basename(image_files[i]) for i in failed_indices]
                 print(f"[Caption] ⚠️ {len(failed_indices)}/{len(results)} 张图片失败: {failed_names}")
-                print(f"[Caption] ⚠️ 请尝试降低「并发数」或调整「对齐倍数」参数")
+                print(f"[Caption] ⚠️ 以上图片已跳过")
 
             if should_unload:
                 try:
@@ -632,7 +632,7 @@ class AnimaImageCaption:
                 if lm_model and lm_model != "(no models found)":
                     if not kwargs.get("_preloaded"):
                         ctx = int(kwargs.get("上下文长度", 4096))
-                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("并发数", 4)))
+                        model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx)
                     else:
                         model_was_loaded = True
                     if model_was_loaded:
