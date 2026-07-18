@@ -663,4 +663,4 @@ class AnimaImageCaption:
 
 
 NODE_CLASS_MAPPINGS = {"AnimaImageCaption": AnimaImageCaption}
-NODE_DISPLAY_NAME_MAPPINGS = {"ImageCaption": "图片反推描述"}
+NODE_DISPLAY_NAME_MAPPINGS = {"AnimaImageCaption": "LM Studio  image to prompt"}
