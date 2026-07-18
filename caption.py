@@ -538,6 +538,20 @@ class AnimaImageCaption:
 
             print(f"[Caption] Folder batch: {len(image_files)} images from {folder_path}")
 
+            # ── Preload model once ──
+            _model_preloaded = False
+            _lm_model = str(kwargs.get("模型", ""))
+            _api_key_fb = str(kwargs.get("API密钥", "")).strip()
+            if not _api_key_fb and _lm_model and _lm_model != "(no models found)":
+                try:
+                    from .lm_studio import ensure_model_loaded
+                    ctx = int(kwargs.get("上下文长度", 4096))
+                    if ensure_model_loaded(_lm_model, context_length=ctx):
+                        _model_preloaded = True
+                        print(f"[Caption] Folder batch: preloaded {_lm_model}")
+                except Exception as e:
+                    print(f"[Caption] Folder batch preload failed: {e}")
+
             # ── Pre-encode all images before ThreadPoolExecutor ──
             from PIL import Image as PILImage
             _batch_b64_folder: list[str] = []
@@ -572,7 +586,7 @@ class AnimaImageCaption:
                         system_prompt, user_msg, b64,
                         _lm_model=str(kwargs.get("模型", "")),
                         _api_key=str(kwargs.get("API密钥", "")).strip(),
-                        _preloaded=False,
+                        _preloaded=_model_preloaded,
                         kwargs_raw=kwargs,
                     )
                     fut_map[fut] = i
