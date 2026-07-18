@@ -381,6 +381,9 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
+                    auto_ctx = bool(kwargs.get("自动上下文长度", False))
+                    if auto_ctx:
+                        ctx = int(kwargs.get("最大并发数", 4)) * 2048
                     if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx):
                         _model_preloaded = True
                 except Exception as e:
@@ -491,6 +494,9 @@ class AnimaImageCaption:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
+                    auto_ctx = bool(kwargs.get("自动上下文长度", False))
+                    if auto_ctx:
+                        ctx = int(kwargs.get("最大并发数", 4)) * 2048
                     if ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx):
                         _model_preloaded = True
                         print(f"[Caption] Folder batch: preloaded {_lm_model}")
