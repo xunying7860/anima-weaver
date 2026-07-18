@@ -11,6 +11,7 @@ from .artist_seed import ArtistSeed
 from .batch_seed import BatchSeedNode
 from .sync_passthrough import SyncPassthrough
 from .passthrough_split import PassthroughSplit
+from .save_text import AnimaTextSaver
 
 NODE_CLASS_MAPPINGS = {
     "AnimaWeaver": AnimaWeaver,
@@ -22,6 +23,7 @@ NODE_CLASS_MAPPINGS = {
     "BatchSeedNode": BatchSeedNode,
     "SyncPassthrough": SyncPassthrough,
     "PassthroughSplit": PassthroughSplit,
+    "AnimaTextSaver": AnimaTextSaver,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AnimaWeaver": "Anima随机提示词",
@@ -33,9 +35,11 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "BatchSeedNode": "批量种子",
     "SyncPassthrough": "同步串行",
     "PassthroughSplit": "串行拆分",
+    "AnimaTextSaver": "Anima文本保存",
 }
 
 __all__ = [
     "NODE_CLASS_MAPPINGS",
     "NODE_DISPLAY_NAME_MAPPINGS",
+    "AnimaTextSaver",
 ]
