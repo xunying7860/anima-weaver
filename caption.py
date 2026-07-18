@@ -490,10 +490,10 @@ class AnimaImageCaption:
             for fp in image_files:
                 try:
                     pil = PILImage.open(fp).convert("RGB")
-                    # Ensure dimensions are multiples of 32 (VL model requirement)
+                    # Ensure dimensions are multiples of 14 (Qwen-VL patch size)
                     w, h = pil.size
-                    new_w = (w + 31) // 32 * 32
-                    new_h = (h + 31) // 32 * 32
+                    new_w = (w + 13) // 14 * 14
+                    new_h = (h + 13) // 14 * 14
                     if new_w != w or new_h != h:
                         pil = pil.resize((new_w, new_h), PILImage.LANCZOS)
                     import io, base64 as _b64
