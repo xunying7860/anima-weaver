@@ -148,7 +148,7 @@ class AnimaImageCaption:
                 "并发数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 8, "step": 1,
-                     "tooltip": "批量模式下 LLM 请求的并发数。本地 LM Studio 建议 4~8，云端 API 可设更高"},
+                     "tooltip": "批量模式并发请求数。本地模型建议保持 4（默认）或更低，显存足够/云端模型可尝试更高的值，否则可能部分图会崩溃无法反推"},
                 ),
             },
             "optional": {
