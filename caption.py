@@ -1,7 +1,6 @@
 """Anima Weaver — Image Caption Node (single + batch mode)."""
 
 from __future__ import annotations
-from .list_to_multiline import shared_json_data
 
 import random
 import os
@@ -628,9 +627,7 @@ class AnimaImageCaption:
                         _var_lines = [str(x).strip() for x in parsed]
                 except Exception:
                     pass
-            # Fallback: use shared storage if available and var_lines is too short
-            if _var_lines and len(_var_lines) < len(image_files) and shared_json_data and len(shared_json_data) >= len(image_files):
-                _var_lines = shared_json_data[:len(image_files)]
+
             _combined = []
             for idx, r in enumerate(results):
                 parts = []
