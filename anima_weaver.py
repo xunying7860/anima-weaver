@@ -161,7 +161,7 @@ class AnimaWeaver:
                     "BOOLEAN",
                     {"default": True},
                 ),
-                "并发数": (
+                "请求数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 128, "step": 1,
                      "tooltip": "批量模式并发请求数。本地模型建议保持 4（默认）或更低，显存足够/云端模型可尝试更高的值，可能有其他未知问题"},
@@ -461,7 +461,7 @@ class AnimaWeaver:
         # Phase 1: Sequential raffle + tag assembly per seed
         from concurrent.futures import ThreadPoolExecutor, as_completed
 
-        concurrency = int(kwargs.get("并发数", 4))
+        concurrency = int(kwargs.get("请求数", 4))
         seed_task_data: list[tuple[dict, str, int]] = []  # (seed_kwargs, tag_prompt, index)
 
         for i, seed_str in enumerate(seeds):

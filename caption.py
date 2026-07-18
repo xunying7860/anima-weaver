@@ -145,10 +145,10 @@ class AnimaImageCaption:
                     "BOOLEAN",
                     {"default": False},
                 ),
-                "并发数": (
+                "请求数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 128, "step": 1,
-                     "tooltip": "批量模式并发请求数。本地模型建议保持 4（默认）或更低，显存足够/云端模型可尝试更高的值，否则可能部分图会崩溃无法反推"},
+                     "tooltip": ""},
                 ),
             },
             "optional": {
@@ -374,7 +374,7 @@ class AnimaImageCaption:
             _batch_image_b64 = _tensor_to_b64(kwargs.get("图像"))
 
             results: list[str] = [""] * len(seeds)
-            concurrency = int(kwargs.get("并发数", 4))
+            concurrency = int(kwargs.get("请求数", 4))
             from concurrent.futures import ThreadPoolExecutor, as_completed
             with ThreadPoolExecutor(max_workers=concurrency) as executor:
                 fut_map = {}
@@ -502,7 +502,7 @@ class AnimaImageCaption:
                     print(f"[Caption] Failed to encode {fp}: {e}")
                     _batch_b64_folder.append("")
 
-            concurrency = int(kwargs.get("并发数", 4))
+            concurrency = int(kwargs.get("请求数", 4))
             from concurrent.futures import ThreadPoolExecutor, as_completed
 
             results: list[str] = [""] * len(image_files)
