@@ -65,22 +65,9 @@ class AnimaLoadImages:
             dummy = torch.zeros((1, 64, 64, 3), dtype=torch.float32)
             return (dummy, 0)
 
-        # Pad all images to max dimensions for batch consistency
-        max_h = max(t.shape[1] for t in tensors)
-        max_w = max(t.shape[2] for t in tensors)
-        padded = []
-        for t in tensors:
-            h, w = t.shape[1], t.shape[2]
-            if h == max_h and w == max_w:
-                padded.append(t)
-            else:
-                pad = torch.zeros((1, max_h, max_w, 3), dtype=torch.float32)
-                pad[:, :h, :w, :] = t
-                padded.append(pad)
-
-        out = torch.cat(padded, dim=0)
-        print(f"[AnimaLoadImages] Loaded {len(padded)} images, size={max_h}x{max_w}")
-        return (out, len(padded))
+        out = torch.cat(tensors, dim=0)
+        print(f"[AnimaLoadImages] Loaded {len(tensors)} images")
+        return (out, len(tensors))
 
 
 NODE_CLASS_MAPPINGS = {"AnimaLoadImages": AnimaLoadImages}
