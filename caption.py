@@ -562,22 +562,27 @@ class AnimaImageCaption:
 
             out_reverse = "\n".join(results)
 
-            # ── Save to .txt files if enabled ──
+            # ── Apply prefix & save to .txt files if enabled ──
+            prefix_txt = str(kwargs.get("固定前缀", "")).strip()
+            if prefix_txt:
+                prefixed_results = [_apply_prefix(r, prefix_txt) for r in results]
+            else:
+                prefixed_results = results
+
             if bool(kwargs.get("保存为txt", False)):
                 saved = 0
                 for i, fp in enumerate(image_files):
-                    if i < len(results) and results[i]:
+                    if i < len(prefixed_results) and prefixed_results[i]:
                         txt_path = os.path.splitext(fp)[0] + ".txt"
                         try:
                             with open(txt_path, "w", encoding="utf-8") as tf:
-                                tf.write(results[i])
+                                tf.write(prefixed_results[i])
                             saved += 1
                         except Exception as e:
                             print(f"[Caption] Failed to save txt for {fp}: {e}")
                 print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
 
-            prefix_img = str(kwargs.get("固定前缀", "")).strip()
-            out_reverse = "\n".join(_apply_prefix(r, prefix_img) for r in results) if prefix_img else "\n".join(results)
+            out_reverse = "\n".join(prefixed_results)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Single mode ──────────────────────────────────────────────
