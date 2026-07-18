@@ -201,8 +201,8 @@ class ImageCaption:
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("描述文本", "提示词串", "画师串", "分辨率串", "反推串")
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = ("描述文本", "提示词串", "画师串", "分辨率串")
     FUNCTION = "describe"
     OUTPUT_NODE = True
 
@@ -390,7 +390,7 @@ class ImageCaption:
                     pass
 
             out_reverse = "\n".join(results)
-            return (results[0] if results else "", cap_prompt, cap_artist, cap_res, out_reverse)
+            return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Image-batch mode: single IMAGE tensor with multiple frames ──
         image_tensor = kwargs.get("图像")
@@ -467,7 +467,7 @@ class ImageCaption:
                     pass
 
             out_reverse = "\n".join(results)
-            return (results[0] if results else "", cap_prompt, cap_artist, cap_res, out_reverse)
+            return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Single mode ──────────────────────────────────────────────
         seed_val = kwargs.get("随机种子", None)
@@ -554,7 +554,7 @@ class ImageCaption:
             except Exception:
                 pass
 
-        return (nl or "", "", "", "", "")
+        return (nl or "", "", "", "")
 
 
 NODE_CLASS_MAPPINGS = {"ImageCaption": ImageCaption}
