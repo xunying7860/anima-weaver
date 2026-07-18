@@ -210,6 +210,25 @@ class ImageCaption:
     def IS_CHANGED(cls, **kwargs) -> float:
         return random.random()
 
+    def _generate_one_with_frame(self,
+                                     system_prompt: str,
+                                     user_msg: str,
+                                     image_tensor,
+                                     frame: int,
+                                     _lm_model: str,
+                                     _api_key: str,
+                                     _preloaded: bool,
+                                     kwargs_raw: dict) -> str:
+        """Encode a specific frame to b64 inside the worker thread, then call API."""
+        image_b64 = _tensor_to_b64(image_tensor, frame)
+        if not image_b64:
+            return ""
+        return self._generate_one_with_b64(
+            system_prompt, user_msg, image_b64,
+            _lm_model=_lm_model, _api_key=_api_key,
+            _preloaded=_preloaded, kwargs_raw=kwargs_raw,
+        ) or ""
+
     def _generate_one_with_b64(self,
                                  system_prompt: str,
                                  user_msg: str,
@@ -433,9 +452,6 @@ class ImageCaption:
             with ThreadPoolExecutor(max_workers=concurrency) as executor:
                 fut_map = {}
                 for i in range(img_batch_count):
-                    image_b64 = _tensor_to_b64(image_tensor, i)
-                    if not image_b64:
-                        continue
                     user_parts: list[str] = []
                     if aspect_ratio:
                         user_parts.append(f"Resolution: {aspect_ratio}")
@@ -443,9 +459,10 @@ class ImageCaption:
                         user_parts.append("Describe the image in detail.")
                     user_msg = "\n".join(user_parts)
 
+                    # Encode frame inside worker thread to overlap with other frames
                     fut = executor.submit(
-                        self._generate_one_with_b64,
-                        system_prompt, user_msg, image_b64,
+                        self._generate_one_with_frame,
+                        system_prompt, user_msg, image_tensor, i,
                         _lm_model=_lm_model, _api_key=_api_key,
                         _preloaded=_model_preloaded,
                         kwargs_raw=kwargs,
