@@ -30,7 +30,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "RandomResolution": "随机分辨率选择器",
     "PromptSlots": "提示词槽位",
     "BottomControls": "底部控制",
-    "AnimaImageCaption": "lm studio image to prompt",
+    "AnimaImageCaption": "LMS I to P",
     "ArtistSeedNode": "画师Seed",
     "BatchSeedNode": "批量种子",
     "SyncPassthrough": "同步串行",
