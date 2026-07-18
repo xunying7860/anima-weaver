@@ -139,7 +139,7 @@ class AnimaImageCaption:
                 ),
                 "最大截断长度": (
                     "INT",
-                    {"default": 1024, "min": 512, "max": 1080, "step": 8},
+                    {"default": 1024, "min": 128, "max": 1024, "step": 8},
                 ),
                 "生成后卸载": (
                     "BOOLEAN",
@@ -161,15 +161,20 @@ class AnimaImageCaption:
                     {"tooltip": "接入图像（可选），不接则仅基于 tag 生成描述"},
                 ),
 
-                "分辨率": (
+                "用户提示词": (
                     "STRING",
-                    {"forceInput": True, "default": "",
-                     "tooltip": "从「随机分辨率选择器」接入分辨率（如 1024x768）"},
+                    {"forceInput": True, "multiline": True, "default": "",
+                     "tooltip": "接入要润色的文本内容（批量模式下使用）"},
                 ),
                 "系统提示词": (
                     "STRING",
                     {"forceInput": True, "multiline": True, "default": "",
                      "tooltip": "自定义系统提示词，留空使用默认"},
+                ),
+                "分辨率": (
+                    "STRING",
+                    {"forceInput": True, "default": "",
+                     "tooltip": "从「随机分辨率选择器」接入分辨率（如 1024x768）"},
                 ),
                 "种子串": (
                     "STRING",
@@ -187,11 +192,6 @@ class AnimaImageCaption:
                      "tooltip": "接入画师串（透传）"},
                 ),
 
-                "用户提示词": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True, "default": "",
-                     "tooltip": "接入要润色的文本内容（批量模式下使用）"},
-                ),
                 "图片路径": (
                     "STRING",
                     {"default": "", "multiline": False,
