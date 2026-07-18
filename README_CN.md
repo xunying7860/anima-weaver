@@ -56,6 +56,9 @@
 
 ## 节点详解
 
+<img width="2471" height="1624" alt="image" src="https://github.com/user-attachments/assets/523fff97-7b53-4f9c-ad8a-041d82918363" />
+
+
 ### Anima随机提示词
 
 三种工作模式：
