@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+import os
 from typing import Any
 
 
@@ -196,6 +197,11 @@ class ImageCaption:
                     "STRING",
                     {"forceInput": True, "multiline": True, "default": "",
                      "tooltip": "接入要润色的文本内容（批量模式下使用）"},
+                ),
+                "文件夹路径": (
+                    "STRING",
+                    {"default": "", "multiline": False,
+                     "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
                 ),
             },
         }
@@ -490,6 +496,95 @@ class ImageCaption:
                         results[i] = ""
 
             if should_unload and results:
+                try:
+                    from .lm_studio import unload_all
+                    unload_all()
+                except Exception:
+                    pass
+
+            out_reverse = "\n".join(results)
+            return (out_reverse, cap_prompt, cap_artist, cap_res)
+
+        # ── Folder batch mode: load images from a folder path ──
+        folder_path = str(kwargs.get("文件夹路径", "")).strip()
+        if folder_path and os.path.isdir(folder_path):
+            cap_prompt = kwargs.get("提示词串", "")
+            cap_artist = kwargs.get("画师串", "")
+            cap_res = kwargs.get("分辨率串", "")
+            aspect_ratio = str(kwargs.get("分辨率", "")).strip()
+            desc_fmt = str(kwargs.get("描述格式", "")).strip()
+            custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
+
+            if custom_prompt:
+                system_prompt = custom_prompt
+            else:
+                system_prompt = _build_system_prompt(desc_fmt)
+            if aspect_ratio:
+                system_prompt += f"\nTarget resolution: {aspect_ratio}"
+
+            should_unload = bool(kwargs.get("生成后卸载", False))
+            kwargs["生成后卸载"] = False
+
+            # Scan for image files
+            image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff"}
+            image_files: list[str] = []
+            for f in sorted(os.listdir(folder_path)):
+                ext = os.path.splitext(f)[1].lower()
+                if ext in image_exts:
+                    image_files.append(os.path.join(folder_path, f))
+
+            if not image_files:
+                return ("", cap_prompt, cap_artist, cap_res)
+
+            print(f"[Caption] Folder batch: {len(image_files)} images from {folder_path}")
+
+            # ── Pre-encode all images before ThreadPoolExecutor ──
+            from PIL import Image as PILImage
+            _batch_b64_folder: list[str] = []
+            for fp in image_files:
+                try:
+                    pil = PILImage.open(fp).convert("RGB")
+                    import io, base64 as _b64
+                    buf = io.BytesIO()
+                    pil.save(buf, format="JPEG", quality=95)
+                    _batch_b64_folder.append(_b64.b64encode(buf.getvalue()).decode("utf-8"))
+                except Exception as e:
+                    print(f"[Caption] Failed to encode {fp}: {e}")
+                    _batch_b64_folder.append("")
+
+            concurrency = int(kwargs.get("并发数", 4))
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            results: list[str] = [""] * len(image_files)
+            with ThreadPoolExecutor(max_workers=concurrency) as executor:
+                fut_map = {}
+                for i, b64 in enumerate(_batch_b64_folder):
+                    if not b64:
+                        continue
+                    user_parts: list[str] = []
+                    if aspect_ratio:
+                        user_parts.append(f"Resolution: {aspect_ratio}")
+                    if not user_parts:
+                        user_parts.append("Describe the image in detail.")
+                    user_msg = "\n".join(user_parts)
+                    fut = executor.submit(
+                        self._generate_one_with_b64,
+                        system_prompt, user_msg, b64,
+                        _lm_model=str(kwargs.get("模型", "")),
+                        _api_key=str(kwargs.get("API密钥", "")).strip(),
+                        _preloaded=False,
+                        kwargs_raw=kwargs,
+                    )
+                    fut_map[fut] = i
+                for future in as_completed(fut_map):
+                    i = fut_map[future]
+                    try:
+                        results[i] = future.result() or ""
+                    except Exception as e:
+                        print(f"[Caption] folder batch file {i} error: {e}")
+                        results[i] = ""
+
+            if should_unload:
                 try:
                     from .lm_studio import unload_all
                     unload_all()
