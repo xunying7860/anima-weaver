@@ -490,6 +490,12 @@ class AnimaImageCaption:
             for fp in image_files:
                 try:
                     pil = PILImage.open(fp).convert("RGB")
+                    # Ensure dimensions are multiples of 32 (VL model requirement)
+                    w, h = pil.size
+                    new_w = (w + 31) // 32 * 32
+                    new_h = (h + 31) // 32 * 32
+                    if new_w != w or new_h != h:
+                        pil = pil.resize((new_w, new_h), PILImage.LANCZOS)
                     import io, base64 as _b64
                     buf = io.BytesIO()
                     pil.save(buf, format="JPEG", quality=95)
