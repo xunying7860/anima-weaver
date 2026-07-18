@@ -210,7 +210,7 @@ class ImageCaption:
     RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
     RETURN_NAMES = ("描述文本", "提示词串", "画师串", "分辨率串")
     FUNCTION = "describe"
-    OUTPUT_NODE = True
+    # OUTPUT_NODE removed to avoid "修复节点" causing duplicate copies
 
     @classmethod
     def IS_CHANGED(cls, **kwargs) -> float:
