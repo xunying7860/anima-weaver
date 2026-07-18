@@ -443,26 +443,34 @@ class ImageCaption:
                     ctx = int(kwargs.get("上下文长度", 4096))
                     if ensure_model_loaded(_lm_model, context_length=ctx):
                         _model_preloaded = True
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"[Caption] Image batch preload failed: {e}")
 
             results: list[str] = [""] * img_batch_count
             concurrency = int(kwargs.get("并发数", 4))
+
+            # ── Pre-encode all frames before ThreadPoolExecutor ──
+            _batch_b64_frames: list[str] = []
+            for i in range(img_batch_count):
+                b64 = _tensor_to_b64(image_tensor, i)
+                _batch_b64_frames.append(b64 or "")
+            print(f"[Caption] Image batch: {img_batch_count} frames encoded, concurrency={concurrency}")
+
             from concurrent.futures import ThreadPoolExecutor, as_completed
             with ThreadPoolExecutor(max_workers=concurrency) as executor:
                 fut_map = {}
                 for i in range(img_batch_count):
+                    if not _batch_b64_frames[i]:
+                        continue
                     user_parts: list[str] = []
                     if aspect_ratio:
                         user_parts.append(f"Resolution: {aspect_ratio}")
                     if not user_parts:
                         user_parts.append("Describe the image in detail.")
                     user_msg = "\n".join(user_parts)
-
-                    # Encode frame inside worker thread to overlap with other frames
                     fut = executor.submit(
-                        self._generate_one_with_frame,
-                        system_prompt, user_msg, image_tensor, i,
+                        self._generate_one_with_b64,
+                        system_prompt, user_msg, _batch_b64_frames[i],
                         _lm_model=_lm_model, _api_key=_api_key,
                         _preloaded=_model_preloaded,
                         kwargs_raw=kwargs,
