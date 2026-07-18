@@ -203,6 +203,11 @@ class AnimaImageCaption:
                     {"default": "", "multiline": False,
                      "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
                 ),
+                "保存为txt": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用后将每张图的描述保存为同名的 .txt 文件到同一目录"},
+                ),
             },
         }
 
@@ -610,6 +615,21 @@ class AnimaImageCaption:
                     pass
 
             out_reverse = "\n".join(results)
+
+            # ── Save to .txt files if enabled ──
+            if bool(kwargs.get("保存为txt", False)):
+                saved = 0
+                for i, fp in enumerate(image_files):
+                    if i < len(results) and results[i]:
+                        txt_path = os.path.splitext(fp)[0] + ".txt"
+                        try:
+                            with open(txt_path, "w", encoding="utf-8") as tf:
+                                tf.write(results[i])
+                            saved += 1
+                        except Exception as e:
+                            print(f"[Caption] Failed to save txt for {fp}: {e}")
+                print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
+
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Single mode ──────────────────────────────────────────────
