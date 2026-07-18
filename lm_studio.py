@@ -463,7 +463,7 @@ def generate_nl_from_lm_studio(
         # ── Continuation: if model stopped very early, re-prompt ──
         # Only fires when output is suspiciously short (< max_tokens * 0.15)
         finish_reason = choices[0].get("finish_reason", "")
-        if finish_reason == "stop" and content and len(content.split()) < max_tokens * 0.15:
+        if finish_reason == "stop" and content and len(content.split()) < max_tokens * 0.05:
             continuation_msg = (
                 f"{content}\n\nContinue from where you left off. "
                 "Keep writing in the same style. Do NOT repeat. "
