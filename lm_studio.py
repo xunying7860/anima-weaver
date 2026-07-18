@@ -606,19 +606,19 @@ def generate_nl_from_lm_studio(
         except Exception:
             body = ""
         # Model crash/reload: wait and retry once
-        if any(kw in body.lower() for kw in [
-            "crashed", "reloaded", "unloaded",
-            "decode image", "attention ubatches",
-        ]):
-            # Serialise under the same lock that ensure_model_loaded uses,
-            # so concurrent threads don't each load a separate instance.
-            with _load_lock:
-                print(f"[LM Studio] Model crashed/reloaded, reloading with context_length={_last_model_ctx} parallel={_last_model_parallel}...")
-                try:
-                    unload_all()
-                    load_model(model_name, context_length=_last_model_ctx, parallel=_last_model_parallel)
-                except Exception as exc:
-                    print(f"[LM Studio] Reload failed: {exc}")
+        if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded", "decode image", "attention ubatches"]):
+            with _reload_lock:
+                # Double-check: another thread may have already recovered the model
+                loaded_now = get_loaded_models()
+                if model_name in loaded_now:
+                    print(f"[LM Studio] Model already recovered by another thread, retrying...")
+                else:
+                    print(f"[LM Studio] Reloading model...")
+                    try:
+                        load_model(model_name, context_length=_last_model_ctx, parallel=_last_model_parallel)
+                    except Exception as exc:
+                        print(f"[LM Studio] Reload failed: {exc}")
+                    time.sleep(2)
             # Retry the request once after reload
             try:
                 resp2 = requests.post(url, json=payload, headers=headers, timeout=timeout)
@@ -634,9 +634,6 @@ def generate_nl_from_lm_studio(
                         return content2
             except Exception:
                 pass
-            print(f"[LM Studio] Crash recovery failed for: [{body[:300]}]")
-        else:
-            # 非崩溃类错误（如超时、连接错误等），也打印到日志
             print(f"[LM Studio] Request error (no crash recovery): [{body[:200]}], "
                   f"returning empty")
         # 所有恢复路径失败或错误关键字不匹配，返回空字符串
