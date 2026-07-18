@@ -202,9 +202,14 @@ class AnimaImageCaption:
                     {"default": "", "multiline": False,
                      "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
                 ),
+                "强制缩放": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用后将图片缩放到约 100 万像素（Lanczos），降低显存压力"},
+                ),
                 "对齐倍数": (
                     "INT",
-                    {"default": 16, "min": 1, "max": 256, "step": 1,
+                    {"default": 14, "min": 1, "max": 256, "step": 1,
                      "tooltip": "将图片宽高对齐到该值的倍数，避免视觉编码器崩溃。默认16，Qwen-VL系用14"},
                 ),
                 "保存为txt": (
@@ -487,8 +492,18 @@ class AnimaImageCaption:
             for fp in image_files:
                 try:
                     pil = PILImage.open(fp).convert("RGB")
+                    # 强制缩放到约 100 万像素（Lanczos）
+                    if bool(kwargs.get("强制缩放", False)):
+                        w, h = pil.size
+                        mp = w * h
+                        target_mp = 1_000_000
+                        if mp > target_mp:
+                            scale = (target_mp / mp) ** 0.5
+                            nw = max(1, int(w * scale))
+                            nh = max(1, int(h * scale))
+                            pil = pil.resize((nw, nh), PILImage.LANCZOS)
                     # 对齐宽高到指定倍数，避免视觉编码器崩溃
-                    align = int(kwargs.get("对齐倍数", 16))
+                    align = int(kwargs.get("对齐倍数", 14))
                     w, h = pil.size
                     new_w = (w + align - 1) // align * align
                     new_h = (h + align - 1) // align * align
