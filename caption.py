@@ -288,6 +288,9 @@ class AnimaImageCaption:
                 if not _preloaded:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs_raw.get("上下文长度", 4096))
+                    auto_ctx = bool(kwargs_raw.get("自动上下文长度", False))
+                    if auto_ctx:
+                        ctx = int(kwargs_raw.get("最大并发数", 4)) * 2048
                     ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx)
                 print(f"[Caption] Requesting{tag} via local model {_lm_model}")
                 return generate_nl_from_lm_studio(
@@ -323,6 +326,9 @@ class AnimaImageCaption:
         else:
             if lm_model and lm_model != "(no models found)":
                 ctx = int(kwargs.get("上下文长度", 4096))
+                auto_ctx = bool(kwargs.get("自动上下文长度", False))
+                if auto_ctx:
+                    ctx = int(kwargs.get("最大并发数", 4)) * 2048
                 from .lm_studio import ensure_model_loaded
                 ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx)
                 nl = generate_nl_from_lm_studio(
@@ -652,6 +658,9 @@ class AnimaImageCaption:
                 if lm_model and lm_model != "(no models found)":
                     if not kwargs.get("_preloaded"):
                         ctx = int(kwargs.get("上下文长度", 4096))
+                        auto_ctx = bool(kwargs.get("自动上下文长度", False))
+                        if auto_ctx:
+                            ctx = int(kwargs.get("最大并发数", 4)) * 2048
                         model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx)
                     else:
                         model_was_loaded = True
