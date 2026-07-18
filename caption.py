@@ -153,7 +153,7 @@ class AnimaImageCaption:
                 "最大并发数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 128, "step": 1,
-                     "tooltip": "控制 LM Studio 的 Max Concurrent Predictions（模型加载时 --parallel 参数）"},
+                     "tooltip": "控制本地模型加载时的 Max Concurrent Predictions（--parallel 参数），仅本地模型有效"},
                 ),
             },
             "optional": {
@@ -210,7 +210,7 @@ class AnimaImageCaption:
                 "自动上下文长度": (
                     "BOOLEAN",
                     {"default": False,
-                     "tooltip": "启用后将图片缩放到约 100 万像素（Lanczos），降低显存压力"},
+                     "tooltip": "启用后自动计算上下文长度 = 最大并发数 × 1684，并强制缩放图片到约 100 万像素，仅本地模型有效"},
                 ),
                 "对齐倍数": (
                     "INT",
