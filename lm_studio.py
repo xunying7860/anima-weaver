@@ -626,7 +626,14 @@ def generate_nl_from_lm_studio(
             body = ""
         # Model crash/reload: wait and retry once
         if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded"]):
-            print(f"[LM Studio] Model crashed/reloaded, waiting 5s then retrying...")
+            print(f"[LM Studio] Model crashed/reloaded, reloading with parallel={_last_model_parallel}...")
+            if model_name:
+                try:
+                    unload_all()
+                    time.sleep(1)
+                    load_model(model_name, context_length=max_tokens, parallel=_last_model_parallel)
+                except Exception as exc:
+                    print(f"[LM Studio] Reload failed: {exc}")
             time.sleep(5)
             try:
                 resp2 = requests.post(url, json=payload, headers=headers, timeout=timeout)
@@ -642,8 +649,6 @@ def generate_nl_from_lm_studio(
                         return content2
             except Exception:
                 pass
-        print(f"[LM Studio] API request error: {e} | Body: {body}")
-        return ""
     except (json.JSONDecodeError, KeyError, IndexError) as e:
         print(f"[LM Studio] Response parsing error: {e}")
         return ""
