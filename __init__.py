@@ -26,7 +26,7 @@ NODE_CLASS_MAPPINGS = {
     "StringToInt": StringToInt,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "AnimaWeaver": "提示词编织器",
+    "AnimaWeaver": "随机提示词",
     "RandomResolution": "随机分辨率选择器",
     "PromptSlots": "提示词槽位",
     "BottomControls": "底部控制",

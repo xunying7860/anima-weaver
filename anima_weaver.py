@@ -164,7 +164,7 @@ class AnimaWeaver:
                 "并发数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 128, "step": 1,
-                     "tooltip": "批量模式下 LLM 请求的并发数（默认 4，最大 128）"},
+                     "tooltip": "批量模式并发请求数。本地模型建议保持 4（默认）或更低，显存足够/云端模型可尝试更高的值，可能有其他未知问题"},
                 ),
             },
             "optional": {
@@ -181,9 +181,15 @@ class AnimaWeaver:
                     "STRING",
                     {"forceInput": True, "tooltip": "从「底部控制」节点接入 Raffle 过滤参数"},
                 ),
+                "NL 系统提示词": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "可选。自定义系统提示词，留空使用默认提示词"},
+                ),
                 "分辨率": (
                     "STRING",
-                    {"forceInput": True, "tooltip": "从「随机分辨率选择器」节点接入分辨率（如 1024x768），用于 NL 生成时描述构图"}
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入分辨率（单值或多行每行一个），用于 NL 生成时描述构图"}
                 ),
                 "种子串": (
                     "STRING",
@@ -195,21 +201,13 @@ class AnimaWeaver:
                     {"forceInput": True, "multiline": True,
                      "tooltip": "接入画师串（每行一个画师），与种子串行对齐"},
                 ),
-                "分辨率串": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True,
-                     "tooltip": "接入分辨率串（每行一个），与种子串行对齐"},
-                ),
+
                 "反推串": (
                     "STRING",
                     {"forceInput": True, "multiline": True,
                      "tooltip": "接入反推串（每行一个），与种子串行对齐"},
                 ),
-                "NL 系统提示词": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True,
-                     "tooltip": "可选。自定义系统提示词，留空使用默认提示词"},
-                ),
+
             },
         }
 
@@ -251,7 +249,7 @@ class AnimaWeaver:
             kwargs.pop("随机种子", None)  # 批量模式下忽略随机种子
 
         # ── Mutually exclusive: 分辨率串 overrides 分辨率 ──────────────
-        res_str = kwargs.get("分辨率串", "")
+        res_str = kwargs.get("分辨率", "")
         if res_str.strip():
             kwargs.pop("分辨率", None)  # 分辨率串模式下忽略分辨率
 
@@ -435,7 +433,7 @@ class AnimaWeaver:
         """Iterate over seeds, run raffle per seed, produce 4 aligned batch outputs."""
         seeds = [s.strip() for s in batch_seeds_str.split("\n") if s.strip()]
         artist_lines = [s.strip() for s in kwargs.get("画师串", "").split("\n") if s.strip()]
-        res_lines = [s.strip() for s in kwargs.get("分辨率串", "").split("\n") if s.strip()]
+        res_lines = [s.strip() for s in kwargs.get("分辨率", "").split("\n") if s.strip()]
         cap_lines = [s.strip() for s in kwargs.get("反推串", "").split("\n") if s.strip()]
 
         prompts: list[str] = []
