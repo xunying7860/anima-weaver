@@ -25,6 +25,7 @@ NODE_CLASS_MAPPINGS = {
     "SyncPassthrough": SyncPassthrough,
     "PassthroughSplit": PassthroughSplit,
     "AnimaLoadImages": AnimaLoadImages,
+    "AnimaTextListToMultiline": AnimaTextListToMultiline,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AnimaWeaver": "Anima随机提示词",
