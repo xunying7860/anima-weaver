@@ -128,7 +128,7 @@ class AnimaWeaver:
                 ),
                 "上下文长度": (
                     "INT",
-                    {"default": 8192, "min": 512, "max": 32768},
+                    {"default": 8192, "min": 0, "max": 262144},
                 ),
                 "API地址": (
                     "STRING",
