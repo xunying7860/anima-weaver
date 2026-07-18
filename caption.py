@@ -83,6 +83,13 @@ def _tensor_to_b64(image_tensor, frame: int = 0) -> str:
     except Exception:
         return ""
     
+def _apply_prefix(text: str, prefix: str) -> str:
+    """Prepend prefix to text if non-empty."""
+    if prefix.strip():
+        return prefix.strip() + ", " + text
+    return text
+
+
 def _image_batch_count(image_tensor) -> int:
     """Return number of frames in an IMAGE tensor (1 if single image)."""
     if image_tensor is None:
@@ -133,11 +140,6 @@ class AnimaImageCaption:
                 "最大截断长度": (
                     "INT",
                     {"default": 1024, "min": 512, "max": 1080, "step": 8},
-                ),
-                "描述格式": (
-                    "STRING",
-                    {"default": "", "multiline": False,
-                     "tooltip": "可选。输出前缀格式。纯文本=仅类型，格式「类型:内容」。不接时使用通用提示"},
                 ),
                 "生成后卸载": (
                     "BOOLEAN",
@@ -207,6 +209,11 @@ class AnimaImageCaption:
                     "BOOLEAN",
                     {"default": False,
                      "tooltip": "启用后将每张图的描述保存为同名的 .txt 文件到同一目录"},
+                ),
+                "固定前缀": (
+                    "STRING",
+                    {"default": "", "multiline": False,
+                     "tooltip": "自定义描述前缀，放在每段描述最前面（末尾自动加逗号）。例：masterpiece, best quality"},
                 ),
             },
         }
@@ -335,7 +342,6 @@ class AnimaImageCaption:
             # ── Batch mode ──────────────────────────────────────────
             seeds = [s.strip() for s in seed_str.split("\n") if s.strip()]
             aspect_ratio = str(kwargs.get("分辨率", "")).strip()
-            desc_fmt = str(kwargs.get("描述格式", "")).strip()
             custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
             refine_text = str(kwargs.get("待润色文本", "")).strip()
 
@@ -344,9 +350,9 @@ class AnimaImageCaption:
             if custom_prompt:
                 system_prompt = custom_prompt
             elif has_image:
-                system_prompt = _build_system_prompt(desc_fmt)
+                system_prompt = _build_system_prompt("")
             else:
-                system_prompt = _build_batch_prompt(desc_fmt)
+                system_prompt = _build_batch_prompt("")
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
 
@@ -423,6 +429,8 @@ class AnimaImageCaption:
                     pass
 
             out_reverse = "\n".join(results)
+            prefix = str(kwargs.get("固定前缀", "")).strip()
+            out_reverse = "\n".join(_apply_prefix(r, prefix) for r in results) if prefix else "\n".join(results)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Image-batch mode: single IMAGE tensor with multiple frames ──
@@ -439,13 +447,12 @@ class AnimaImageCaption:
             cap_artist = kwargs.get("画师串", "")
             cap_res = kwargs.get("分辨率串", "")
             aspect_ratio = str(kwargs.get("分辨率", "")).strip()
-            desc_fmt = str(kwargs.get("描述格式", "")).strip()
             custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
 
             if custom_prompt:
                 system_prompt = custom_prompt
             else:
-                system_prompt = _build_system_prompt(desc_fmt)
+                system_prompt = _build_system_prompt("")
             if aspect_ratio:
                 system_prompt += f"\nTarget resolution: {aspect_ratio}"
 
@@ -520,13 +527,12 @@ class AnimaImageCaption:
             cap_artist = kwargs.get("画师串", "")
             cap_res = kwargs.get("分辨率串", "")
             aspect_ratio = str(kwargs.get("分辨率", "")).strip()
-            desc_fmt = str(kwargs.get("描述格式", "")).strip()
             custom_prompt = str(kwargs.get("自定义提示词", "")).strip()
 
             if custom_prompt:
                 system_prompt = custom_prompt
             else:
-                system_prompt = _build_system_prompt(desc_fmt)
+                system_prompt = _build_system_prompt("")
             if aspect_ratio:
                 system_prompt += f"\nTarget resolution: {aspect_ratio}"
 
@@ -630,6 +636,8 @@ class AnimaImageCaption:
                             print(f"[Caption] Failed to save txt for {fp}: {e}")
                 print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
 
+            prefix_img = str(kwargs.get("固定前缀", "")).strip()
+            out_reverse = "\n".join(_apply_prefix(r, prefix_img) for r in results) if prefix_img else "\n".join(results)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
 
         # ── Single mode ──────────────────────────────────────────────
@@ -650,9 +658,9 @@ class AnimaImageCaption:
         if custom_prompt:
             system_prompt = custom_prompt
         elif has_image:
-            system_prompt = _build_system_prompt(desc_fmt)
+            system_prompt = _build_system_prompt("")
         else:
-            system_prompt = _build_batch_prompt(desc_fmt)
+            system_prompt = _build_batch_prompt("")
         if aspect_ratio:
             system_prompt += f"\nTarget resolution: {aspect_ratio}"
         user_parts = []
@@ -717,7 +725,9 @@ class AnimaImageCaption:
             except Exception:
                 pass
 
-        return (nl or "", "", "", "")
+        prefix_single = str(kwargs.get("固定前缀", "")).strip()
+        nl_out = _apply_prefix(nl or "", prefix_single)
+        return (nl_out, "", "", "")
 
 
 NODE_CLASS_MAPPINGS = {"AnimaImageCaption": AnimaImageCaption}
