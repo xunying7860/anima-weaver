@@ -616,6 +616,24 @@ def generate_nl_from_lm_studio(
             body = e.response.text[:500] if hasattr(e, 'response') and e.response is not None else ""
         except Exception:
             body = ""
+        # Model crash/reload: wait and retry once
+        if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded"]):
+            print(f"[LM Studio] Model crashed/reloaded, waiting 5s then retrying...")
+            time.sleep(5)
+            try:
+                resp2 = requests.post(url, json=payload, headers=headers, timeout=timeout)
+                resp2.raise_for_status()
+                data2 = resp2.json()
+                choices2 = data2.get("choices", [])
+                if choices2:
+                    msg2 = choices2[0].get("message", {})
+                    content2 = msg2.get("content", "").strip()
+                    if not content2:
+                        content2 = msg2.get("reasoning_content", "").strip()
+                    if content2:
+                        return content2
+            except Exception:
+                pass
         print(f"[LM Studio] API request error: {e} | Body: {body}")
         return ""
     except (json.JSONDecodeError, KeyError, IndexError) as e:
