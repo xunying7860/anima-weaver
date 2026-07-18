@@ -457,7 +457,7 @@ class AnimaWeaver:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    if ensure_model_loaded(lm_model_name, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4))):
+                    if ensure_model_loaded(lm_model_name, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if bool(kwargs.get("自动上下文长度", False)) else None):
                         _model_preloaded = True
                         print(f"[AnimaWeaver] Preloaded model: {lm_model_name}")
                 except Exception as e:
@@ -820,7 +820,7 @@ class AnimaWeaver:
                         # 本地 LM Studio：先加载模型再调用 API
                         # 如果已在外部加载过（批量并发），跳过重复加载
                         if not kwargs.get("_preloaded"):
-                            model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)))
+                            model_was_loaded = ensure_model_loaded(lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if bool(kwargs.get("自动上下文长度", False)) else None)
                         else:
                             model_was_loaded = True
                         if model_was_loaded:
