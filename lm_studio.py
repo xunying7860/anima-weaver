@@ -25,8 +25,6 @@ import requests
 # ── Module-level settings for crash recovery ──
 _last_model_parallel: Optional[int] = None
 _load_lock = threading.Lock()
-import threading as _threading
-_reload_lock = _threading.Lock()
 
 # ── Constants ──────────────────────────────────────────────────────
 
@@ -179,27 +177,6 @@ def get_models() -> list[str]:
     return models
 
 
-def get_loaded_models() -> list[str]:
-    """
-    Query LM Studio for currently loaded models via ``lms ps``.
-    """
-    rc, stdout, stderr = _run_lms(["ps"])
-    if rc != 0:
-        return []
-
-    loaded = []
-    for line in stdout.splitlines():
-        line = line.strip()
-        if not line or line.startswith("-") or "IDENTIFIER" in line:
-            continue
-        parts = line.split()
-        if len(parts) >= 2:
-            name = parts[1]  # parts[0]=identifier, parts[1]=model name
-            if not name.startswith("("):
-                loaded.append(name)
-    return loaded
-
-
 def load_model(
     model_name: str,
     identifier: Optional[str] = None,
@@ -283,21 +260,12 @@ def ensure_model_loaded(
     Ensure a model is loaded in LM Studio memory.
 
     Uses ``lms ps`` to check current loaded models, and ``lms load``
-    to load if necessary.
-
-    Parameters
-    ----------
-    model_name : str
-        Name of the model to check / load.
-    context_length : int
-        Context length (used only if loading is needed).
-
-    Returns
-    -------
-    bool
-        ``True`` if the model is now available in memory.
+    to load if necessary.  Thread-safe: a module-level lock prevents
+    multiple concurrent ``lms load`` calls from creating duplicate
+    model instances (which LM Studio treats as separate copies with
+    ``:2``, ``:3`` … identifiers).
     """
-    # Check currently loaded models via lms ps
+    # Fast path — quick check without lock
     loaded = get_loaded_models()
     if model_name in loaded:
         return True
@@ -307,16 +275,23 @@ def ensure_model_loaded(
         unload_all()
         time.sleep(1.0)
 
-    # Try loading with retries
-    for attempt in range(_LMS_MAX_RETRIES):
-        ok = load_model(model_name, context_length=context_length, parallel=parallel)
-        if ok:
-            time.sleep(2.0)
-            # Verify it actually loaded
-            if model_name in get_loaded_models():
-                return True
-        if attempt < _LMS_MAX_RETRIES - 1:
-            time.sleep(_LMS_RETRY_DELAY_S)
+    # Serialise the actual load so concurrent callers don't each create
+    # a separate model instance.
+    with _load_lock:
+        # Double-check: another thread may have loaded it while we waited
+        if model_name in get_loaded_models():
+            return True
+
+        # Try loading with retries
+        for attempt in range(_LMS_MAX_RETRIES):
+            ok = load_model(model_name, context_length=context_length, parallel=parallel)
+            if ok:
+                time.sleep(2.0)
+                # Verify it actually loaded
+                if model_name in get_loaded_models():
+                    return True
+            if attempt < _LMS_MAX_RETRIES - 1:
+                time.sleep(_LMS_RETRY_DELAY_S)
 
     return False
 
@@ -629,13 +604,17 @@ def generate_nl_from_lm_studio(
         except Exception:
             body = ""
         # Model crash/reload: wait and retry once
-        crash_keywords = ["crashed", "reloaded", "unloaded", "decode image",
-                          "attention ubatches", "llama.cpp", "internal error"]
-        if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded", "decode image", "attention ubatches"]):
-            # Only one thread reloads; others wait
-            with _reload_lock:
-                print(f"[LM Studio] Reloading model with parallel={_last_model_parallel}...")
+        if any(kw in body.lower() for kw in [
+            "crashed", "reloaded", "unloaded",
+            "decode image", "attention ubatches",
+        ]):
+            # Serialise under the same lock that ensure_model_loaded uses,
+            # so concurrent threads don't each load a separate instance.
+            with _load_lock:
+                print(f"[LM Studio] Model crashed/reloaded, reloading with parallel={_last_model_parallel}...")
                 try:
+                    unload_all()
+                    time.sleep(1)
                     load_model(model_name, context_length=max_tokens, parallel=_last_model_parallel)
                 except Exception as exc:
                     print(f"[LM Studio] Reload failed: {exc}")
@@ -655,31 +634,7 @@ def generate_nl_from_lm_studio(
                         return content2
             except Exception:
                 pass
-            print(f"[LM Studio] LM Studio error — [{body[:300]}]")
-            print(f"[LM Studio] Triggered crash recovery (keywords matched), "
-                  f"reloading with parallel={_last_model_parallel}...")
-            if model_name:
-                try:
-                    unload_all()
-                    time.sleep(1)
-                    load_model(model_name, context_length=max_tokens, parallel=_last_model_parallel)
-                except Exception as exc:
-                    print(f"[LM Studio] Reload failed: {exc}")
-            time.sleep(5)
-            try:
-                resp2 = requests.post(url, json=payload, headers=headers, timeout=timeout)
-                resp2.raise_for_status()
-                data2 = resp2.json()
-                choices2 = data2.get("choices", [])
-                if choices2:
-                    msg2 = choices2[0].get("message", {})
-                    content2 = msg2.get("content", "").strip()
-                    if not content2:
-                        content2 = msg2.get("reasoning_content", "").strip()
-                    if content2:
-                        return content2
-            except Exception:
-                pass
+            print(f"[LM Studio] Crash recovery failed for: [{body[:300]}]")
         else:
             # 非崩溃类错误（如超时、连接错误等），也打印到日志
             print(f"[LM Studio] Request error (no crash recovery): [{body[:200]}], "
