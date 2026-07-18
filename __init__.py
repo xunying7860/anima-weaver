@@ -24,11 +24,11 @@ NODE_CLASS_MAPPINGS = {
     "PassthroughSplit": PassthroughSplit,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "AnimaWeaver": "随机提示词",
+    "AnimaWeaver": "Anima随机提示词",
     "RandomResolution": "随机分辨率选择器",
     "PromptSlots": "提示词槽位",
     "BottomControls": "底部控制",
-    "AnimaImageCaption": "LMS I to P",
+    "AnimaImageCaption": "Anima反推",
     "ArtistSeedNode": "画师Seed",
     "BatchSeedNode": "批量种子",
     "SyncPassthrough": "同步串行",
