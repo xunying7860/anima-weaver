@@ -153,7 +153,7 @@ class AnimaImageCaption:
                 "请求数": (
                     "INT",
                     {"default": 4, "min": 1, "max": 128, "step": 1,
-                     "tooltip": ""},
+                     "tooltip": "建议大于或等于最大并发数"},
                 ),
                 "最大并发数": (
                     "INT",
