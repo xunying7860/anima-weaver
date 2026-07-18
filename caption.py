@@ -414,6 +414,11 @@ class ImageCaption:
         # ── Image-batch mode: single IMAGE tensor with multiple frames ──
         image_tensor = kwargs.get("图像")
         img_batch_count = _image_batch_count(image_tensor)
+        if image_tensor is not None:
+            try:
+                print(f"[Caption] Tensor shape: {list(image_tensor.shape)}, dim={image_tensor.dim()}, batch_count={img_batch_count}")
+            except Exception as e:
+                print(f"[Caption] Tensor inspect error: {e}")
         if img_batch_count > 1:
             # Auto-batch per image frame, no 种子串 needed
             cap_prompt = kwargs.get("提示词串", "")
