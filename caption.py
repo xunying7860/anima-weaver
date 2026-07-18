@@ -95,7 +95,7 @@ def _image_batch_count(image_tensor) -> int:
         return 0
 
 
-class ImageCaption:
+class AnimaImageCaption:
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, Any]:
         model_list: list[str] = []
@@ -682,5 +682,5 @@ class ImageCaption:
         return (nl or "", "", "", "")
 
 
-NODE_CLASS_MAPPINGS = {"ImageCaption": ImageCaption}
+NODE_CLASS_MAPPINGS = {"AnimaImageCaption": AnimaImageCaption}
 NODE_DISPLAY_NAME_MAPPINGS = {"ImageCaption": "图片反推描述"}
