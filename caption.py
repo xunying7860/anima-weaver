@@ -542,8 +542,8 @@ class AnimaImageCaption:
             failed_indices = [i for i, r in enumerate(results) if not r]
             if failed_indices:
                 failed_names = [os.path.basename(image_files[i]) for i in failed_indices]
-                print(f"[Caption] ⚠️ {len(failed_indices)}/{len(results)} images failed — {failed_names}")
-                print(f"[Caption] ⚠️ Tip: try reducing '并发数' or adjust '对齐倍数' parameter")
+                print(f"[Caption] ⚠️ {len(failed_indices)}/{len(results)} 张图片失败: {failed_names}")
+                print(f"[Caption] ⚠️ 请尝试降低「并发数」或调整「对齐倍数」参数")
 
             if should_unload:
                 try:

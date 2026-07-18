@@ -609,7 +609,7 @@ def generate_nl_from_lm_studio(
             body = ""
         # Model crash/reload: wait and retry once
         if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded", "decode image", "attention ubatches"]):
-            print(f"[LM Studio] ⚠️ Model crashed on this request. If this keeps happening, try reducing the '并发数' parameter.")
+            print(f"[LM Studio] ⚠️ 模型崩溃，请尝试降低「并发数」或调整「对齐倍数」参数")
             print(f"[LM Studio] Request error (no crash recovery): [{body[:200]}], "
                   f"returning empty")
         # 所有恢复路径失败或错误关键字不匹配，返回空字符串
