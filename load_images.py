@@ -50,12 +50,17 @@ class AnimaLoadImages:
             dummy = torch.zeros((1, 64, 64, 3), dtype=torch.float32)
             return (dummy, 0)
 
-        # Load all images
+        # Load all images, resize to first image's size
         tensors: list[torch.Tensor] = []
+        ref_size = None
         for fname in images:
             fp = os.path.join(folder, fname)
             try:
                 pil_img = PILImage.open(fp).convert("RGB")
+                if ref_size is None:
+                    ref_size = pil_img.size
+                elif pil_img.size != ref_size:
+                    pil_img = pil_img.resize(ref_size, PILImage.LANCZOS)
                 img_np = np.array(pil_img).astype(np.float32) / 255.0
                 tensors.append(torch.from_numpy(img_np)[None, ...])
             except Exception as e:
