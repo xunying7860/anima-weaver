@@ -214,6 +214,9 @@ class AnimaImageCaption:
 
     @classmethod
     def IS_CHANGED(cls, **kwargs) -> float:
+        # Return fixed value for folder batch to avoid unnecessary re-execution
+        if kwargs.get("文件夹路径", "") and os.path.isdir(str(kwargs.get("文件夹路径", ""))):
+            return 0.0
         return random.random()
 
     def _generate_one_with_frame(self,
@@ -537,6 +540,7 @@ class AnimaImageCaption:
                 return ("", cap_prompt, cap_artist, cap_res)
 
             print(f"[Caption] Folder batch: {len(image_files)} images from {folder_path}")
+            print(f"[Caption] Files found: {[os.path.basename(f) for f in image_files[:10]]}")
 
             # ── Preload model once ──
             _model_preloaded = False
