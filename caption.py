@@ -217,7 +217,11 @@ class AnimaImageCaption:
                     {"default": 14, "min": 1, "max": 256, "step": 1,
                      "tooltip": "将图片宽高对齐到该值的倍数，避免视觉编码器崩溃。默认16，Qwen-VL系用14"},
                 ),
-
+                "保存为txt": (
+                    "BOOLEAN",
+                    {"default": False,
+                     "tooltip": "启用后将每张图的描述保存为同名的 .txt 文件到同一目录"},
+                ),
             },
         }
 
@@ -587,7 +591,18 @@ class AnimaImageCaption:
             else:
                 prefixed_results = results
 
-
+            if bool(kwargs.get("保存为txt", False)):
+                saved = 0
+                for i, fp in enumerate(image_files):
+                    if i < len(prefixed_results) and prefixed_results[i]:
+                        txt_path = os.path.splitext(fp)[0] + ".txt"
+                        try:
+                            with open(txt_path, "w", encoding="utf-8") as tf:
+                                tf.write(prefixed_results[i])
+                            saved += 1
+                        except Exception as e:
+                            print(f"[Caption] Failed to save txt for {fp}: {e}")
+                print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
 
             out_reverse = "\n".join(prefixed_results)
             return (out_reverse, cap_prompt, cap_artist, cap_res)
