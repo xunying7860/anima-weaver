@@ -609,33 +609,7 @@ def generate_nl_from_lm_studio(
             body = ""
         # Model crash/reload: wait and retry once
         if any(kw in body.lower() for kw in ["crashed", "reloaded", "unloaded", "decode image", "attention ubatches"]):
-            with _load_lock:
-                # Double-check: another thread may have already recovered the model
-                loaded_now = get_loaded_models()
-                if model_name in loaded_now:
-                    print(f"[LM Studio] Model already recovered by another thread, retrying...")
-                else:
-                    print(f"[LM Studio] Reloading model...")
-                    try:
-                        load_model(model_name, context_length=_last_model_ctx, parallel=_last_model_parallel)
-                    except Exception as exc:
-                        print(f"[LM Studio] Reload failed: {exc}")
-                    time.sleep(2)
-            # Retry the request once after reload
-            try:
-                resp2 = requests.post(url, json=payload, headers=headers, timeout=timeout)
-                resp2.raise_for_status()
-                data2 = resp2.json()
-                choices2 = data2.get("choices", [])
-                if choices2:
-                    msg2 = choices2[0].get("message", {})
-                    content2 = msg2.get("content", "").strip()
-                    if not content2:
-                        content2 = msg2.get("reasoning_content", "").strip()
-                    if content2:
-                        return content2
-            except Exception:
-                pass
+            print(f"[LM Studio] ⚠️ Model crashed on this request. If this keeps happening, try reducing the '并发数' parameter.")
             print(f"[LM Studio] Request error (no crash recovery): [{body[:200]}], "
                   f"returning empty")
         # 所有恢复路径失败或错误关键字不匹配，返回空字符串
