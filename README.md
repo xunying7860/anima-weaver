@@ -163,25 +163,27 @@ When an image input is connected, invokes a VL (vision-language) model for image
 
 Independent node for random resolution generation.
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `随机画幅` | BOOLEAN | Randomly selects from 8 aspect ratios |
-| `百万像素` | FLOAT | Target megapixels; automatically computes nearest width/height |
-| `固定比例` | COMBO | Fixed aspect ratio when random is disabled |
-| `对齐到` | INT | Align dimensions to this multiple (1–256, default 8) |
-| `随机种子` | INT (forceInput) | Optional external seed input |
-| `种子串` | STRING | Accepts batch seeds for per-seed independent resolutions |
+**New Features:**
+- New "模式" toggle (BOOLEAN, default False=manual)
+- Manual mode retains all original functionality
+- Auto mode (True) adds: prompt input (STRING forceInput multiline), pure random resolution (BOOLEAN default True)
+- When a prompt is connected, each line is analyzed for composition keywords (70% preferred ratio / 30% secondary ratio)
+- When no prompt or insufficient lines, the pure random toggle determines fallback (True=random, False=fixed)
+- Supports 11 aspect ratios: 1:1, 3:4, 4:3, 2:3, 3:2, 16:9, 9:16, 16:10, 10:16, 21:9, 9:21
+- Manual mode fixed ratio dropdown expanded to 11 ratios
 
-**Outputs:**
+**Output Changes:**
+- Removed 分辨率, 分辨率串, 宽度串, 高度串 outputs
+- 宽度/高度 changed to STRING type (manual=single value, auto=comma-separated multiline)
+- Final outputs: 随机种子(INT) + 种子串(STRING) + 宽度(STRING) + 高度(STRING)
 
-| Output | Type | Description |
-|--------|------|-------------|
-| `宽度` | INT | Computed width |
-| `高度` | INT | Computed height |
-| `分辨率` | STRING | Formatted as `1024x768` |
-| `分辨率串` | STRING | Multiline resolutions (batch mode) |
-| `宽度串` | STRING | Multiline width values (batch mode) |
-| `高度串` | STRING | Multiline height values (batch mode) |
+**Note: Auto mode algorithm is based on keyword matching and is for reference only (pending validation). Algorithm suggestions are welcome.**
+
+### Batch Pipeline Changes
+- 同步串行: 7-channel → 6-channel (removed 分辨率串 channel)
+- 串行拆分: 7-channel → 6-channel (removed 分辨率 channel)
+- Anima随机提示词: removed 分辨率 input, 分辨率串 output
+- Anima反推: removed 分辨率 input, 分辨率串 output
 
 ---
 
