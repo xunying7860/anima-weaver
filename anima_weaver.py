@@ -196,11 +196,6 @@ class AnimaWeaver:
                     {"forceInput": True, "multiline": True,
                      "tooltip": "可选。自定义系统提示词，留空使用默认提示词"},
                 ),
-                "分辨率": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True,
-                     "tooltip": "接入分辨率（单值或多行每行一个），用于 NL 生成时描述构图"}
-                ),
                 "种子串": (
                     "STRING",
                     {"forceInput": True, "multiline": True,
@@ -222,8 +217,8 @@ class AnimaWeaver:
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("生成的提示词", "调试信息", "画师串", "分辨率串", "反推串")
+    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
+    RETURN_NAMES = ("生成的提示词", "调试信息", "画师串", "反推串")
     FUNCTION = "compose"
     OUTPUT_NODE = True
 
@@ -243,9 +238,9 @@ class AnimaWeaver:
 
     # ── Main composition entry point ──────────────────────────────
 
-    def compose(self, **kwargs) -> tuple[str, str, str, str, str, str]:
+    def compose(self, **kwargs) -> tuple[str, str, str, str, str]:
         """
-        Main node workflow. Returns 6-tuple (single_prompt, debug, +4 batch outs).
+        Main node workflow. Returns 5-tuple (single_prompt, debug, +3 batch outs).
         """
         mode = kwargs.get("模式", "hybrid")
         tag_ratio = float(kwargs.get("标签比例", 0.6))
@@ -257,11 +252,6 @@ class AnimaWeaver:
         is_batch = bool(batch_seeds_str.strip())
         if is_batch:
             kwargs.pop("随机种子", None)  # 批量模式下忽略随机种子
-
-        # ── Mutually exclusive: 分辨率串 overrides 分辨率 ──────────────
-        res_str = kwargs.get("分辨率", "")
-        if res_str.strip():
-            kwargs.pop("分辨率", None)  # 分辨率串模式下忽略分辨率
 
         # ── Optional: merge slot data JSON ────────────────────────────
         slot_json = kwargs.get("槽位数据", "")
@@ -439,16 +429,14 @@ class AnimaWeaver:
 
     def _compose_batch(self, kwargs: dict, manual_slots: dict, batch_seeds_str: str,
                         mode: str, tag_ratio: float,
-                        enable_conflict: bool, nl_source: str) -> tuple[str, str, str, str, str, str]:
-        """Iterate over seeds, run raffle per seed, produce 4 aligned batch outputs."""
+                        enable_conflict: bool, nl_source: str) -> tuple[str, str, str, str, str]:
+        """Iterate over seeds, run raffle per seed, produce 3 aligned batch outputs."""
         seeds = [s.strip() for s in batch_seeds_str.split("\n") if s.strip()]
         artist_lines = [s.strip() for s in kwargs.get("画师串", "").split("\n") if s.strip()]
-        res_lines = [s.strip() for s in kwargs.get("分辨率", "").split("\n") if s.strip()]
         cap_lines = [s.strip() for s in kwargs.get("反推串", "").split("\n") if s.strip()]
 
         prompts: list[str] = []
         artists_out: list[str] = []
-        res_out: list[str] = []
         caps_out: list[str] = []
 
         should_unload = bool(kwargs.get("生成后卸载", False))
@@ -515,10 +503,6 @@ class AnimaWeaver:
                     except (ValueError, IndexError):
                         pass
 
-            # Per-seed resolution from 分辨率串
-            if i < len(res_lines):
-                seed_kwargs["分辨率"] = res_lines[i]
-
             seed_task_data.append((seed_kwargs, tag_prompt, i))
 
         # Mark all seed_kwargs as preloaded for parallel phase
@@ -529,7 +513,6 @@ class AnimaWeaver:
         # Phase 2: Parallel NL generation + final assembly
         prompts = [""] * len(seeds)
         artists_out = [""] * len(seeds)
-        res_out = [""] * len(seeds)
         caps_out = [""] * len(seeds)
         seed_index_to_i: dict[int, int] = {}  # maps task index to original seed index
         for task_idx, (_, _, orig_i) in enumerate(seed_task_data):
@@ -552,7 +535,6 @@ class AnimaWeaver:
                     print(f"[AnimaWeaver] batch seed {orig_i} error: {e}")
                     prompts[orig_i] = ""
                 artists_out[orig_i] = artist_lines[orig_i] if orig_i < len(artist_lines) else ""
-                res_out[orig_i] = res_lines[orig_i] if orig_i < len(res_lines) else ""
                 caps_out[orig_i] = cap_lines[orig_i] if orig_i < len(cap_lines) else ""
 
         # Filter out empty results
@@ -571,7 +553,6 @@ class AnimaWeaver:
             out_prompts,
             debug,
             "\n".join(artists_out),
-            "\n".join(res_out),
             "\n".join(caps_out),
         )
 
@@ -803,7 +784,6 @@ class AnimaWeaver:
                     api_key = kwargs.get("API密钥", "")
                     cloud_model = kwargs.get("云端模型名", "").strip()
                     detailed_nl = bool(kwargs.get("强制详细自然语言", False))
-                    aspect_ratio = str(kwargs.get("分辨率", "") or "")
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
