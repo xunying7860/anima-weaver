@@ -38,6 +38,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SyncPassthrough": "同步串行",
     "PassthroughSplit": "串行拆分",
     "AnimaLoadImages": "Anima加载图像",
+    "AnimaTextListToMultiline": "Anima列表转多行",
 }
 
 __all__ = [
