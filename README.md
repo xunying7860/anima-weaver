@@ -163,21 +163,50 @@ When an image input is connected, invokes a VL (vision-language) model for image
 
 Independent node for random resolution generation.
 
-**New Features:**
-- New "模式" toggle (BOOLEAN, default False=manual)
-- Manual mode retains all original functionality
-- Auto mode (True) adds: prompt input (STRING forceInput multiline), pure random resolution (BOOLEAN default True)
-- When a prompt is connected, each line is analyzed for composition keywords (70% preferred ratio / 30% secondary ratio)
-- When no prompt or insufficient lines, the pure random toggle determines fallback (True=random, False=fixed)
-- Supports 11 aspect ratios: 1:1, 3:4, 4:3, 2:3, 3:2, 16:9, 9:16, 16:10, 10:16, 21:9, 9:21
-- Manual mode fixed ratio dropdown expanded to 11 ratios
+#### Manual Mode
+- Full original functionality preserved, pick from 13 aspect ratios or random
+
+#### Auto Mode (Scoring-based Decision Engine v7)
+- With a prompt connected, the node automatically analyzes composition via **7-layer priority normalization + 3D scoring engine**
+- No manual rule maintenance needed — handles shot type, person count, pose, and viewpoint automatically
+
+**Supported Aspect Ratios:** 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9
+
+**Scoring System (Width / Height / Square 3D scoring):**
+- **Width factors:** fighting(+3), action(+2), OTS(+3), wide angle(+2~3), aerial(+2~4), small group(+1), large group(+5), panorama(+5), full body+group(+2), argue(+1), lying(+1~2), low angle(+1)
+- **Height factors:** tall portrait(+4~1), selfie(+4), full body+solo(+2), bust/half body(+1), upper/lower body(+2), sitting(+3), curled(+1)
+- **Square factors:** face close-up(+5), focus detail(+5), chibi(+4), american shot(+3), still life(+2), high angle(+1)
+- **Combo bonuses:** fighting+action(+1), panorama+wide(+1), full body+action(+1)
+
+**Covered Composition Scenes:**
+- Solo / Couple / Small group / Large group
+- Standing / Sitting / Lying / Curled up
+- Face close-up / Bust / Full body
+- Fighting / Action / Acrobat
+- POV / Over-the-shoulder / Selfie
+- Panorama / Wide angle / Aerial
+- Still life / Product photography
+- Various angles (low/high/eye-level)
+
+**7-Layer Priority Normalization:**
+- Layer 0: Compound words first (prevents "face close up" being corrupted by "close up")
+- Layer 1: Person count & group
+- Layer 2: Shot type & framing
+- Layer 3: POV perspective
+- Layer 4: Action & pose
+- Layer 5: Face & focus
+- Layer 6: Scene & environment
+- Layer 7: Angle
 
 **Output Changes:**
 - Removed 分辨率, 分辨率串, 宽度串, 高度串 outputs
 - 宽度/高度 changed to STRING type (manual=single value, auto=comma-separated multiline)
 - Final outputs: 随机种子(INT) + 种子串(STRING) + 宽度(STRING) + 高度(STRING)
 
-**Note: Auto mode algorithm is based on keyword matching and is for reference only (pending validation). Algorithm suggestions are welcome.**
+**Resolution Calculation:**
+- Global min edge 512px, max edge 2048px
+- Alignment step 16 (compatible with Illustrious / anima-base DiT)
+- Area loss < 3%
 
 ### Batch Pipeline Changes
 - 同步串行: 7-channel → 6-channel (removed 分辨率串 channel)
