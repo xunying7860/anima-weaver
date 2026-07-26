@@ -40,7 +40,8 @@ RATIO_THRESHOLD = {
 PERSON      = frozenset({"solo", "1girl", "1boy", "alone", "person"})
 COUPLE      = frozenset({"2girls", "2boys", "couple"})
 GROUP_SMALL = frozenset({"3girls", "3boys", "4girls", "4boys"})
-GROUP_LARGE = frozenset({"group", "crowd", "multiple"})
+GROUP_LARGE = frozenset({"group", "crowd"})
+MULTIPLE = frozenset({"multiple"})
 POV         = frozenset({"pov"})
 OTS         = frozenset({"over the shoulder"})
 PANORAMA    = frozenset({"panorama", "grand vista", "breathtaking view", "scenic view"})
@@ -117,6 +118,8 @@ NORM_LAYERS = [
         r'\btwo\s+(girls?|boys?)\b': lambda m: f"2{m.group(1).rstrip('s')}s",
         r'\bthree\s+(girls?|boys?)\b': lambda m: f"3{m.group(1).rstrip('s')}s",
         r'\bfour\s+(girls?|boys?)\b': lambda m: f"4{m.group(1).rstrip('s')}s",
+        r'\bmultiple[s]?\b': 'multiple',
+        r'\bmultiple[_\- ]?(girls|boys|people|girl|boy)\b': 'multiple',
         r'\bmany\b': 'multiple',
         r'\beveryone\b': 'group',
         r'\b(s?he|they)\b': 'person',
@@ -125,6 +128,7 @@ NORM_LAYERS = [
         r'\bduo\b': 'couple',
         r'\bpair\b': 'couple',
         r'\bcrowd\b': 'crowd',
+        r'\bmultiple\s+(girls|boys|people)\b': 'multiple',
     },
     # Layer 2: 景别与镜头
     {
@@ -280,7 +284,7 @@ def resolve_ratio(tokens: list[str]) -> str:
     hs = 0
     ss = 0
 
-    has_group = (COUPLE | GROUP_SMALL | GROUP_LARGE) & tset
+    has_group = (COUPLE | GROUP_SMALL | GROUP_LARGE | MULTIPLE) & tset
     has_person = PERSON & tset
     is_lying = LYING & tset
     is_curled = CURLED & tset
@@ -304,8 +308,6 @@ def resolve_ratio(tokens: list[str]) -> str:
         ws += 3 if has_person else 2
     if AERIAL & tset:
         ws += 3 if has_person else 4
-    if tset & COUPLE:
-        ws += 2
     if tset & GROUP_SMALL:
         ws += 1
     if tset & GROUP_LARGE:
@@ -330,6 +332,12 @@ def resolve_ratio(tokens: list[str]) -> str:
         ws += 1
     if FULL & tset and ACTION & tset:
         ws += 1
+    # COUPLE bonus when combined with composition keywords
+    if tset & COUPLE and (FULL & tset or FIGHTING & tset or ACTION & tset or
+            OTS & tset or WIDE_ANGLE & tset or AERIAL & tset or
+            tset & GROUP_SMALL or tset & GROUP_LARGE or
+            PANORAMA & tset or ARGUE & tset or LOW_ANGLE & tset):
+        ws += 2
 
     # 竖屏因子
     if TALL & tset:
@@ -358,6 +366,10 @@ def resolve_ratio(tokens: list[str]) -> str:
         ss += 2
     if HIGH_ANGLE & tset:
         ss += 1
+
+    # 群体/双人无修饰 → 3:4
+    if (tset & COUPLE or tset & MULTIPLE) and ws == 0 and hs == 0 and ss == 0:
+        return "3:4"
 
     # 躺卧全身 → 4:3
     if is_lying and FULL & tset and has_person and not has_group:
