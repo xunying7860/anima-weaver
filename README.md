@@ -173,16 +173,16 @@ Independent node for random resolution generation.
 **Supported Aspect Ratios:** 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9
 
 **Scoring System (Width / Height / Square 3D scoring):**
-- **Width factors:** fighting(+3), action(+2), OTS(+3), wide angle(+2~3), aerial(+2~4), small group(+1), large group(+5), panorama(+5), full body+group(+2), argue(+1), lying(+1~2), low angle(+1)
+- **Width factors:** fighting(+3), action(+2), OTS(+3), wide angle(+2~3), aerial(+2~4), small group(+1), large group(+5), multiple(+2), panorama(+5), full body+group(+2), argue(+1), lying(+2,overrides sitting), hug+group(+2), low angle(+1)
 - **Height factors:** tall portrait(+4~1), selfie(+4), full body+solo(+2), bust/half body(+1), upper/lower body(+2), sitting(+3), curled(+1)
 - **Square factors:** face close-up(+5), focus detail(+5), chibi(+4), american shot(+3), still life(+2), high angle(+1)
 - **Combo bonuses:** fighting+action(+1), panorama+wide(+1), full body+action(+1)
 
 **Covered Composition Scenes:**
-- Solo / Couple / Small group / Large group
+- Solo / Couple / Small group (3-4) / Large group (5+)
 - Standing / Sitting / Lying / Curled up
 - Face close-up / Bust / Full body
-- Fighting / Action / Acrobat
+- Hug / Family group / Fighting / Action / Acrobat
 - POV / Over-the-shoulder / Selfie
 - Panorama / Wide angle / Aerial
 - Still life / Product photography
