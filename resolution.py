@@ -318,13 +318,13 @@ def resolve_ratio(tokens: list[str]) -> str:
         ws += 2
     if ARGUE & tset and (GROUP_SMALL & tset or GROUP_LARGE & tset):
         ws += 1
-    if is_lying and has_person and not has_group and not is_curled:
-        ws += 2
-        hs = 0
     if is_curled and has_person and not has_group:
         hs = 0  # curled up cancels FULL hs bonus
     if LOW_ANGLE & tset:
         ws += 1
+    # Hug: group activity needs width
+    if "hug" in tset and has_group:
+        ws += 2
     # 组合加分
     if FIGHTING & tset and ACTION & tset:
         ws += 1
@@ -352,6 +352,11 @@ def resolve_ratio(tokens: list[str]) -> str:
         hs += 2
     if SITTING & tset:
         hs += 3
+    if is_lying and has_person and not is_curled:
+        ws += 2
+        hs = 0
+        if SITTING & tset:
+            hs = 0  # lying overrides sitting
     if is_curled and has_person and not has_group:
         hs += 1
 
