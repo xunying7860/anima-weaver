@@ -784,6 +784,8 @@ class AnimaWeaver:
                     api_key = kwargs.get("API密钥", "")
                     cloud_model = kwargs.get("云端模型名", "").strip()
                     detailed_nl = bool(kwargs.get("强制详细自然语言", False))
+                    auto_ctx = bool(kwargs.get("自动上下文长度", False))
+                    aspect_ratio = kwargs.get("aspect_ratio", "")
 
                     if api_key:
                         # 云端 API：跳过 lms load，直接发请求
