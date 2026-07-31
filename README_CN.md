@@ -337,7 +337,6 @@
 
 ## Credits
 
-- **节点编写：** DeepSeek V4 Flash
 - **Danbooru 标签数据：** 来自 [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle)（rainlizard）
 - **ComfyUI 集成：** 标准 ComfyUI 自定义节点接口
 - **画师索引：** 基于 Danbooru 标签数据构建
