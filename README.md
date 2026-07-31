@@ -91,7 +91,7 @@ LM Studio NL enhancement: calls a local LLM to convert tags into fluent English 
 | 场景类型 | COMBO | Scene category for raffle sampling |
 | 自然语言来源 | COMBO | manual / lm_studio |
 | 强制详细自然语言 | BOOLEAN | Force NL to be very detailed (512 tokens) |
-| 模型 | COMBO | LM Studio model selection |
+| 模型 | COMBO | LM Studio model selection (choose `none` to disable LLM and pass through 变化文本) |
 | 生成后卸载 | BOOLEAN | Unload model after generation |
 | API地址 | STRING | LM Studio / OpenAI-compatible API endpoint |
 | API密钥 | STRING | API key (blank for local) |
@@ -120,9 +120,11 @@ LM Studio NL enhancement: calls a local LLM to convert tags into fluent English 
 
 When an image input is connected, invokes a VL (vision-language) model for image captioning. Without an image, operates in prompt refinement mode.
 
+**none mode (LLM disabled):** Select `none` in the model dropdown to skip LLM calls entirely — 变化文本 (e.g. multiline wd14 tagger output) passes through as-is, combined with 固定前缀 and output/saved directly. Typical workflow: `Anima加载图像 → wd14 tagger → Anima列表转多行 → 变化文本 → Anima反推(none) → save as txt`.
+
 **Prompt priority:** Custom system prompt > Image connected → caption mode > No image → refinement mode
 
-**Batch mode:** Accepts `种子串` for per-seed independent generation (no image input in batch mode). LLM loads once, processes N seeds concurrently, unloads on completion.
+**Batch mode:** Accepts `种子串` (located below 随机种子) for per-seed independent generation (no image input in batch mode). LLM loads once, processes N seeds concurrently, unloads on completion.
 
 **Fixed prefix:** The `固定前缀` parameter lets you prepend a string (e.g., `masterpiece, best quality`) to every generated description.
 
@@ -132,7 +134,7 @@ When an image input is connected, invokes a VL (vision-language) model for image
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| 模型 | COMBO | LM Studio model selection |
+| 模型 | COMBO | LM Studio model selection (choose `none` to disable LLM and pass through 变化文本) |
 | API地址 | STRING | LM Studio / OpenAI-compatible API endpoint |
 | API密钥 | STRING | API key (blank for local) |
 | 云端模型名 | STRING | Cloud vision model name |
@@ -144,7 +146,7 @@ When an image input is connected, invokes a VL (vision-language) model for image
 | 最大并发数 | INT | Max concurrent predictions (1–128, default 4) |
 | 固定前缀 | STRING | Custom prefix prepended to each description |
 | 变化文本 | STRING (forceInput) | Variable text, one line per image, combined with prefix + description before saving to txt |
-| 图片路径 | STRING | Folder path to batch-process images (lower priority than 种子串) |
+| 图片路径 | STRING | Folder path to batch-process images (lower priority than 种子串) | (right-click → convert to input to connect Anima加载图像 file paths)
 | 对齐倍数 | INT | Align image dimensions to this multiple (default 14) |
 | 保存为txt | BOOLEAN | Save each description as a `.txt` file next to the source image |
 
