@@ -249,7 +249,7 @@ class AnimaImageCaption:
                 ),
                 "图片路径": (
                     "STRING",
-                    {"default": "", "multiline": True,
+                    {"default": "", "multiline": False,
                      "tooltip": "直接指定图片文件夹路径（或右键转换为输入，接入 Anima加载图像 的文件路径串），节点自动遍历所有图片并发处理（优先级低于种子串）"},
                 ),
                 "对齐倍数": (
