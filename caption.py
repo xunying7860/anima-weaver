@@ -104,6 +104,29 @@ def _apply_prefix(text: str, prefix: str) -> str:
     return text
 
 
+def _collect_image_paths(folder_or_paths: str) -> list[str]:
+    """
+    Resolve 图片路径 input into a list of image file paths.
+    Supports: a folder path, or a multiline list of file paths
+    (e.g. from Anima加载图像 文件路径 output).
+    """
+    raw = (folder_or_paths or "").strip()
+    if not raw:
+        return []
+    image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff"}
+    # Case 1: multiline list of file paths
+    lines = [l.strip() for l in raw.split("\n") if l.strip()]
+    if len(lines) > 1 or (len(lines) == 1 and os.path.isfile(lines[0])):
+        return [l for l in lines if os.path.isfile(l)
+                and os.path.splitext(l)[1].lower() in image_exts]
+    # Case 2: single folder path
+    folder = lines[0] if lines else raw
+    if os.path.isdir(folder):
+        return [os.path.join(folder, f) for f in sorted(os.listdir(folder))
+                if os.path.splitext(f)[1].lower() in image_exts]
+    return []
+
+
 def _image_batch_count(image_tensor) -> int:
     """Return number of frames in an IMAGE tensor (1 if single image)."""
     if image_tensor is None:
@@ -130,9 +153,12 @@ class AnimaImageCaption:
         if not model_list:
             model_list = ["(no models found)"]
 
+        # none = 禁用 LLM（透传变化文本，配合 wd14 标签器直接保存 txt）
+        model_options = ["none"] + model_list
+
         return {
             "required": {
-                "模型": (model_list,),
+                "模型": (model_options,),
                 "API地址": (
                     "STRING",
                     {"default": "http://localhost:1234/v1", "multiline": False,
@@ -180,6 +206,11 @@ class AnimaImageCaption:
                     "INT",
                     {"forceInput": True, "default": 0, "min": 0, "max": 0xFFFF_FFFF_FFFF_FFFF},
                 ),
+                "种子串": (
+                    "STRING",
+                    {"forceInput": True, "multiline": True,
+                     "tooltip": "接入批量种子串（每行一个），批量模式不接图片和WD14"},
+                ),
                 "图像": (
                     "IMAGE",
                     {"tooltip": "接入图像（可选），不接则仅基于 tag 生成描述"},
@@ -194,16 +225,6 @@ class AnimaImageCaption:
                     "STRING",
                     {"forceInput": True, "multiline": True, "default": "",
                      "tooltip": "自定义系统提示词，留空使用默认"},
-                ),
-                "分辨率": (
-                    "STRING",
-                    {"forceInput": True, "default": "",
-                     "tooltip": "从「随机分辨率选择器」接入分辨率（如 1024x768）"},
-                ),
-                "种子串": (
-                    "STRING",
-                    {"forceInput": True, "multiline": True,
-                     "tooltip": "接入批量种子串（每行一个），批量模式不接图片和WD14"},
                 ),
                 "提示词串": (
                     "STRING",
@@ -228,8 +249,8 @@ class AnimaImageCaption:
                 ),
                 "图片路径": (
                     "STRING",
-                    {"default": "", "multiline": False,
-                     "tooltip": "直接指定图片文件夹路径，节点自动遍历所有图片并发处理（优先级低于种子串）"},
+                    {"forceInput": True, "multiline": True, "default": "",
+                     "tooltip": "直接指定图片文件夹路径（或从 Anima加载图像 接入文件路径串），节点自动遍历所有图片并发处理（优先级低于种子串）"},
                 ),
                 "对齐倍数": (
                     "INT",
@@ -245,8 +266,8 @@ class AnimaImageCaption:
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("描述文本", "提示词串", "画师串", "分辨率串")
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("描述文本", "提示词串", "画师串")
     FUNCTION = "describe"
     # OUTPUT_NODE removed to avoid "修复节点" causing duplicate copies
 
@@ -360,24 +381,64 @@ class AnimaImageCaption:
                 )
         return nl
 
-    def describe(self, **kwargs) -> tuple[str, str, str, str, str]:
+    def _describe_no_llm(self, kwargs: dict[str, Any]) -> tuple[str, str, str]:
+        """
+        none 模式：不调用 LLM。
+        - 变化文本（wd14 标签多行）原样透传，与固定前缀组合
+        - 接图片路径时逐张保存为同名 .txt
+        """
+        var_lines = _parse_var_text(str(kwargs.get("变化文本", "")))
+        prefix = str(kwargs.get("固定前缀", "")).strip()
+        cap_prompt = str(kwargs.get("提示词串", ""))
+        cap_artist = str(kwargs.get("画师串", ""))
+
+        # 逐行组合：前缀 + 变化文本
+        combined: list[str] = []
+        for v in var_lines:
+            parts = []
+            if prefix:
+                parts.append(prefix)
+            if v:
+                parts.append(v)
+            combined.append(", ".join(parts) if parts else "")
+
+        # 有图片路径 → 保存为同名 txt
+        if bool(kwargs.get("保存为txt", False)):
+            image_files = _collect_image_paths(str(kwargs.get("图片路径", "")))
+            if image_files:
+                saved = 0
+                for i, fp in enumerate(image_files):
+                    if i < len(combined) and combined[i]:
+                        txt_path = os.path.splitext(fp)[0] + ".txt"
+                        try:
+                            with open(txt_path, "w", encoding="utf-8") as tf:
+                                tf.write(combined[i])
+                            saved += 1
+                        except Exception as e:
+                            print(f"[Caption] Failed to save txt for {fp}: {e}")
+                print(f"[Caption] none模式: saved {saved}/{len(image_files)} txt files")
+            else:
+                print("[Caption] none模式: 保存为txt已启用但未找到图片路径")
+
+        out = "\n".join(combined)
+        return (out, cap_prompt, cap_artist)
+
+    def describe(self, **kwargs) -> tuple[str, str, str]:
+        # ── none 模式：禁用 LLM，透传变化文本/提示词串，可选保存 txt ──
+        if str(kwargs.get("模型", "")).strip() == "none":
+            return self._describe_no_llm(kwargs)
+
         seed_str = kwargs.get("种子串", "").strip()
 
         # ── Mutual exclusion ────────────────────────────────────────────
         if seed_str:
             kwargs.pop("随机种子", None)
-        cap_res_batch = kwargs.get("分辨率", "")
-        if cap_res_batch.strip():
-            kwargs.pop("分辨率", None)
-
         cap_prompt = kwargs.get("提示词串", "")
         cap_artist = kwargs.get("画师串", "")
-        cap_res = kwargs.get("分辨率", "")
 
         if seed_str:
             # ── Batch mode ──────────────────────────────────────────
             seeds = [s.strip() for s in seed_str.split("\n") if s.strip()]
-            aspect_ratio = str(kwargs.get("分辨率", "")).strip()
             custom_prompt = str(kwargs.get("系统提示词", "")).strip()
             refine_text = str(kwargs.get("用户提示词", "")).strip()
 
@@ -425,21 +486,11 @@ class AnimaImageCaption:
                     seed_kwargs["随机种子"] = seed_val
                     if _model_preloaded:
                         seed_kwargs["_preloaded"] = True
-                    # Per-seed resolution from 分辨率串
-                    res_line = ""
-                    if i < len(cap_res.split("\n")):
-                        res_line = cap_res.split("\n")[i].strip()
                     user_parts: list[str] = []
                     if refine_text:
                         user_parts.append(refine_text)
-                    if res_line:
-                        user_parts.append(f"Resolution: {res_line}")
-                    elif aspect_ratio:
-                        user_parts.append(f"Resolution: {aspect_ratio}")
                     if not user_parts:
                         user_parts.append("Describe in detail.")
-                    if res_line:
-                        seed_kwargs["分辨率"] = res_line
                     # Use pre-encoded image to avoid per-thread tensor→b64 conversion
                     if _batch_image_b64:
                         fut = executor.submit(
@@ -481,23 +532,19 @@ class AnimaImageCaption:
                     parts.append(r)
                 _combined_seed.append(", ".join(parts) if parts else "")
             out_reverse = "\n".join(_combined_seed)
-            return (out_reverse, cap_prompt, cap_artist, cap_res)
+            return (out_reverse, cap_prompt, cap_artist)
 
         # ── Folder batch mode: load images from a folder path ──
         folder_path = str(kwargs.get("图片路径", "")).strip()
         if folder_path and os.path.isdir(folder_path):
             cap_prompt = kwargs.get("提示词串", "")
             cap_artist = kwargs.get("画师串", "")
-            cap_res = kwargs.get("分辨率", "")
-            aspect_ratio = str(kwargs.get("分辨率", "")).strip()
             custom_prompt = str(kwargs.get("系统提示词", "")).strip()
 
             if custom_prompt:
                 system_prompt = custom_prompt
             else:
                 system_prompt = _build_system_prompt("")
-            if aspect_ratio:
-                system_prompt += f"\nTarget resolution: {aspect_ratio}"
 
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
@@ -511,7 +558,7 @@ class AnimaImageCaption:
                     image_files.append(os.path.join(folder_path, f))
 
             if not image_files:
-                return ("", cap_prompt, cap_artist, cap_res)
+                return ("", cap_prompt, cap_artist)
 
             print(f"[Caption] Folder batch: {len(image_files)} images from {folder_path}")
             print(f"[Caption] Files found: {[os.path.basename(f) for f in image_files[:10]]}")
@@ -574,8 +621,6 @@ class AnimaImageCaption:
                     if not b64:
                         continue
                     user_parts: list[str] = []
-                    if aspect_ratio:
-                        user_parts.append(f"Resolution: {aspect_ratio}")
                     if not user_parts:
                         user_parts.append("Describe the image in detail.")
                     user_msg = "\n".join(user_parts)
@@ -653,7 +698,7 @@ class AnimaImageCaption:
                 print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
 
             out_reverse = "\n".join(_combined)
-            return (out_reverse, cap_prompt, cap_artist, cap_res)
+            return (out_reverse, cap_prompt, cap_artist)
 
         # ── Single mode ──────────────────────────────────────────────
         seed_val = kwargs.get("随机种子", None)
@@ -663,7 +708,6 @@ class AnimaImageCaption:
             raw_seed = int(seed_val)
         kwargs["随机种子"] = raw_seed
 
-        aspect_ratio = str(kwargs.get("分辨率", "")).strip()
         custom_prompt = str(kwargs.get("系统提示词", "")).strip()
         desc_fmt = str(kwargs.get("描述格式", "")).strip()
 
@@ -675,11 +719,7 @@ class AnimaImageCaption:
             system_prompt = _build_system_prompt("")
         else:
             system_prompt = _build_batch_prompt("")
-        if aspect_ratio:
-            system_prompt += f"\nTarget resolution: {aspect_ratio}"
         user_parts = []
-        if aspect_ratio:
-            user_parts.append(f"Resolution: {aspect_ratio}")
         user_parts.append(
             "Write a very long, extremely detailed description. "
             "Do NOT stop early. Continue until you have described every detail."
@@ -742,7 +782,7 @@ class AnimaImageCaption:
 
         prefix_single = str(kwargs.get("固定前缀", "")).strip()
         nl_out = _apply_prefix(nl or "", prefix_single)
-        return (nl_out, "", "", "")
+        return (nl_out, "", "")
 
 
 NODE_CLASS_MAPPINGS = {"AnimaImageCaption": AnimaImageCaption}
