@@ -341,7 +341,6 @@ These nodes support any OpenAI-compatible API provider (SiliconFlow, DeepSeek, O
 
 ## Credits
 
-- **Node implementation:** DeepSeek V4 Flash
 - **Danbooru tag data:** Sourced from [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle) by rainlizard
 - **ComfyUI integration:** Standard ComfyUI custom node interface
 - **Artist index:** Built from Danbooru tag data
