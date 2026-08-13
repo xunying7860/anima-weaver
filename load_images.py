@@ -1,14 +1,21 @@
 """
 Anima Weaver — Load Images Node.
 Loads all images from a folder path, outputs as IMAGE list (not batch).
-No cropping, no resizing. Traversal order matches Anima反推 (sorted by filename).
+No cropping, no resizing. Traversal order matches Anima反推 (natural sort by filename).
 """
 
 from __future__ import annotations
 import os
+import re
 import torch
 from PIL import Image as PILImage, ImageOps
 import numpy as np
+
+
+def natural_key(s: str):
+    """自然排序键：'knmzx (2).jpg' 排在 'knmzx (10).png' 之前。"""
+    return [int(t) if t.isdigit() else t.lower()
+            for t in re.split(r'(\d+)', s)]
 
 
 class AnimaLoadImages:
@@ -43,7 +50,8 @@ class AnimaLoadImages:
         image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff"}
         images = sorted(
             [f for f in os.listdir(folder)
-             if os.path.splitext(f)[1].lower() in image_exts]
+             if os.path.splitext(f)[1].lower() in image_exts],
+            key=natural_key,
         )
         if not images:
             dummy = torch.zeros((1, 64, 64, 3), dtype=torch.float32)

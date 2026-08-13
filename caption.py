@@ -104,6 +104,13 @@ def _apply_prefix(text: str, prefix: str) -> str:
     return text
 
 
+def natural_key(s: str):
+    """自然排序键：'knmzx (2).jpg' 排在 'knmzx (10).png' 之前。"""
+    import re as _re
+    return [int(t) if t.isdigit() else t.lower()
+            for t in _re.split(r'(\d+)', s)]
+
+
 def _collect_image_paths(folder_or_paths: str) -> list[str]:
     """
     Resolve 图片路径 input into a list of image file paths.
@@ -122,7 +129,7 @@ def _collect_image_paths(folder_or_paths: str) -> list[str]:
     # Case 2: single folder path
     folder = lines[0] if lines else raw
     if os.path.isdir(folder):
-        return [os.path.join(folder, f) for f in sorted(os.listdir(folder))
+        return [os.path.join(folder, f) for f in sorted(os.listdir(folder), key=natural_key)
                 if os.path.splitext(f)[1].lower() in image_exts]
     return []
 
@@ -407,9 +414,19 @@ class AnimaImageCaption:
             image_files = _collect_image_paths(str(kwargs.get("图片路径", "")))
             if image_files:
                 saved = 0
+                # 同名不同后缀（a.png/a.jpg）避免 txt 互相覆盖，冲突时用完整文件名
+                txt_map: dict[str, str] = {}
+                used_txt: set[str] = set()
+                for fp in image_files:
+                    cand = os.path.splitext(fp)[0] + ".txt"
+                    if cand in used_txt:
+                        cand = fp + ".txt"
+                        print(f"[Caption] ⚠️ txt 冲突: {fp} 改用 {os.path.basename(cand)}")
+                    used_txt.add(cand)
+                    txt_map[fp] = cand
                 for i, fp in enumerate(image_files):
                     if i < len(combined) and combined[i]:
-                        txt_path = os.path.splitext(fp)[0] + ".txt"
+                        txt_path = txt_map.get(fp, os.path.splitext(fp)[0] + ".txt")
                         try:
                             with open(txt_path, "w", encoding="utf-8") as tf:
                                 tf.write(combined[i])
@@ -549,10 +566,10 @@ class AnimaImageCaption:
             should_unload = bool(kwargs.get("生成后卸载", False))
             kwargs["生成后卸载"] = False
 
-            # Scan for image files
+            # Scan for image files (natural sort, matches Anima加载图像)
             image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff"}
             image_files: list[str] = []
-            for f in sorted(os.listdir(folder_path)):
+            for f in sorted(os.listdir(folder_path), key=natural_key):
                 ext = os.path.splitext(f)[1].lower()
                 if ext in image_exts:
                     image_files.append(os.path.join(folder_path, f))
@@ -686,9 +703,20 @@ class AnimaImageCaption:
 
             if bool(kwargs.get("保存为txt", False)):
                 saved = 0
+                # 预计算 txt 路径：同名不同后缀的图片（如 a.png/a.jpg）避免互相覆盖，
+                # 冲突时第二个起改用完整文件名（a.png.txt / a.jpg.txt）
+                txt_map: dict[str, str] = {}
+                used_txt: set[str] = set()
+                for fp in image_files:
+                    cand = os.path.splitext(fp)[0] + ".txt"
+                    if cand in used_txt:
+                        cand = fp + ".txt"
+                        print(f"[Caption] ⚠️ txt 冲突: {fp} 改用 {os.path.basename(cand)}")
+                    used_txt.add(cand)
+                    txt_map[fp] = cand
                 for i, fp in enumerate(image_files):
                     if i < len(_combined) and _combined[i]:
-                        txt_path = os.path.splitext(fp)[0] + ".txt"
+                        txt_path = txt_map.get(fp, os.path.splitext(fp)[0] + ".txt")
                         try:
                             with open(txt_path, "w", encoding="utf-8") as tf:
                                 tf.write(_combined[i])
