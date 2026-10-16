@@ -556,8 +556,12 @@ def generate_nl_from_lm_studio(
         "stream": False,
     }
     # enable_thinking only for LM Studio local API (not supported by cloud providers)
+    # reasoning_effort=none: LM Studio 0.4.x+ 对思考型模型(如 Qwen3.5)只认这个字段；
+    # 不加则 max_tokens 被思维链吃光、content 恒空（实测 reasoning_tokens==max_tokens）。
+    # 两个字段并存无害：enable_thinking 服务 vLLM 系，reasoning_effort 服务 LM Studio。
     if not api_key:
         payload["enable_thinking"] = False
+        payload["reasoning_effort"] = "none"
 
     # 修复 BUG-1：原写法 f"{base_url.rstrip("/")}/chat/completions" 在同类型引号内嵌套，
     # 只有 Python 3.12+ (PEP 701) 才允许；3.10/3.11（ComfyUI 主流环境）会 SyntaxError。
