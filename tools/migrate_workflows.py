@@ -1,26 +1,31 @@
 # -*- coding: utf-8 -*-
-"""tools/migrate_workflows.py — 四节点精简版（8→4）工作流迁移
+"""tools/migrate_workflows.py — 四节点精简版工作流迁移（v3：总线拆回两节点）
 
 用法：python tools/migrate_workflows.py [workflows目录]
-（对已迁移过的工作流幂等：名字对了就只剩无害的空操作）
+（幂等：已迁移的工作流再跑是无害空操作）
 
-做六件事（全部按**名字**重排 slot，绝不按数字硬编码 —— 不同工作流是
-不同时期保存的，旧 slot 数字并不一致）：
-  1. 工作流 6→2：只留 anima双采-随机提示词-v2 / 随机提示词编织器-批量 并改名
+做六件事（全部按**名字**重排 slot，绝不按数字硬编码）：
+  1. 工作流 6→2：只留 anima双采-随机提示词(-v2) / 随机提示词编织器-批量 并改名
   2. 删除 4 个已消失节点（Anima反推/画师Seed/Anima加载图像/Anima列表转多行）
      及其全部连线
-  3. forceInput 输入端口 / 输出端口按新名字重排：
-     - AnimaWeaver：只留「种子串」；RandomResolution：只留「种子串」
-     - AnimaBatchBus（2026-10-16 用户裁剪后）：输入只留 种子串/提示词串/
-       宽度串/高度串，输出只留 合并输出/种子/提示词/宽度/高度；
-       「分辨率串/反推串/JSON行/分辨率/反推」全部删除
-  4. 拆分总线的 JSON行 反查重接线：JSON行 的来源若是 easy promptLine 或
-     合并总线，就把来源节点的 4 路通道连线复制给拆分总线（新总线已内置
-     easy promptLine 选行逻辑），并删掉中间那个 easy promptLine 节点
+  3. AnimaBatchBus（带「模式」下拉的合并体）按模式 widget 拆回两个节点：
+       模式=合并 → Anima批量合并 AnimaBatchMerge
+           输入  种子串/提示词串/宽度串/高度串（分辨率串/反推串/JSON行 删）
+           输出  合并输出（其余输出槽删，已有连线作废）
+           widget [start_index, max_rows, remove_empty_lines]（去掉模式）
+       模式=拆分 → Anima批量拆分 AnimaBatchSplit
+           输入  JSON行（唯一入口；上游挂 easy-use 提示词行）
+           输出  种子/提示词/宽度/高度（合并输出/反推/分辨率 槽删）
+       无模式 widget 的（2026-10-16 上午单节点版）：按端口推断
+           （JSON行 已连线→拆分，否则→合并）
+     中间的 easy-use「easy promptLine（提示词行）」节点保持原位（用户管线
+     本就要求合并与拆分之间挂它）
+  4. AnimaWeaver 只留「种子串」输入、RandomResolution 只留「种子串」
+     （删 随机种子/画师串/反推串/系统提示词/槽位数据/底部数据/提示词 端口）
   5. widgets_values：
      - AnimaWeaver 旧 43 项 → 新 46 项（index 2 场景类型→随机种子置 0；
        index 0/23 旧英文选项值 → 官方中文；末尾补 系统提示词 三项）
-     - AnimaBatchBus 去掉首位「模式」widget（合并/拆分 下拉已删）
+     - 合并/拆分 widget 只留三窗口参数
   6. 孤儿清理：输入连线全部失效的 easy showAnything / ShowText|pysssss /
      easy promptLine / easy string 节点一并删除（它们没有下游）
 
@@ -41,17 +46,21 @@ KEEP = {
     "随机提示词-批量.json":         "随机提示词-批量.json",
 }
 
-# ── 2) 改后各节点的 forceInput 输入端口顺序 ──
+# ── 4) 改后各节点的 forceInput 输入端口顺序（按新类型） ──
 PORT_ORDER = {
-    "AnimaWeaver":      ["种子串"],
-    "RandomResolution": ["种子串"],
-    "AnimaBatchBus":    ["种子串", "提示词串", "宽度串", "高度串"],
+    "AnimaWeaver":       ["种子串"],
+    "RandomResolution":  ["种子串"],
+    "AnimaBatchMerge":   ["种子串", "提示词串", "宽度串", "高度串"],
+    "AnimaBatchSplit":   ["JSON行"],
 }
 
-# ── 3) 改后各节点的输出顺序（删中间项的必须重排）──
+# ── 改后各节点的输出顺序（删中间项的必须重排）──
 OUT_ORDER = {
-    "AnimaWeaver":   ["生成的提示词", "调试信息"],
-    "AnimaBatchBus": ["合并输出", "种子", "提示词", "宽度", "高度"],
+    "AnimaWeaver":       ["生成的提示词", "调试信息"],
+    "AnimaBatchMerge":   ["合并输出"],
+    "AnimaBatchSplit":   ["种子", "提示词", "宽度", "高度"],
+    # 分辨率节点删「随机种子」输出槽（2026-10-16 用户要求），其余前移
+    "RandomResolution":  ["种子串", "宽度", "高度"],
 }
 
 DELETE_NODES = {"ArtistSeedNode", "AnimaImageCaption",
@@ -60,8 +69,6 @@ DELETE_NODES = {"ArtistSeedNode", "AnimaImageCaption",
 # 无任何下游的展示/胶水节点：输入连线全断即删
 ORPHAN_TYPES = {"easy showAnything", "ShowText|pysssss",
                 "easy promptLine", "easy string"}
-
-BUS_CHANNELS = ["种子串", "提示词串", "宽度串", "高度串"]
 
 OLD_WIDGETS = 43          # 旧 AnimaWeaver widget 数（43 → 46）
 SEED_INDEX = 2            # 「场景类型」(combo) → 「随机种子」(INT)
@@ -90,6 +97,26 @@ def prune_and_rename(d):
             print("warn: 期望保留的工作流不存在:", want)
 
 
+def convert_bus(n, l2n):
+    """AnimaBatchBus → AnimaBatchMerge / AnimaBatchSplit（按模式 widget）。"""
+    if n.get("type") != "AnimaBatchBus":
+        return
+    v = n.get("widgets_values") or []
+    if v and isinstance(v[0], str) and v[0] in ("合并", "拆分"):
+        mode = v[0]
+        w3 = list(v[1:4])
+    else:
+        # 2026-10-16 上午的单节点版（无模式）：JSON行 有连线 → 拆分，否则合并
+        has_json = any(i.get("name") == "JSON行" and i.get("link") in l2n
+                       for i in (n.get("inputs") or []))
+        mode = "拆分" if has_json else "合并"
+        w3 = list(v)
+    while len(w3) < 3:
+        w3.append([0, 1000, True][len(w3)])
+    n["widgets_values"] = w3[:3]
+    n["type"] = "AnimaBatchMerge" if mode == "合并" else "AnimaBatchSplit"
+
+
 def migrate(path):
     with open(path, encoding="utf-8") as f:
         j = json.load(f)
@@ -97,15 +124,8 @@ def migrate(path):
     nodes = j.get("nodes", [])
     by_id = {n["id"]: n for n in nodes}
     l2n = {l[0]: l for l in links}
-    next_lid = (max(l2n) + 1) if l2n else 1
     drop = set()          # 只收集「要删的」，其余一律保留
     gone = set()          # 要删的节点
-
-    def link_of(node, name):
-        for inp in (node.get("inputs") or []):
-            if inp.get("name") == name and inp.get("link") is not None:
-                return l2n.get(inp["link"])
-        return None
 
     # A) 被删节点 → 与之相连的所有线
     for n in nodes:
@@ -115,41 +135,13 @@ def migrate(path):
         if l[1] in gone or l[3] in gone:
             drop.add(l[0])
 
-    # B) 拆分总线：JSON行 反查来源，把来源的 4 路通道复制过来
-    rewires = {}   # split_node_id -> [(通道名, src_id, src_slot), ...]
+    # B) 总线实例按模式拆回两个节点（先换类型，后面的重排按新类型走）
     for n in nodes:
-        if n.get("type") != "AnimaBatchBus" or n["id"] in gone:
-            continue
-        jl = link_of(n, "JSON行")
-        if jl is None:
-            continue
-        src = by_id.get(jl[1])
-        if src is not None and src.get("type") == "easy promptLine":
-            # 中间跳：promptLine 的输入来源（通常是合并总线的 合并输出）
-            drop.add(jl[0])
-            pl = None
-            for inp in (src.get("inputs") or []):
-                if inp.get("link") is not None:
-                    pl = l2n.get(inp["link"])
-                    break
-            if pl is not None:
-                drop.add(pl[0])
-            gone.add(src["id"])              # 删的是中间 promptLine，不是来源
-            src = by_id.get(pl[1]) if pl else None
-        if src is not None and src.get("type") == "AnimaBatchBus":
-            plan = []
-            for ch in BUS_CHANNELS:
-                cl = link_of(src, ch)
-                if cl is not None:
-                    plan.append((ch, cl[1], cl[2]))
-            if plan:
-                rewires[n["id"]] = plan
-            drop.add(jl[0])   # JSON行 连线作废（set 幂等）
+        convert_bus(n, l2n)
 
     # C) 输入端口：按名字重算 target_slot
     for n in nodes:
-        t = n.get("type")
-        order = PORT_ORDER.get(t)
+        order = PORT_ORDER.get(n.get("type"))
         if not order or n["id"] in gone:
             continue
         new_slot = {nm: i for i, nm in enumerate(order)}
@@ -171,20 +163,9 @@ def migrate(path):
                 continue                       # 指到已删端口
             l[4] = ns
 
-    # D) 拆分总线重接线：新建 4 路通道连线（新 link id）
-    for nid, plan in rewires.items():
-        for ch, src_id, src_slot in plan:
-            lid = next_lid
-            next_lid += 1
-            new_link = [lid, src_id, src_slot, nid,
-                        BUS_CHANNELS.index(ch), "STRING"]
-            links.append(new_link)
-            l2n[lid] = new_link
-
-    # E) 输出端口：按名字重算 origin_slot
+    # D) 输出端口：按名字重算 origin_slot
     for n in nodes:
-        t = n.get("type")
-        oorder = OUT_ORDER.get(t)
+        oorder = OUT_ORDER.get(n.get("type"))
         if not oorder or n["id"] in gone:
             continue
         new_oslot = {nm: i for i, nm in enumerate(oorder)}
@@ -207,32 +188,27 @@ def migrate(path):
                 continue
             l[2] = ns
 
-    # F) widgets_values
+    # E) widgets_values
     for n in nodes:
-        t = n.get("type")
-        if t == "AnimaWeaver":
+        if n.get("type") == "AnimaWeaver":
             v = n.get("widgets_values") or []
             if len(v) >= OLD_WIDGETS:
                 out = (list(v[:OLD_WIDGETS]) + APPEND
                        if len(v) < OLD_WIDGETS + 3 else list(v[:OLD_WIDGETS + 3]))
-                out[SEED_INDEX] = 0 if not isinstance(out[SEED_INDEX], int) else out[SEED_INDEX]
+                if not isinstance(out[SEED_INDEX], int):
+                    out[SEED_INDEX] = 0
                 for idx, mp in MODE_MAP.items():
                     if isinstance(out[idx], str) and out[idx] in mp:
                         out[idx] = mp[out[idx]]
                 n["widgets_values"] = out
-        elif t == "AnimaBatchBus":
-            v = n.get("widgets_values") or []
-            if v and isinstance(v[0], str) and v[0] in ("合并", "拆分"):
-                n["widgets_values"] = v[1:4]   # 去掉「模式」，保留三窗口参数
+        # 合并/拆分的 widget 已在 convert_bus 里归一成三窗口参数
 
-    # G) 应用删除：节点 + 连线
+    # F) 应用删除：节点 + 连线
     j["links"] = [l for l in links if l[0] not in drop and
                   l[1] not in gone and l[3] not in gone]
     alive_nodes = [n for n in nodes if n["id"] not in gone]
 
-    # H) 孤儿清理：ORPHAN_TYPES 且无任何「存活」输入连线
-    #    （必须对着 j["links"] 的存活 id 判断 —— 两端指针要到 I 段才重建，
-    #    此刻 inputs[].link 可能还指着已删连线，直接判 not None 会漏孤儿）
+    # G) 孤儿清理：ORPHAN_TYPES 且无任何「存活」输入连线
     alive_ids = {l[0] for l in j["links"]}
     def has_input_link(n):
         return any(inp.get("link") in alive_ids for inp in (n.get("inputs") or []))
@@ -245,7 +221,7 @@ def migrate(path):
                       if l[1] not in removed_orphans and l[3] not in removed_orphans]
         alive_nodes = [n for n in alive_nodes if n["id"] not in removed_orphans]
 
-    # I) 收尾：以 links 表为唯一真源重建两端指针（三方一致性）
+    # H) 收尾：以 links 表为唯一真源重建两端指针（三方一致性）
     j["nodes"] = alive_nodes
     final = {}
     for l in j["links"]:

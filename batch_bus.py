@@ -1,24 +1,31 @@
 """
-AnimaBatchBus（Anima批量总线）—— 合并输出 + 按行拆分 一步到位
-=============================================================
+Anima批量合并 / Anima批量拆分 —— 两节点批量管线（中间挂 easy-use 提示词行）
+==========================================================================
 
-2026-10-16 用户反馈重构：删掉「模式」下拉与「JSON行」中间层，内置
-easy-use「easy promptLine（提示词行）」的行窗口逻辑（start_index /
-max_rows / remove_empty_lines 三个参数与其**同名同义**）。以前需要
-「合并总线 → easy promptLine → 拆分总线」三个节点才能完成的
-「多行对齐 + 选行」，现在一个节点直接给。
+用户最终确认的标准管线（2026-10-16）：
 
-输入（4 路多行串，按行对齐；forceInput 连线端口）：
-    种子串 · 提示词串 · 宽度串 · 高度串
-输出（永远同时给齐，不再分模式）：
-    合并输出  = 窗口内逐行打包的多行 JSON（键：种子/提示词/宽度/高度）
-    种子/提示词/宽度/高度 = 窗口第一行（= 去空行后的第 start_index 行）的标量
+    批量种子 / Anima随机提示词 / 随机分辨率   （各自的多行串，按行对齐）
+            │
+            ▼
+    Anima批量合并   多行串 → 逐行打包的多行 JSON（合并输出）
+            │
+            ▼
+    easy-use「easy promptLine（提示词行）」   按 index 选出一行 JSON
+            │
+            ▼
+    Anima批量拆分   一行 JSON → 种子 / 提示词 / 宽度 / 高度（标量）
+            │
+            ▼
+    KSampler(noise_seed) / CLIPTextEncode(text) / EmptyLatentImage(width,height)
 
-历史沿革：由 sync_passthrough.py（合并）+ passthrough_split.py（拆分）
-两节点合并而来；「画师」通道（画师已拼进提示词）与「分辨率串/反推串/
-JSON行/分辨率/反推」（2026-10-16 用户裁剪）已删。旧工作流的连线与
-widget 由 tools/migrate_workflows.py 按名字自动迁移（含 split 总线经
-easy promptLine 反查合并总线的重接线）。
+通道只保留 种子 / 提示词 / 宽度 / 高度（分辨率串、反推串、画师串及
+拆分侧的「合并输出」均已按用户要求裁剪；JSON行 只在拆分节点的入口）。
+
+历史：sync_passthrough.py（合并）+ passthrough_split.py（拆分）先被合并成
+带「模式」下拉的 AnimaBatchBus（11→8 轮），又试做过单节点内置选行
+（2026-10-16 上午），最终按用户要求恢复为两个独立节点、由用户自行在
+中间挂 easy-use 提示词行。旧工作流由 tools/migrate_workflows.py 按
+「模式」widget 自动拆成对应的新节点。
 """
 
 from __future__ import annotations
@@ -26,7 +33,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-# ── 通道定义：(连线端口名, JSON 键) ─────────────────────────────────────
+# ── 合并通道定义：(连线端口名, JSON 键) ────────────────────────────────
 _CHANNELS: list[tuple[str, str]] = [
     ("种子串", "种子"),
     ("提示词串", "提示词"),
@@ -41,62 +48,55 @@ _SEED_DEFAULT = 0
 _SIZE_DEFAULT = 512
 
 
-class AnimaBatchBus:
-    """多行对齐 + easy-use 提示词行选行，一个节点完成（无模式下拉）。"""
+def _window(text, start: int, max_rows: int, rm_empty: bool) -> list[str]:
+    """行窗口：split('\n') →（可选去空行）→ [start:start+max_rows]。
+    与 easy-use easy promptLine 的窗口参数同名同义。"""
+    if text is None:
+        text = ""
+    if not isinstance(text, str):
+        text = str(text)
+    if not text.strip():
+        return []
+    lines = text.split("\n")
+    if rm_empty:
+        lines = [ln for ln in lines if ln.strip()]
+    end = start + max_rows
+    return lines[start:end] if start < len(lines) else []
+
+
+class AnimaBatchMerge:
+    """Anima批量合并：多路多行串按行对齐打包成多行 JSON。"""
 
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, Any]:
-        # 通道串：全部 forceInput，只做连线端口，不占 widget
         optional: dict[str, Any] = {
             name: ("STRING", {"forceInput": True, "multiline": True,
                               "tooltip": "多行串，第 N 行与其他通道第 N 行对齐"})
             for name in _INPUT_NAMES
         }
-        # 行窗口三参数：与 easy-use「easy promptLine（提示词行）」同名同义
         optional["start_index"] = ("INT", {"default": 0, "min": 0, "max": 9999,
-                                       "tooltip": "行窗口起点：拆分标量输出=去空行后第 start_index 行"})
+                                       "tooltip": "行窗口起点（与 easy-use 提示词行同名同义）"})
         optional["max_rows"] = ("INT", {"default": 1000, "min": 1, "max": 9999})
         optional["remove_empty_lines"] = ("BOOLEAN", {"default": True})
-
         return {"optional": optional}
 
-    RETURN_TYPES = ("STRING", "INT", "STRING", "INT", "INT")
-    RETURN_NAMES = ("合并输出", "种子", "提示词", "宽度", "高度")
-    FUNCTION = "run"
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("合并输出",)
+    FUNCTION = "merge"
     CATEGORY = "Anima Weaver / Batch"
 
-    # ── 入口 ────────────────────────────────────────────────────────────
-    def run(self, **kwargs) -> tuple:
-        """一次执行同时产出：合并 JSON 多行 + 窗口首行标量（提示词行逻辑）。
-
-        未连线的可选输入 ComfyUI 根本不会传，用 **kwargs 兜住。
-        """
+    def merge(self, **kwargs) -> tuple:
         start = int(kwargs.get("start_index", 0) or 0)
         max_rows = int(kwargs.get("max_rows", 1000) or 1000)
         rm_empty = bool(kwargs.get("remove_empty_lines", True))
 
-        # 每路通道按行拆开（空通道 = 0 行）；行窗口语义与 easy promptLine 一致
         all_rows: dict[str, list[str]] = {}
         for name in _INPUT_NAMES:
-            text = kwargs.get(name, "")
-            if text is None:
-                text = ""
-            if not isinstance(text, str):
-                text = str(text)
-            if not text.strip():
-                all_rows[name] = []
-                continue
-            lines = text.split("\n")
-            if rm_empty:
-                lines = [ln for ln in lines if ln.strip()]
-            end = start + max_rows
-            all_rows[name] = lines[start:end] if start < len(lines) else []
+            all_rows[name] = _window(kwargs.get(name, ""), start, max_rows, rm_empty)
 
-        # 行数取各通道最大值，短的补 ""
         counts = [len(v) for v in all_rows.values()]
         row_count = max(counts) if counts else 0
 
-        # 合并输出：逐行打包 JSON（ensure_ascii=False 保住中文）
         lines_out: list[str] = []
         for i in range(row_count):
             obj: dict[str, str] = {}
@@ -104,26 +104,59 @@ class AnimaBatchBus:
                 rows = all_rows[input_name]
                 obj[json_key] = rows[i] if i < len(rows) else ""
             lines_out.append(json.dumps(obj, ensure_ascii=False))
+        return ("\n".join(lines_out),)
 
-        # 拆分标量：窗口第一行（= 去空行后的第 start_index 行）
-        def row_val(name: str) -> str:
-            rows = all_rows[name]
-            return rows[0].strip() if rows else ""
 
-        def row_int(name: str, default: int) -> int:
+class AnimaBatchSplit:
+    """Anima批量拆分：一行 JSON（通常来自上游 easy promptLine 选出的行）
+    → 种子 / 提示词 / 宽度 / 高度 标量。"""
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict[str, Any]:
+        return {"optional": {
+            "JSON行": ("STRING", {"forceInput": True, "multiline": True,
+                               "tooltip": "接入一行 JSON（上游 easy-use 提示词行选出的行；多行时取窗口第一行）"}),
+            "start_index": ("INT", {"default": 0, "min": 0, "max": 9999,
+                                 "tooltip": "直接喂多行 JSON 时的行窗口起点；上游已是单行则无影响"}),
+            "max_rows": ("INT", {"default": 1000, "min": 1, "max": 9999}),
+            "remove_empty_lines": ("BOOLEAN", {"default": True}),
+        }}
+
+    RETURN_TYPES = ("INT", "STRING", "INT", "INT")
+    RETURN_NAMES = ("种子", "提示词", "宽度", "高度")
+    FUNCTION = "split"
+    CATEGORY = "Anima Weaver / Batch"
+
+    def split(self, **kwargs) -> tuple:
+        start = int(kwargs.get("start_index", 0) or 0)
+        max_rows = int(kwargs.get("max_rows", 1000) or 1000)
+        rm_empty = bool(kwargs.get("remove_empty_lines", True))
+
+        window = _window(kwargs.get("JSON行", ""), start, max_rows, rm_empty)
+        row = window[0] if window else ""
+
+        try:
+            data = json.loads(row.strip())
+        except (json.JSONDecodeError, AttributeError, ValueError):
+            data = {}
+        if not isinstance(data, dict):
+            data = {}
+
+        def get_int(key: str, default: int) -> int:
             try:
-                return int(row_val(name))
+                return int(data.get(key, default))
             except (ValueError, TypeError):
                 return default
 
         return (
-            "\n".join(lines_out),                          # 合并输出
-            row_int("种子串", _SEED_DEFAULT),               # 种子   INT
-            row_val("提示词串"),                            # 提示词 STRING
-            row_int("宽度串", _SIZE_DEFAULT),               # 宽度   INT
-            row_int("高度串", _SIZE_DEFAULT),               # 高度   INT
+            get_int("种子", _SEED_DEFAULT),
+            str(data.get("提示词", "")),
+            get_int("宽度", _SIZE_DEFAULT),
+            get_int("高度", _SIZE_DEFAULT),
         )
 
 
-NODE_CLASS_MAPPINGS = {"AnimaBatchBus": AnimaBatchBus}
-NODE_DISPLAY_NAME_MAPPINGS = {"AnimaBatchBus": "Anima批量总线"}
+NODE_CLASS_MAPPINGS = {"AnimaBatchMerge": AnimaBatchMerge,
+                       "AnimaBatchSplit": AnimaBatchSplit}
+NODE_DISPLAY_NAME_MAPPINGS = {"AnimaBatchMerge": "Anima批量合并",
+                              "AnimaBatchSplit": "Anima批量拆分"}

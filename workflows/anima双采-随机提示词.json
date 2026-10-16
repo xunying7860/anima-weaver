@@ -23,7 +23,7 @@
           "label": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 448
+          "link": 445
         },
         {
           "label": "lora_name",
@@ -122,7 +122,7 @@
           "slot_index": 0,
           "links": [
             9,
-            450
+            444
           ]
         }
       ],
@@ -391,7 +391,7 @@
           "label": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 449
+          "link": 446
         }
       ],
       "outputs": [
@@ -478,8 +478,8 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            448,
-            449
+            445,
+            446
           ]
         }
       ],
@@ -770,7 +770,7 @@
     },
     {
       "id": 304,
-      "type": "AnimaBatchBus",
+      "type": "AnimaBatchMerge",
       "pos": [
         486.3449037335791,
         5427.786613596031
@@ -809,28 +809,9 @@
           "name": "合并输出",
           "type": "*",
           "links": [
+            423,
             433
           ]
-        },
-        {
-          "name": "种子",
-          "type": "*",
-          "links": null
-        },
-        {
-          "name": "提示词",
-          "type": "*",
-          "links": null
-        },
-        {
-          "name": "宽度",
-          "type": "*",
-          "links": null
-        },
-        {
-          "name": "高度",
-          "type": "*",
-          "links": null
         }
       ],
       "properties": {
@@ -847,6 +828,134 @@
         0,
         1000,
         true
+      ]
+    },
+    {
+      "id": 305,
+      "type": "easy promptLine",
+      "pos": [
+        914.7523569581228,
+        5570.994537495264
+      ],
+      "size": [
+        400,
+        204
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "提示词",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 423
+        },
+        {
+          "label": "起始索引",
+          "name": "start_index",
+          "type": "INT",
+          "widget": {
+            "name": "start_index"
+          },
+          "link": null
+        },
+        {
+          "label": "最大行数",
+          "name": "max_rows",
+          "type": "INT",
+          "widget": {
+            "name": "max_rows"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "字符串",
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            424,
+            425
+          ]
+        },
+        {
+          "name": "COMBO",
+          "shape": 6,
+          "type": "COMBO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy promptLine",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "text",
+        0,
+        1000,
+        true,
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 306,
+      "type": "easy showAnything",
+      "pos": [
+        1401.0799234344147,
+        4970.446295071814
+      ],
+      "size": [
+        210,
+        196
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "输入任何",
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 424
+        }
+      ],
+      "outputs": [
+        {
+          "label": "输出",
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}",
+        "{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}",
+        "{\"种子\": \"1498686692077220175\", \"提示词\": \"1boy, 2girls, anya_(spy_x_family), multiple_girls, twilight_(spy_x_family), yor_briar, solo, black_hair, breasts, child, pink_hair, red_eyes, sidelocks, green eyes, black_dress, dress, formal_clothes, jacket, suit, arm_behind_back, bag, holding, holding_bag, holding_hands, walking, family, open_mouth, sideways_mouth, smile, shy, from below, window, class room, reflection, A girl with pink and black hair from below is shown sitting next to her two classmates, one of them being Anya and the other Yor, in a classroom setting while their teacher or teacher's assistant is standing at the window showing them to reflect on their actions. The girl at the back has a shy expression, looking at her hands with her pink and black hair styled in traditional sidelocks. She is dressed in a formal outfit of a dark dress with a suit jacket on, having open mouthed., outdoors, @qeanoya\", \"画师\": \"[52025] @qeanoya\", \"分辨率\": \"1328x744\", \"反推\": \"\", \"宽度\": \"1328\", \"高度\": \"744\"}"
       ]
     },
     {
@@ -872,8 +981,7 @@
             417,
             427,
             430,
-            432,
-            441
+            432
           ]
         }
       ],
@@ -914,34 +1022,23 @@
       ],
       "outputs": [
         {
-          "name": "随机种子",
-          "type": "INT",
-          "links": null,
-          "slot_index": 0
-        },
-        {
           "name": "种子串",
-          "type": "STRING",
-          "links": null,
-          "slot_index": 1
+          "type": "*",
+          "links": null
         },
         {
           "name": "宽度",
-          "type": "INT",
+          "type": "*",
           "links": [
-            421,
-            443
-          ],
-          "slot_index": 2
+            421
+          ]
         },
         {
           "name": "高度",
-          "type": "INT",
+          "type": "*",
           "links": [
-            422,
-            444
-          ],
-          "slot_index": 3
+            422
+          ]
         }
       ],
       "properties": {
@@ -988,8 +1085,7 @@
           "name": "生成的提示词",
           "type": "*",
           "links": [
-            418,
-            442
+            418
           ]
         },
         {
@@ -1504,19 +1600,19 @@
       "mode": 0,
       "inputs": [
         {
-          "label": "clip",
-          "name": "clip",
-          "type": "CLIP",
-          "link": 450
-        },
-        {
           "label": "text",
           "name": "text",
           "type": "STRING",
           "widget": {
             "name": "text"
           },
-          "link": 447
+          "link": 443
+        },
+        {
+          "label": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 444
         }
       ],
       "outputs": [
@@ -1549,7 +1645,7 @@
     },
     {
       "id": 307,
-      "type": "AnimaBatchBus",
+      "type": "AnimaBatchSplit",
       "pos": [
         1715.47345632335,
         5290.6613131624135
@@ -1563,32 +1659,12 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "种子串",
+          "name": "JSON行",
           "type": "*",
-          "link": 441
-        },
-        {
-          "name": "提示词串",
-          "type": "*",
-          "link": 442
-        },
-        {
-          "name": "宽度串",
-          "type": "*",
-          "link": 443
-        },
-        {
-          "name": "高度串",
-          "type": "*",
-          "link": 444
+          "link": 425
         }
       ],
       "outputs": [
-        {
-          "name": "合并输出",
-          "type": "*",
-          "links": null
-        },
         {
           "name": "种子",
           "type": "*",
@@ -1602,7 +1678,7 @@
           "type": "*",
           "links": [
             411,
-            445
+            441
           ]
         },
         {
@@ -1661,7 +1737,7 @@
         {
           "name": "string_b",
           "type": "STRING",
-          "link": 445
+          "link": 441
         }
       ],
       "outputs": [
@@ -1669,7 +1745,7 @@
           "name": "STRING",
           "type": "STRING",
           "links": [
-            446
+            442
           ],
           "slot_index": 0
         }
@@ -1701,7 +1777,7 @@
         {
           "name": "string_a",
           "type": "STRING",
-          "link": 446
+          "link": 442
         },
         {
           "name": "string_b",
@@ -1714,7 +1790,7 @@
           "name": "STRING",
           "type": "STRING",
           "links": [
-            447
+            443
           ],
           "slot_index": 0
         }
@@ -1845,7 +1921,7 @@
     [
       411,
       307,
-      2,
+      1,
       298,
       0,
       "STRING"
@@ -1853,7 +1929,7 @@
     [
       414,
       307,
-      3,
+      2,
       301,
       0,
       "INT"
@@ -1861,7 +1937,7 @@
     [
       415,
       307,
-      4,
+      3,
       302,
       0,
       "INT"
@@ -1885,7 +1961,7 @@
     [
       421,
       310,
-      2,
+      1,
       304,
       2,
       "STRING"
@@ -1893,15 +1969,39 @@
     [
       422,
       310,
-      3,
+      2,
       304,
       3,
       "STRING"
     ],
     [
+      423,
+      304,
+      0,
+      305,
+      0,
+      "STRING"
+    ],
+    [
+      424,
+      305,
+      0,
+      306,
+      0,
+      "STRING"
+    ],
+    [
+      425,
+      305,
+      0,
+      307,
+      0,
+      "STRING"
+    ],
+    [
       426,
       307,
-      1,
+      0,
       308,
       0,
       "INT"
@@ -1941,7 +2041,7 @@
     [
       434,
       307,
-      1,
+      0,
       248,
       5,
       "INT"
@@ -1949,7 +2049,7 @@
     [
       437,
       307,
-      3,
+      2,
       36,
       0,
       "INT"
@@ -1957,69 +2057,45 @@
     [
       438,
       307,
-      4,
+      3,
       36,
       1,
       "INT"
     ],
     [
       441,
-      309,
-      0,
       307,
-      0,
+      1,
+      9001,
+      1,
       "STRING"
     ],
     [
       442,
-      313,
+      9001,
       0,
-      307,
-      1,
+      9002,
+      0,
       "STRING"
     ],
     [
       443,
-      310,
-      2,
-      307,
-      2,
+      9002,
+      0,
+      256,
+      0,
       "STRING"
     ],
     [
       444,
-      310,
-      3,
-      307,
-      3,
-      "STRING"
-    ],
-    [
-      445,
-      307,
-      2,
-      9001,
-      1,
-      "STRING"
-    ],
-    [
-      446,
-      9001,
-      0,
-      9002,
-      0,
-      "STRING"
-    ],
-    [
-      447,
-      9002,
+      34,
       0,
       256,
       1,
-      "STRING"
+      "CLIP"
     ],
     [
-      448,
+      445,
       283,
       0,
       253,
@@ -2027,20 +2103,12 @@
       "MODEL"
     ],
     [
-      449,
+      446,
       283,
       0,
       282,
       0,
       "MODEL"
-    ],
-    [
-      450,
-      34,
-      0,
-      256,
-      0,
-      "CLIP"
     ]
   ],
   "groups": [

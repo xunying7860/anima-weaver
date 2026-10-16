@@ -15,7 +15,8 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 | **Anima随机提示词** | Anima Weaver | Core node: assembles tags → NL → complete prompt (two-level collapsible groups, built-in random seed) |
 | **随机分辨率选择器** | Anima Weaver | Random aspect ratio & resolution generator (built-in random seed) |
 | **批量种子** | Anima Weaver / Batch | N-seed generator (max 4096) shared across pipeline nodes; also an alternative to the core node's built-in seed (for cross-node alignment) |
-| **Anima批量总线** | Anima Weaver / Batch | Merge/split in one node: 6 channels (seed/prompt/resolution/caption/width/height; artist channel removed) ↔ JSON-per-line (replaces 同步串行 + 串行拆分); used by both sample workflows |
+| **Anima批量合并** | Anima Weaver / Batch | 4 multiline channels (seed/prompt/width/height) aligned per line → merged multiline JSON (one data group per line) |
+| **Anima批量拆分** | Anima Weaver / Batch | one JSON line (picked by Easy-Use promptLine in between) → seed/prompt/width/height scalars |
 
 > As of 2026-10-16 the package is trimmed 8 → 4 nodes: Anima反推 (image captioning), 画师Seed,
 > Anima加载图像 and Anima列表转多行 are removed (artist selection is now the 画师种子 widget on the
@@ -242,7 +243,7 @@ batch must drive several nodes; otherwise the core node can derive seeds from it
 
 ### 同步串行
 
-> Both 同步串行 and 串行拆分 have been merged into **Anima批量总线** — this section is kept
+> Historic section (同步串行). Today this node is **Anima批量合并 (AnimaBatchMerge)** —
 > for reference against the old version only.
 
 Merges 7 multiline STRING inputs into a single multiline JSON output (one complete data group per line). Supports row selection. Designed for use with Easy-Use Prompt Line node.
@@ -260,7 +261,7 @@ Merges 7 multiline STRING inputs into a single multiline JSON output (one comple
 
 ### 串行拆分
 
-> Both 同步串行 and 串行拆分 have been merged into **Anima批量总线** — this section is kept
+> Historic section (同步串行). Today this node is **Anima批量合并 (AnimaBatchMerge)** —
 > for reference against the old version only.
 
 Receives a single JSON line from the Prompt Line node and splits it into 7 independent typed outputs:
@@ -286,7 +287,7 @@ Batch Seed(N)   ← optional: the core node's built-in seed + 批量数量 can d
   ├──→ Anima随机提示词 → Prompt String (artist already merged into the prompt, no separate column)
   │
   ▼
-Anima批量总线(merge) ──JSON lines──→ Prompt Line (Easy-Use) ──→ Anima批量总线(split)
+Anima批量合并 ──JSON lines──→ Prompt Line (Easy-Use) ──single line──→ Anima批量拆分
                                                           │ Seed (INT) → KSampler
                                                           │ Width (INT) → Empty Latent
                                                           │ Height (INT) → Empty Latent

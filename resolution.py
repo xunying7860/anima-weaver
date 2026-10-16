@@ -578,7 +578,7 @@ class RandomResolution:
                 "随机种子": ("INT", {
                     "default": 0, "min": 0, "max": 0xFFFF_FFFF_FFFF_FFFF, "step": 1,
                     "control_after_generate": True,
-                    "tooltip": "0=每次执行内部随机；>0=按此种子确定性选画幅。仅在不接「种子串」时生效；本次实际使用的种子输出到「随机种子」槽。",
+                    "tooltip": "0=每次执行内部随机；>0=按此种子确定性选画幅。仅在不接「种子串」时生效。",
                 }),
             },
             "optional": {
@@ -591,8 +591,11 @@ class RandomResolution:
         }
 
     CATEGORY = "Anima Weaver"
-    RETURN_TYPES = ("INT", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("随机种子", "种子串", "宽度", "高度")
+    # 「随机种子」输出槽已删（2026-10-16 用户要求）。宽/高为通配类型 "*"：
+    # 未接「种子串」时返回 int（可直接连 EmptyLatent 等 INT 输入），
+    # 接了「种子串」时返回逐行多行字符串（连批量合并）。
+    RETURN_TYPES = ("STRING", "*", "*")
+    RETURN_NAMES = ("种子串", "宽度", "高度")
     FUNCTION = "pick"
     OUTPUT_NODE = False
 
@@ -649,11 +652,9 @@ class RandomResolution:
                 w, h = _resolve(百万像素, ratio, 对齐到)
                 ws.append(str(w))
                 hs.append(str(h))
-            # 修 bug：第 1 个输出槽是「随机种子」，旧代码误返回宽度 fw
-            return (seeds[0], "\n".join(map(str, seeds)),
-                    "\n".join(ws), "\n".join(hs))
+            return ("\n".join(map(str, seeds)), "\n".join(ws), "\n".join(hs))
 
-        # ── 单次：用内置种子 ──
+        # ── 单次：用内置种子；宽/高返回 int（可直接连 INT 输入）──
         if 模式 or 随机画幅:
             ratio = random.Random(eff_seed).choice(ASPECT_NAMES)
         else:
@@ -661,7 +662,7 @@ class RandomResolution:
         w, h = _resolve(百万像素, ratio, 对齐到)
         # 未接种子串时「种子串」输出恒为空串：不把内置种子伪装成
         # 批量串（下游靠这个区分单次/批量，与主节点语义刻意一致）
-        return (eff_seed, "", str(w), str(h))
+        return ("", w, h)
 
 
 NODE_CLASS_MAPPINGS = {"RandomResolution": RandomResolution}

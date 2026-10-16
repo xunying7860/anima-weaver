@@ -11,19 +11,21 @@ Anima列表转多行(list_to_multiline)。画师能力由主节点「画师种�
 from .anima_weaver import AnimaWeaver
 from .resolution import RandomResolution
 from .batch_seed import BatchSeedNode
-from .batch_bus import AnimaBatchBus
+from .batch_bus import AnimaBatchMerge, AnimaBatchSplit
 
 NODE_CLASS_MAPPINGS = {
     "AnimaWeaver": AnimaWeaver,
     "RandomResolution": RandomResolution,
     "BatchSeedNode": BatchSeedNode,
-    "AnimaBatchBus": AnimaBatchBus,
+    "AnimaBatchMerge": AnimaBatchMerge,
+    "AnimaBatchSplit": AnimaBatchSplit,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AnimaWeaver": "Anima随机提示词",
     "RandomResolution": "随机分辨率选择器",
     "BatchSeedNode": "批量种子",
-    "AnimaBatchBus": "Anima批量总线",
+    "AnimaBatchMerge": "Anima批量合并",
+    "AnimaBatchSplit": "Anima批量拆分",
 }
 
 # 前端扩展目录：js/anima_groups.js（AnimaWeaver 两级分组折叠）
