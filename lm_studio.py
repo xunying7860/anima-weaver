@@ -168,9 +168,10 @@ def _run_lms(args: list[str], timeout: int = 60) -> tuple[int, str, str]:
 # ── Model management ───────────────────────────────────────────────
 
 def _query_models_http(base_url: str = _DEFAULT_BASE_URL) -> list[str]:
-    """HTTP 查询 OpenAI 兼容端点 GET {base}/models（2026-10-16 用户反馈：
-    ComfyUI 进程里 lms CLI 常因 PATH/管理 API 未启用而查不到模型，但 LM
-    Studio 的 OpenAI 服务通常一直开着 —— 改 HTTP 优先，3s 超时）。"""
+    """HTTP 查询 OpenAI 兼容端点 GET {base}/models。
+
+    HTTP 优先：ComfyUI 进程里 lms CLI 常因 PATH/管理 API 未启用而查不到，
+    而 LM Studio 的 OpenAI 服务通常一直开着。3s 超时。"""
     try:
         resp = requests.get(f"{base_url.rstrip('/')}/models", timeout=3)
         if resp.status_code == 200:
@@ -187,7 +188,7 @@ def _query_models() -> list[str]:
     真实查询（会阻塞）：HTTP 优先，失败再退回 ``lms ls``。
 
     这是 get_models() 的内部实现，**不要直接对外** ——
-    外面应统一走非阻塞的 get_models()（03 补丁）。轻量查询 timeout=5s。
+    不要直接对外 —— 走 get_models()。轻量查询 timeout=5s。
 
     Returns
     -------
@@ -225,7 +226,7 @@ def _query_models() -> list[str]:
     return models
 
 
-# ── 模型列表缓存（03 补丁）──────────────────────────────────────────
+# ── 模型列表缓存 ──────────────────────────────────────────
 # 背景：ComfyUI 每次刷新页面 / 打开节点菜单都会请求 /object_info，
 # anima_weaver.py:79 与 caption.py 的 INPUT_TYPES 都会调 get_models()，
 # 也就是每次 fork 一个 lms 子进程。装了 LM Studio 但服务没响应时最坏阻塞 60s。
@@ -240,13 +241,13 @@ _MODEL_PLACEHOLDER = "(检测中…)"
 
 def get_models() -> list[str]:
     """
-    模型列表查询（2026-10-16 二次修复：首取改同步）。
+    模型列表查询。
 
-    教训：纯非阻塞首取会翻车 —— 前端只在加载页面那一刻拉一次
-    object_info，彼时后台刷新尚未完成，占位符就被前端节点定义缓存
-    吃死，用户不刷新页面永远看到 (检测中…)。
+    首取必须同步：前端只在加载页面那一刻拉一次 object_info，若首取
+    走后台刷新，占位符会被前端节点定义缓存吃死（不刷新页面永远显示
+    (检测中…)）。
 
-    现策略：
+    策略：
       - 有缓存且未过期（5 分钟）→ 直接回缓存
       - 无缓存（首取）→ 同步查询一次：HTTP /v1/models 优先（LM Studio
         在本机时通常 <0.1 s），最坏 HTTP 3 s + lms CLI 5 s 封顶；
@@ -284,7 +285,7 @@ def get_models() -> list[str]:
         with _MODEL_LOCK:
             return list(_MODEL_CACHE)
 
-    # 首取：同步查询（见 docstring 教训）
+    # 首取：同步查询（见 docstring）
     try:
         models = _query_models()
     except Exception:

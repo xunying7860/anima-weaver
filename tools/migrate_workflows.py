@@ -8,7 +8,7 @@
   1. 工作流 6→2：只留 anima双采-随机提示词(-v2) / 随机提示词编织器-批量 并改名
   2. 删除 4 个已消失节点（Anima反推/画师Seed/Anima加载图像/Anima列表转多行）
      及其全部连线
-  3. AnimaBatchBus（带「模式」下拉的合并体）按模式 widget 拆回两个节点：
+  3. AnimaBatchBus（带「模式」下拉的合并体）按模式拆回两个节点：
        模式=合并 → Anima批量合并 AnimaBatchMerge
            输入  种子串/提示词串/宽度串/高度串（分辨率串/反推串/JSON行 删）
            输出  合并输出（其余输出槽删，已有连线作废）
@@ -16,10 +16,9 @@
        模式=拆分 → Anima批量拆分 AnimaBatchSplit
            输入  JSON行（唯一入口；上游挂 easy-use 提示词行）
            输出  种子/提示词/宽度/高度（合并输出/反推/分辨率 槽删）
-       无模式 widget 的（2026-10-16 上午单节点版）：按端口推断
+       无模式 widget 的（单节点版）：按端口推断
            （JSON行 已连线→拆分，否则→合并）
-     中间的 easy-use「easy promptLine（提示词行）」节点保持原位（用户管线
-     本就要求合并与拆分之间挂它）
+     中间的 easy-use「easy promptLine（提示词行）」节点保持原位
   4. AnimaWeaver 只留「种子串」输入、RandomResolution 只留「种子串」
      （删 随机种子/画师串/反推串/系统提示词/槽位数据/底部数据/提示词 端口）
   5. widgets_values：
@@ -27,7 +26,7 @@
        index 0/23 旧英文选项值 → 官方中文；末尾补 系统提示词 三项）
      - 合并/拆分 widget 只留三窗口参数
   6. 孤儿清理：输入连线全部失效的 easy showAnything / ShowText|pysssss /
-     easy promptLine / easy string 节点一并删除（它们没有下游）
+     easy promptLine / easy string 节点一并删除
 
 ⚠ 只收集 drop、其余连线一律保留；drop 先收集、最后一次性过滤；
 ⚠ 收尾用 links 表为唯一真源重建所有节点的 inputs[].link / outputs[].links
@@ -46,7 +45,7 @@ KEEP = {
     "随机提示词-批量.json":         "随机提示词-批量.json",
 }
 
-# ── 4) 改后各节点的 forceInput 输入端口顺序（按新类型） ──
+# ── 4) 各节点的 forceInput 输入端口顺序 ──
 PORT_ORDER = {
     "AnimaWeaver":       ["种子串"],
     "RandomResolution":  ["种子串"],
@@ -59,7 +58,7 @@ OUT_ORDER = {
     "AnimaWeaver":       ["生成的提示词", "调试信息"],
     "AnimaBatchMerge":   ["合并输出"],
     "AnimaBatchSplit":   ["种子", "提示词", "宽度", "高度"],
-    # 分辨率节点删「随机种子」输出槽（2026-10-16 用户要求），其余前移
+    # 分辨率节点删「随机种子」输出槽，其余前移
     "RandomResolution":  ["种子串", "宽度", "高度"],
 }
 

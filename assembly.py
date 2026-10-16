@@ -6,7 +6,7 @@ Anima Weaver — Prompt Assembler
   - mix_by_ratio  按标签/自然语言比例混合
 
 死代码 assemble_prompt / _check_slot_limits / _count_tags / SLOT_LIMITS
-已删除（全仓无调用点，见四节点精简方案 P5）。
+已删除（全仓无调用点）。
 """
 
 from __future__ import annotations

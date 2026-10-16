@@ -1,5 +1,5 @@
 """
-tag_index.py —— 标签行偏移索引 + 分类字典缓存（P1）
+tag_index.py —— 标签行偏移索引 + 分类字典缓存
 ====================================================
 解决 _run_raffle 每次调用都「重新解析 categorized_tags.txt + 全量扫 taglist」的 IO 灾难：
 
@@ -62,7 +62,7 @@ class TagIndex:
         self.count = len(offsets)
         self.mtime = mtime
         self.size = size
-        # P8-4: 按线程缓存文件句柄（8 µs/次 → 3 µs/次），仍线程安全
+        # 按线程缓存文件句柄（8 µs/次 → 3 µs/次），仍线程安全
         self._tls = threading.local()
 
     def _handle(self):
@@ -81,7 +81,7 @@ class TagIndex:
 
     def iter_lines(self):
         """顺序全量读（一次 open）；构建倒排索引专用，
-        比 read_line×N 快 ~2.7x（P8-3：省掉 10 万次 open/close）。"""
+        比 read_line×N 快 ~2.7x（省掉 10 万次 open/close）。"""
         with open(self.path, "r", encoding="utf-8", errors="replace") as f:
             for line in f:
                 yield line

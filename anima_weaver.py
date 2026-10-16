@@ -21,9 +21,8 @@ from typing import Any, Optional
 
 try:
     from .rules import check_conflicts, resolve_conflicts
-    # P2 清理：assemble_prompt/SLOT_LIMITS 从未被引用（死 import，方案 §5）
     from .assembly import mix_by_ratio, SLOT_ORDER
-    # P1/P5/P6: 行偏移索引、三级抽取、画师单例、laya 质量门
+    # 行偏移索引、三级抽取、画师单例、laya 质量门
     from .tag_index import get_tag_index, get_category_map, get_slot_map
     from .tag_extract import pick_line
     from .artist_index import all as _artist_index_all
@@ -38,7 +37,7 @@ except ImportError:
 
 
 # ══════════════════════════════════════════════════════════════════
-# P4: 随机内核 —— 命名子流 + 垃圾标签黑名单
+# 随机内核 —— 命名子流 + 垃圾标签黑名单
 # ══════════════════════════════════════════════════════════════════
 # 旧写法「一个 rng 干所有事」：改了标签数量就会连锁改变画师，
 # 「固定种子复现」实际失效。命名子流让每个抽样环节互不干扰：
@@ -70,7 +69,7 @@ class SeedRNG:
 def sample_slot(srng: "SeedRNG", tags, slot: str, k: int = 8,
                 keep_order: bool = True, protect: set = None) -> list:
     """
-    P4: rng.sample 替代 raffle_tags[:8] 位置截断。
+    rng.sample 替代 raffle_tags[:8] 位置截断。
 
     Danbooru 行内标签是完全按字母序排列的（实测 400/400），[:8] 永远
     保留字母序最靠前的 8 个 —— 系统性字母序偏差（b 开头 +48%，
@@ -91,7 +90,7 @@ def sample_slot(srng: "SeedRNG", tags, slot: str, k: int = 8,
     return list(chosen)
 
 
-# ── P4: Danbooru 元数据垃圾标签黑名单 ──────────────────────────────
+# ── Danbooru 元数据垃圾标签黑名单 ──────────────────────────────
 # 这些是元数据不是画面内容（实测占抽中 tag 的 5.3%）。
 # 把 commentary/absurdres/bad_id 塞进提示词 = 告诉 SD「请生成一张
 # 有评论的、分辨率爆表的、ID 损坏的图」—— 要么无响应要么副作用。
@@ -150,7 +149,7 @@ _ARTIST_FILE = _os.path.join(
 
 def _load_artists() -> list[str]:
     """
-    P1: 统一走 artist_index 单例（进程内只加载一次，O(1) 序号查名）。
+    统一走 artist_index 单例（进程内只加载一次，O(1) 序号查名）。
     保留本函数与 _ARTIST_LIST 缓存，兼容旧调用点。
     """
     global _ARTIST_LIST
@@ -190,29 +189,27 @@ class AnimaWeaver:
             pass
         if not model_list:
             model_list = ["(no models found)"]
-        # P3 修正：占位符常列在列表尾部 —— 旧工作流里保存的占位值（检测中/
+        # 修正：占位符常列在列表尾部 —— 旧工作流里保存的占位值（检测中/
         # 无模型）在真列表到达后不会再被 COMBO 校验拒绝（Value not in list）；
         # 运行侧所有「无模型」判断都把占位符当 manual 兜底处理。
         for _s in ("(no models found)", "(检测中…)"):
             if _s not in model_list:
                 model_list.append(_s)
 
-        # ── P2: 分组 INPUT_TYPES（配合 js/anima_groups.js 折叠）────────
+        # ── 分组 INPUT_TYPES（配合 js/anima_groups.js 折叠）────────
         # 硬约束1: 组开关（▸ xxx）必须排在它管理的 widget 前面（dict 顺序=前端顺序）
         # 硬约束2: 槽位/过滤 widget 默认值一律 "" —— 空槽不参与抽签/合并
         # 硬约束3: 敏感/露骨默认 True 是真实开关的兜底行为，不能改
         return {
             # ══ 一级：常驻，永远可见 ══════════════════════════════════
             "required": {
-                # 2026-10-16 用户修订：删除「模式」下拉 —— 行为固定为原「混合」
-                # （固定标签槽 + 抽签始终合并）；LLM 是否触发只看下方
-                # 「LLM设置 ▸ 自然语言来源」。旧工作流的 widgets_values 由
-                # tools/migrate_workflows.py 去掉首位模式值（46→45 项）。
+                # 无「模式」控件：固定标签槽 + 抽签始终合并；
+                # LLM 是否触发只看「LLM设置 ▸ 自然语言来源」。
                 "标签比例": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0,
                                     "step": 0.05,
                                     "tooltip": "标签与自然语言混合比例：1.0=纯标签（不调LLM），0=纯自然语言"}),
-                # 内置随机种子顶替原「场景类型」的 widget 下标（index 2），
-                # 旧工作流 widgets_values 只需重置这一个值即可逐位对齐（方案 §4.1）
+                # 内置随机种子占 index 2（顶替旧「场景类型」），旧工作流
+                # widgets_values 只需重置这一个值即可逐位对齐
                 "随机种子": ("INT", {
                     "default": 0, "min": 0, "max": 0xFFFF_FFFF_FFFF_FFFF, "step": 1,
                     "control_after_generate": True,
@@ -222,7 +219,7 @@ class AnimaWeaver:
 
             # ══ 二级：分组，默认收起（勾选组开关展开）══════════════════
             "optional": {
-                # ━━ 组1 固定标签（吸收「提示词槽位」节点；2026-10-16 更名）━━
+                # ━━ 组1 固定标签 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 "▸ 固定标签": ("BOOLEAN", {"default": False,
                                       "tooltip": "组开关：勾选展开下方固定槽位控件"}),
                 "人数/身份": ("STRING", {"multiline": True, "default": ""}),
@@ -235,7 +232,7 @@ class AnimaWeaver:
                 "细节/氛围": ("STRING", {"multiline": True, "default": ""}),
                 "自然语言描述": ("STRING", {"multiline": True, "default": ""}),
 
-                # ━━ 组2 过滤标签（吸收「底部控制」节点；2026-10-16 更名）━━━
+                # ━━ 组2 过滤标签 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 "▸ 过滤标签": ("BOOLEAN", {"default": False}),
                 "标签列表必含": ("STRING", {"multiline": True, "default": ""}),
                 "过滤标签": ("STRING", {"multiline": True, "default": ""}),
@@ -294,9 +291,7 @@ class AnimaWeaver:
                 "过滤质量标签": ("BOOLEAN", {"default": False,
                                         "tooltip": "剔除 masterpiece/highres 等质量标签（有人刻意保留这类标签，故默认关）"}),
 
-                # ━━ 组7 系统提示词（「高级」的二级子组；原 forceInput 端口
-                # → 可手填槽位。2026-10-16 起子组挪到「▸ 高级」之后显示，
-                # 旧 widgets_values 由 tools/migrate_workflows.py 按标记置换）━━
+                # ━━ 组7 系统提示词（二级子组，可手填）━━━━━━━━━━━━━━━━
                 "▸ 系统提示词": ("BOOLEAN", {"default": False,
                                         "tooltip": "组开关：展开系统提示词编辑框"}),
                 "系统提示词": ("STRING", {"multiline": True, "default": "",
@@ -323,7 +318,7 @@ class AnimaWeaver:
     @classmethod
     def IS_CHANGED(cls, **kwargs) -> float:
         """
-        P4: 输入确定性哈希（替代旧 random.random()）。
+        输入确定性哈希（替代旧 random.random()）。
 
         旧版永远返回随机值 → 每次执行都强制重算，和「用 seed 复现结果」
         直接冲突。新版：同输入 → 同值 → ComfyUI 可复用缓存；
@@ -338,7 +333,7 @@ class AnimaWeaver:
         except (TypeError, ValueError):
             return random.random()
         try:
-            # P2: 组开关（▸ xxx）只是前端折叠标记，展开/收起不应触发重算，
+            # 组开关（▸ xxx）只是前端折叠标记，展开/收起不应触发重算，
             # 从哈希输入里剔除，保证「同参数输入 → 同 IS_CHANGED → 复用缓存」
             payload_kwargs = {k: v for k, v in kwargs.items()
                               if not str(k).startswith("▸")}
@@ -357,7 +352,7 @@ class AnimaWeaver:
         Main node workflow. Returns (prompt, debug)；批量模式把各条提示词
         拼成多行串放进第一个输出槽（画师/反推不再单独成串）。
         """
-        # 2026-10-16：模式控件已删 —— 固定按原「混合」执行（槽位+抽签始终合并）
+        # 无模式控件：固定按「混合」执行（槽位+抽签始终合并）
         mode = "混合"
         kwargs["模式"] = mode
         tag_ratio = float(kwargs.get("标签比例", 0.6))
@@ -375,9 +370,8 @@ class AnimaWeaver:
 
         # ── Mutually exclusive: 种子串 overrides 随机种子 ──────────────
         batch_seeds_str = kwargs.get("种子串", "")
-        # ── P2: 吸收「批量种子」节点 —— 批量数量>0 且未接种子串时，由内置
-        #    种子作父种子派生 N 个可复现子种子（旧版走 random.randint，
-        #    同参数每次跑出不同的一批；现在 批量数量=8+种子=12345 整批可复现）
+        # ── 批量数量>0 且未接种子串时：内置种子作父种子，派生 N 个
+        #    可复现子种子（同参数整批可复现）
         if not batch_seeds_str.strip():
             try:
                 _n = int(kwargs.get("批量数量", 0) or 0)
@@ -391,7 +385,7 @@ class AnimaWeaver:
         if is_batch:
             kwargs.pop("随机种子", None)  # 批量逐行种子由 seed_kwargs 覆盖
 
-        # ── P8-6: 与种子无关的重复解析量只算一次，经 kwargs 下传复用 ──
+        # ── 与种子无关的重复解析量只算一次，经 kwargs 下传复用 ────
         kwargs["_filter"] = {
             "must": _parse_comma_field(kwargs.get("标签列表必含", "")),
             "excl": _parse_comma_field(kwargs.get("排除含标签列表", "")),
@@ -428,7 +422,7 @@ class AnimaWeaver:
         seed_kwargs = dict(kwargs)
         seed_kwargs["随机种子"] = raw_seed
 
-        # P4: 抽签 / 槽位抽样 / 画师都从 raw_seed 派生独立子流
+        # 抽签 / 槽位抽样 / 画师都从 raw_seed 派生独立子流
         srng = SeedRNG(raw_seed)
         raffle_slots: dict[str, list[str]] = {}
         if mode in ("随机", "混合"):
@@ -439,7 +433,7 @@ class AnimaWeaver:
         tag_prompt = self._slots_to_string(merged)
 
         # Conflict check & removal + dedup (single mode)
-        # P6: 检测与移除共用同一套分层逻辑（不再两套匹配分叉）
+        # 检测与移除共用同一套分层逻辑（不再两套匹配分叉）
         # 必含标签与手动槽位同等保护，冲突层不得删除（否则必含被静默打破）
         if enable_conflict and tag_prompt.strip():
             tag_prompt = self._conflict_and_dedup(
@@ -521,12 +515,12 @@ class AnimaWeaver:
         artist_seed_val = kwargs.get("画师种子", None)
         if artist_seed_val is not None and str(artist_seed_val) != "":
             s = int(artist_seed_val)
-            # P8-7: 画师表按需加载 —— s==0（无画师，默认值）时不加载
+            # 画师表按需加载 —— s==0（无画师，默认值）时不加载
             # 59676 条约 3.5 MB，也省首次解析
             artists = _load_artists() if s != 0 else []
             if artists:
                 if s == -1:
-                    # P4: 画师走种子派生的命名子流 —— 可复现，
+                    # 画师走种子派生的命名子流 —— 可复现，
                     # 且不再受「标签数量/抽签环节」连锁影响（旧版用全局
                     # random.randint，同 seed 重跑画师会变）
                     srng = SeedRNG(int(kwargs.get("随机种子", 0)))
@@ -571,7 +565,7 @@ class AnimaWeaver:
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
-                    # BUG-2 修复：auto_ctx 此前从未定义 → NameError 被外层
+                    # auto_ctx 此前从未定义 → NameError 被外层
                     # except 吞掉 → 批量模式的模型预加载一直静默失败。
                     # 语义对齐单次路径(见 _get_nl 处)：自动上下文 = 最大并发数 × 2048
                     auto_ctx = bool(kwargs.get("自动上下文长度", False))
@@ -599,13 +593,13 @@ class AnimaWeaver:
             seed_kwargs["随机种子"] = raw_seed
 
             # ── Per-seed raffle + tag_prompt ──────────────────────────
-            # P4: 每个种子独立 SeedRNG（子流派生，互不耦合）
+            # 每个种子独立 SeedRNG（子流派生，互不耦合）
             raffle = self._run_raffle(seed_kwargs) if mode in ("随机", "混合") else {}
             merged = self._merge_slots(mode, manual_slots, raffle, SeedRNG(raw_seed),
                                        kwargs.get("_protected") or set())
             tag_prompt = self._slots_to_string(merged)
             if enable_conflict and tag_prompt.strip():
-                # P6: 检测与移除共用同一套分层逻辑；必含标签受保护
+                # 检测与移除共用同一套分层逻辑；必含标签受保护
                 tag_prompt = self._conflict_and_dedup(
                     tag_prompt, manual_slots,
                     kwargs.get("_protected") or set())
@@ -676,7 +670,7 @@ class AnimaWeaver:
           random   → pure Raffle
           hybrid   → Raffle (up to 8) + manual appended (higher weight)
 
-        P4: hybrid 的 Raffle 部分用随机抽样 sample_slot（替代 [:8]
+        hybrid 的 Raffle 部分用随机抽样 sample_slot（替代 [:8]
         位置截断，消除字母序偏差）；srng 为 None（旧调用路径）时退回 [:8]。
         """
         merged: dict[str, str] = {}
@@ -716,12 +710,12 @@ class AnimaWeaver:
         classify each tag via ``categorized_tags.txt``, and map
         categories to slots via ``category_to_slot.json``.
 
-        P1: 行偏移表（.idx 磁盘缓存）+ 分类字典模块级缓存 ——
+        行偏移表（.idx 磁盘缓存）+ 分类字典模块级缓存 ——
             不再每种子全文件扫描（批量 256 种子 21s -> ~0.1s），
             并解锁全部 ~10 万行（旧版只扫前 5000 行）。
-        P4: 命名子流派生文件/行选择（替代 shuffle + seed%len）；
+        命名子流派生文件/行选择（替代 shuffle + seed%len）；
             META_TAGS 过滤元数据垃圾标签；QUALITY_TAGS 可选（默认关）。
-        P5: 三级混合抽取（拒绝采样 -> 倒排索引 -> 全量扫描），
+        三级混合抽取（拒绝采样 -> 倒排索引 -> 全量扫描），
             「必含/排除」严格满足、0 静默违规；无解明确返回 {}。
 
         Returns a dict ``{slot_name: [tag_str, ...]}``.
@@ -744,18 +738,17 @@ class AnimaWeaver:
             # Fallback default（保留：无启用文件时兜底 sensitive+explicit 旧逻辑）
             enabled_files = ["taglists-sensitive.txt", "taglists-explicit.txt"]
 
-        # ── Load category → slot mapping（P1: 模块级缓存，只解析一次）──
+        # ── Load category → slot mapping──
         cat_to_slot: dict[str, str] = get_slot_map(tags_dir)
         if not cat_to_slot:
             return {}
 
-        # ── Load category tags index（P1: 模块级缓存，只解析一次）──
+        # ── Load category tags index──
         tag_to_category: dict[str, str] = get_category_map(tags_dir)
         if not tag_to_category:
             return {}
 
-        # ── Filter parameters（P8-6: compose() 预算一次，批量逐种子复用；
-        #    保留现算兜底，兼容直接调用 _run_raffle 的旧路径）──────────
+        # ── 过滤参数：compose() 预算一次、批量复用（保留现算兜底）──
         _f = kwargs.get("_filter")
         if _f is not None:
             exclude_containing = _f["excl"]
@@ -768,7 +761,7 @@ class AnimaWeaver:
             excluded_cats = _parse_comma_field(kwargs.get("排除标签分类", ""))
             filter_out = _parse_comma_field(kwargs.get("过滤标签", ""))
 
-        # ── P4: 命名子流（替代旧的单一 rng + shuffle + seed%len）──
+        # ── 命名子流（替代旧的单一 rng + shuffle + seed%len）──
         # 旧版 rng.shuffle(enabled_files) 是纯浪费（shuffle 结果被丢弃），
         # enabled_files[seed % len] 让种子奇偶决定文件（0 bit 随机性）。
         seed = int(kwargs.get("随机种子", 0))
@@ -779,20 +772,20 @@ class AnimaWeaver:
         selected_file = enabled_files[rng.randrange(len(enabled_files))]
         filepath = os.path.join(tags_dir, selected_file)
 
-        # ── P1: 行偏移索引（建一次，.idx 磁盘缓存；文件缺失 -> {}）──
+        # ── 行偏移索引（建一次，.idx 磁盘缓存；文件缺失 -> {}）──
         try:
             idx = get_tag_index(filepath)
         except OSError:
             return {}
 
-        # ── P5: 三级混合抽取（must/exclude 严格满足，无解明确返回）──
+        # ── 三级混合抽取（must/exclude 严格满足，无解明确返回）──
         selected_tags, source = pick_line(
             idx, rng, must=must_include, excl=exclude_containing
         )
         if not selected_tags:
             return {}  # 索引确认无解（或文件为空），明确返回
 
-        # ── P4: 垃圾标签黑名单（META_TAGS 常开；QUALITY_TAGS 可选默认关）──
+        # ── 垃圾标签黑名单（META_TAGS 常开；QUALITY_TAGS 可选默认关）──
         drop = META_TAGS
         if bool(kwargs.get("过滤质量标签", False)):
             drop = META_TAGS | QUALITY_TAGS
@@ -848,7 +841,7 @@ class AnimaWeaver:
         to generate text via the LM Studio HTTP API (local or cloud).
         Otherwise return the manual NL text.
 
-        2026-10-16 用户修订：模式控件已删——是否调 LLM 只看
+        模式控件已删——是否调 LLM 只看
         「自然语言来源」：LM Studio=调模型生成；手动=只取「自然语言描述」
         槽文本。「标签比例=1.0」= 纯标签，直接跳过 LLM（连推理都不发）。
         """
@@ -928,7 +921,7 @@ class AnimaWeaver:
                             pass
         return kwargs.get("自然语言描述", "")
 
-    # ── Conflict detection + removal (P6) ─────────────────────────
+    # ── 冲突检测 + 移除 ─────────────────────────────────────────────
 
     @staticmethod
     def _must_protected(kwargs: dict) -> set:
@@ -944,8 +937,8 @@ class AnimaWeaver:
     def _conflict_and_dedup(tag_prompt: str, manual_slots: dict[str, str],
                             extra_protected: set = None) -> str:
         """
-        冲突检测 + 移除（P6：检测与移除共用 rules.resolve_conflicts 同一套
-        分层逻辑，警告与实际删除永远一致）+ 标签去重。
+        冲突检测 + 移除（与 rules.resolve_conflicts 同一套分层逻辑，
+        警告与实际删除永远一致）+ 标签去重。
 
         extra_protected: 「标签列表必含」等用户显式要求的标签 —— 与手动槽位
         同等保护，永不因冲突被删（否则必含过滤会被冲突层静默打破）。
@@ -978,7 +971,7 @@ class AnimaWeaver:
         extra_protected: set = None,
     ) -> str:
         """
-        P6: 冲突移除（替代旧 CONFLICT_PAIRS 子串匹配双删版）。
+        冲突移除（替代旧 CONFLICT_PAIRS 子串匹配双删版）。
 
         旧版三个 bug：
           1. 检测用精确匹配、移除用子串匹配（lap_pov/solo_focus 被误伤）
@@ -1083,7 +1076,7 @@ def _parse_comma_field(text: str) -> set[str]:
     )
 
 
-# ── 后台预热（P1 + P8-1）─────────────────────────────────────────
+# ── 后台预热─────────────────────────────────────────
 # 只预热每次都要用的量：分类字典 + 行偏移表（.idx 磁盘缓存，毫秒级）。
 # 倒排索引改惰性构建（tag_extract._ensure_index）——默认场景（不设
 # 必含/排除）根本不碰倒排索引，不再为它付 4×1.6s CPU + ~92MB 内存。

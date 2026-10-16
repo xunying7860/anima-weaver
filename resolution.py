@@ -256,7 +256,7 @@ NORM_LAYERS = [
 ]
 
 
-# ── P8-5 归一化快速通道（实测 3.1x，逐 token 与原算法一致）────────
+# ── 归一化快速通道（3.1x，逐 token 与原算法一致）──────────────
 # 真实提示词里 ~97% 的 token 不会被任何层改写，逐 token 跑 8 层
 # × ~25 条正则纯属白跑（4.06 ms/次）。两级短路：
 #   1) _CANON_FAST：import 时用「原算法」预计算所有规范形/关键词集
@@ -583,15 +583,15 @@ class RandomResolution:
             },
             "optional": {
                 # 原「随机种子」forceInput 端口已删（改内置 widget）；
-                # 「提示词」输入端口 2026-10-16 按用户要求删除（analyze_prompt
-                # 引擎保留在模块内，需要时可再接回）
+                # 「提示词」输入端口已删（analyze_prompt 引擎保留在
+                # 模块内，需要时可再接回）
                 "种子串": ("STRING", {"forceInput": True, "multiline": True,
                                    "tooltip": "接入批量种子串（每行一个种子），逐行选画幅；非空时内置种子让位"}),
             },
         }
 
     CATEGORY = "Anima Weaver"
-    # 「随机种子」输出槽已删（2026-10-16 用户要求）。宽/高为通配类型 "*"：
+    # 无「随机种子」输出槽。宽/高为通配类型 "*"：
     # 未接「种子串」时返回 int（可直接连 EmptyLatent 等 INT 输入），
     # 接了「种子串」时返回逐行多行字符串（连批量合并）。
     RETURN_TYPES = ("STRING", "*", "*")

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""tools/bench.py —— P8 性能基准（方案 §9.0）
+"""tools/bench.py —— 性能基准
 
 合成 100 000 行 / 结构与真实 taglist 一致的文件，测：
-  1) 倒排索引构建（P8-3 顺序批量读后应 <1.0s）
-  2) read_line（P8-4 句柄复用后应 <4 µs/次）
-  3) 全量扫描（P8-2 后不应再被自动触发；这里只做参照量级展示）
+  1) 倒排索引构建（顺序批量读，应 <1.0s）
+  2) read_line（句柄复用后应 <4 µs/次）
+  3) 全量扫描（不应再被自动触发；只做参照量级展示）
 
 用法：python tools/bench.py [合成文件路径]
 """
@@ -61,13 +61,13 @@ def main():
     idx = TagIndex.load_or_build(p)
     print("lines:", idx.count)
 
-    # 1) 倒排索引构建（P8-3：一次 open 顺序读）
+    # 1) 倒排索引构建（一次 open 顺序读）
     t0 = time.perf_counter()
     InvertedIndex.build(idx.iter_lines(), idx.count)
     dt = time.perf_counter() - t0
     print(f"build: {dt:.2f}s  RSS {rss():.0f} MB   （期望 <1.0s）")
 
-    # 2) read_line 句柄复用（P8-4）
+    # 2) read_line 句柄复用
     for i in range(300):                       # 预热页缓存
         idx.read_line(i * 7 % idx.count)
     best = 1e9
@@ -78,7 +78,7 @@ def main():
         best = min(best, (time.perf_counter() - t0) / 2000 * 1e6)
     print(f"read_line: {best:.1f} us/次   （期望 <5us；机器负载高时会偏高）")
 
-    # 3) 全量扫描参照（P8-2：生产路径已不再自动触发）
+    # 3) 全量扫描参照（生产路径已不再自动触发）
     rng = random.Random(1)
     must = {"tag_00001", "tag_00002"}
     t0 = time.perf_counter()

@@ -2,7 +2,7 @@
 Anima批量合并 / Anima批量拆分 —— 两节点批量管线（中间挂 easy-use 提示词行）
 ==========================================================================
 
-用户最终确认的标准管线（2026-10-16）：
+标准管线：
 
     批量种子 / Anima随机提示词 / 随机分辨率   （各自的多行串，按行对齐）
             │
@@ -21,11 +21,8 @@ Anima批量合并 / Anima批量拆分 —— 两节点批量管线（中间挂 e
 通道只保留 种子 / 提示词 / 宽度 / 高度（分辨率串、反推串、画师串及
 拆分侧的「合并输出」均已按用户要求裁剪；JSON行 只在拆分节点的入口）。
 
-历史：sync_passthrough.py（合并）+ passthrough_split.py（拆分）先被合并成
-带「模式」下拉的 AnimaBatchBus（11→8 轮），又试做过单节点内置选行
-（2026-10-16 上午），最终按用户要求恢复为两个独立节点、由用户自行在
-中间挂 easy-use 提示词行。旧工作流由 tools/migrate_workflows.py 按
-「模式」widget 自动拆成对应的新节点。
+旧总线（AnimaBatchBus）工作流由 tools/migrate_workflows.py 按「模式」
+widget 自动拆成对应的新节点。
 """
 
 from __future__ import annotations

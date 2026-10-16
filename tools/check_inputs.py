@@ -7,7 +7,7 @@ check_inputs.py —— anima_weaver.py 静态体检（防死参数/死控件复�
 - B 类：INPUT_TYPES 声明了 widget X，但 INPUT_TYPES 之外全文再无 "X"
   字面量 → 死控件（四节点版曾命中：场景类型 —— 已删）
 
-判定口径（噪音教训，改判定前先读）：
+判定口径（改判定前先读）：
 - used 只认 kwargs/seed_kwargs/reroll_kwargs 这三个真实入参字典上的
   .get("字面量")；其余 .get（SeedRNG.get 子流名、os.environ.get、
   选项别名表 get、内部 _filter dict）一概不算，否则 must/artist/

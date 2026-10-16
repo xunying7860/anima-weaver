@@ -4,8 +4,8 @@ Anima Weaver — Conflict Rules Engine
 Defines mutually exclusive tag pairs and provides conflict checking
 functions for tag prompts.
 
-P6 重构（面向出图准确性）：
-  旧版 23 对硬编码 + 「检测精确匹配 / 移除子串匹配」两套逻辑不一致，
+分层冲突模型（面向出图准确性）：
+  旧版硬编码冲突对 + 检测/移除两套匹配逻辑不一致，
   实测只覆盖 2.1% 的行且误伤互补组合 88 次。
   新版分层模型：
     L0 豁免     伞形标签（multicolored_hair / heterochromia...）
@@ -86,7 +86,7 @@ CLOTHING_KEYWORDS = frozenset(
 
 
 # ═════════════════════════════════════════════════════════════════
-# P6 分层冲突模型
+# 分层冲突模型
 # ═════════════════════════════════════════════════════════════════
 
 # ── L0 伞形标签：出现时该维度内多值合法 ────────────────────────────
@@ -332,8 +332,8 @@ def check_conflicts(tags: list, manual_tags: set = None,
     """
     Check a list of raw tag strings for mutually exclusive pairs.
 
-    P6：与 resolve_conflicts 共用同一套分层逻辑（检测与移除不再分叉：
-    旧版检测用精确匹配、移除用子串匹配，lap_pov 等被误伤且警告与
+    与 resolve_conflicts 共用同一套分层逻辑（检测与移除不再分叉：
+    旧版检测用精确匹配、移除用子串匹配，存在误伤且警告与
     实际删除对不上）。
 
     Parameters
