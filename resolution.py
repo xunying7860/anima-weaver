@@ -566,7 +566,7 @@ class RandomResolution:
         return {
             "required": {
                 "模式": ("BOOLEAN", {"default": False,
-                                   "tooltip": "开启=自动（分析提示词选画幅）；关闭=手动（用固定比例）"}),
+                                   "tooltip": "开启=按种子随机选比例（忽略固定比例）；关闭=由「随机画幅」决定随机还是固定"}),
                 "随机画幅": ("BOOLEAN", {"default": True,
                                      "tooltip": "手动模式/自动兜底：比例随机选择；关闭则恒用「固定比例」"}),
                 "百万像素": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 32.0, "step": 0.01}),
@@ -582,11 +582,11 @@ class RandomResolution:
                 }),
             },
             "optional": {
-                # 原「随机种子」forceInput 端口已删（改为内置 widget）
+                # 原「随机种子」forceInput 端口已删（改内置 widget）；
+                # 「提示词」输入端口 2026-10-16 按用户要求删除（analyze_prompt
+                # 引擎保留在模块内，需要时可再接回）
                 "种子串": ("STRING", {"forceInput": True, "multiline": True,
                                    "tooltip": "接入批量种子串（每行一个种子），逐行选画幅；非空时内置种子让位"}),
-                "提示词": ("STRING", {"forceInput": True, "multiline": True,
-                                   "tooltip": "自动模式的提示词（每行一条，与种子串行对齐）"}),
             },
         }
 
@@ -619,7 +619,7 @@ class RandomResolution:
 
     def pick(self, 模式: bool, 随机画幅: bool, 百万像素: float, 固定比例: str,
              对齐到: int = 8, 随机种子: int = 0,
-             种子串: str = "", 提示词: str = "") -> tuple[int, str, str, str]:
+             种子串: str = "") -> tuple[int, str, str, str]:
         seeds = []
         for s in (种子串 or "").split("\n"):
             s = s.strip()
@@ -628,8 +628,6 @@ class RandomResolution:
                     seeds.append(int(s))
                 except ValueError:
                     pass
-        prompt_lines = [l.strip() for l in (提示词 or "").split("\n")
-                        if l.strip()]
 
         # ── 内置种子解析：0 = 每次执行内部随机；>0 = 确定性复现 ──
         try:
@@ -643,12 +641,11 @@ class RandomResolution:
         if seeds:
             ws, hs = [], []
             for i, sv in enumerate(seeds):
-                if 模式 and i < len(prompt_lines):
-                    ratio = analyze_prompt(prompt_lines[i])
+                # 自动模式恒随机；手动模式看「随机画幅」开关
+                if 模式 or 随机画幅:
+                    ratio = random.Random(sv).choice(ASPECT_NAMES)
                 else:
-                    # 手动模式，或自动模式但该行没有提示词 → 回退随机/固定
-                    ratio = (random.Random(sv).choice(ASPECT_NAMES)
-                             if 随机画幅 else 固定比例)
+                    ratio = 固定比例
                 w, h = _resolve(百万像素, ratio, 对齐到)
                 ws.append(str(w))
                 hs.append(str(h))
@@ -657,11 +654,10 @@ class RandomResolution:
                     "\n".join(ws), "\n".join(hs))
 
         # ── 单次：用内置种子 ──
-        if 模式:
-            ratio = analyze_prompt(prompt_lines[0]) if prompt_lines else "3:4"
+        if 模式 or 随机画幅:
+            ratio = random.Random(eff_seed).choice(ASPECT_NAMES)
         else:
-            ratio = (random.Random(eff_seed).choice(ASPECT_NAMES)
-                     if 随机画幅 else 固定比例)
+            ratio = 固定比例
         w, h = _resolve(百万像素, ratio, 对齐到)
         # 未接种子串时「种子串」输出恒为空串：不把内置种子伪装成
         # 批量串（下游靠这个区分单次/批量，与主节点语义刻意一致）

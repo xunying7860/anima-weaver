@@ -52,100 +52,6 @@
       ]
     },
     {
-      "id": 127,
-      "type": "easy showAnything",
-      "pos": [
-        2958.1597786035736,
-        5775.374715510409
-      ],
-      "size": [
-        210,
-        196
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "输入任何",
-          "name": "anything",
-          "shape": 7,
-          "type": "*",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "输出",
-          "name": "output",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-easy-use",
-        "ver": "1.3.6",
-        "Node name for S&R": "easy showAnything",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "[41721] @dh ead",
-        "[41721] @dh ead",
-        "[41721] @dh ead"
-      ]
-    },
-    {
-      "id": 128,
-      "type": "easy showAnything",
-      "pos": [
-        2958.1597786035736,
-        6013.885897063194
-      ],
-      "size": [
-        210,
-        196
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "输入任何",
-          "name": "anything",
-          "shape": 7,
-          "type": "*",
-          "link": 288
-        }
-      ],
-      "outputs": [
-        {
-          "label": "输出",
-          "name": "output",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-easy-use",
-        "ver": "1.3.6",
-        "Node name for S&R": "easy showAnything",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "1152x864",
-        "1152x864",
-        "1152x864"
-      ]
-    },
-    {
       "id": 129,
       "type": "easy showAnything",
       "pos": [
@@ -265,16 +171,6 @@
           "link": 272
         },
         {
-          "name": "分辨率串",
-          "type": "*",
-          "link": null
-        },
-        {
-          "name": "反推串",
-          "type": "*",
-          "link": null
-        },
-        {
           "name": "宽度串",
           "type": "*",
           "link": 256
@@ -283,11 +179,6 @@
           "name": "高度串",
           "type": "*",
           "link": 257
-        },
-        {
-          "name": "JSON行",
-          "type": "*",
-          "link": null
         }
       ],
       "outputs": [
@@ -295,7 +186,6 @@
           "name": "合并输出",
           "type": "*",
           "links": [
-            273,
             276
           ]
         },
@@ -306,16 +196,6 @@
         },
         {
           "name": "提示词",
-          "type": "*",
-          "links": null
-        },
-        {
-          "name": "反推",
-          "type": "*",
-          "links": null
-        },
-        {
-          "name": "分辨率",
           "type": "*",
           "links": null
         },
@@ -341,138 +221,9 @@
         }
       },
       "widgets_values": [
-        "合并",
         0,
         1000,
         true
-      ]
-    },
-    {
-      "id": 121,
-      "type": "easy promptLine",
-      "pos": [
-        1417.3021296648747,
-        5748.74580249032
-      ],
-      "size": [
-        400,
-        204
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "提示词",
-          "name": "prompt",
-          "type": "STRING",
-          "widget": {
-            "name": "prompt"
-          },
-          "link": 273
-        },
-        {
-          "label": "起始索引",
-          "name": "start_index",
-          "type": "INT",
-          "widget": {
-            "name": "start_index"
-          },
-          "link": null
-        },
-        {
-          "label": "最大行数",
-          "name": "max_rows",
-          "type": "INT",
-          "widget": {
-            "name": "max_rows"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "字符串",
-          "name": "STRING",
-          "shape": 6,
-          "type": "STRING",
-          "links": [
-            277,
-            278
-          ]
-        },
-        {
-          "name": "COMBO",
-          "shape": 6,
-          "type": "COMBO",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-easy-use",
-        "ver": "1.3.6",
-        "Node name for S&R": "easy promptLine",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "text",
-        0,
-        1000,
-        true,
-        ""
-      ],
-      "color": "#233",
-      "bgcolor": "#355"
-    },
-    {
-      "id": 123,
-      "type": "easy showAnything",
-      "pos": [
-        1903.6296961411654,
-        5148.19756006687
-      ],
-      "size": [
-        210,
-        196
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "输入任何",
-          "name": "anything",
-          "shape": 7,
-          "type": "*",
-          "link": 277
-        }
-      ],
-      "outputs": [
-        {
-          "label": "输出",
-          "name": "output",
-          "type": "*",
-          "links": null
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-easy-use",
-        "ver": "1.3.6",
-        "Node name for S&R": "easy showAnything",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}",
-        "{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}",
-        "{\"种子\": \"3226781916754868154\", \"提示词\": \"3girls, gotoh_hitori, ijichi_nijika, kita_ikuyo, multiple_girls, 1boy, solo, blonde_hair, brown_eyes, green_eyes, long_hair, pink_hair, red_hair, apron, drawstring, hood, hood_down, maid, maid_apron, maid_headdress, girl_sandwich, pocky, pocky_kiss, sandwiched, sitting, closed_eyes, flying_sweatdrops, one_eye_closed, sweatdrop, shy, from below, food, class room, Two girls, one boy, are shown in a school girl setting, with one girl wearing a pink maid dress and an apron, while the others have more casual and short-haired outfits, with long hair tied up in ponytails, and various expressions of eating or eating-related activities. The scene is shot from below, showing food, and sandwiches on the girls' laps or nearby, with some looking shy or closed-eyed as if in a snack-filled reverie. A few students are shown sitting in a classroom, while others are walking away or flying sweat droplets., @dh ead\", \"画师\": \"[41721] @dh ead\", \"分辨率\": \"1152x864\", \"反推\": \"\", \"宽度\": \"1152\", \"高度\": \"864\"}"
       ]
     },
     {
@@ -493,37 +244,22 @@
         {
           "name": "种子串",
           "type": "*",
-          "link": null
+          "link": 291
         },
         {
           "name": "提示词串",
           "type": "*",
-          "link": null
-        },
-        {
-          "name": "分辨率串",
-          "type": "*",
-          "link": null
-        },
-        {
-          "name": "反推串",
-          "type": "*",
-          "link": null
+          "link": 292
         },
         {
           "name": "宽度串",
           "type": "*",
-          "link": null
+          "link": 293
         },
         {
           "name": "高度串",
           "type": "*",
-          "link": null
-        },
-        {
-          "name": "JSON行",
-          "type": "*",
-          "link": 278
+          "link": 294
         }
       ],
       "outputs": [
@@ -544,18 +280,6 @@
           "type": "*",
           "links": [
             286
-          ]
-        },
-        {
-          "name": "反推",
-          "type": "*",
-          "links": null
-        },
-        {
-          "name": "分辨率",
-          "type": "*",
-          "links": [
-            288
           ]
         },
         {
@@ -584,7 +308,6 @@
         }
       },
       "widgets_values": [
-        "拆分",
         0,
         1000,
         true
@@ -660,7 +383,8 @@
             261,
             263,
             264,
-            269
+            269,
+            291
           ]
         }
       ],
@@ -697,11 +421,6 @@
           "name": "种子串",
           "type": "*",
           "link": 264
-        },
-        {
-          "name": "提示词",
-          "type": "*",
-          "link": null
         }
       ],
       "outputs": [
@@ -721,7 +440,8 @@
           "name": "宽度",
           "type": "INT",
           "links": [
-            256
+            256,
+            293
           ],
           "slot_index": 2
         },
@@ -729,7 +449,8 @@
           "name": "高度",
           "type": "INT",
           "links": [
-            257
+            257,
+            294
           ],
           "slot_index": 3
         }
@@ -778,7 +499,8 @@
           "name": "生成的提示词",
           "type": "*",
           "links": [
-            272
+            272,
+            292
           ]
         },
         {
@@ -943,7 +665,7 @@
       115,
       2,
       112,
-      4,
+      2,
       "STRING"
     ],
     [
@@ -951,7 +673,7 @@
       115,
       3,
       112,
-      5,
+      3,
       "STRING"
     ],
     [
@@ -995,35 +717,11 @@
       "STRING"
     ],
     [
-      273,
-      112,
-      0,
-      121,
-      0,
-      "STRING"
-    ],
-    [
       276,
       112,
       0,
       122,
       0,
-      "STRING"
-    ],
-    [
-      277,
-      121,
-      0,
-      123,
-      0,
-      "STRING"
-    ],
-    [
-      278,
-      121,
-      0,
-      124,
-      6,
       "STRING"
     ],
     [
@@ -1043,17 +741,9 @@
       "STRING"
     ],
     [
-      288,
-      124,
-      4,
-      128,
-      0,
-      "STRING"
-    ],
-    [
       289,
       124,
-      5,
+      3,
       129,
       0,
       "INT"
@@ -1061,10 +751,42 @@
     [
       290,
       124,
-      6,
+      4,
       130,
       0,
       "INT"
+    ],
+    [
+      291,
+      117,
+      0,
+      124,
+      0,
+      "STRING"
+    ],
+    [
+      292,
+      120,
+      0,
+      124,
+      1,
+      "STRING"
+    ],
+    [
+      293,
+      115,
+      2,
+      124,
+      2,
+      "STRING"
+    ],
+    [
+      294,
+      115,
+      3,
+      124,
+      3,
+      "STRING"
     ]
   ],
   "groups": [],

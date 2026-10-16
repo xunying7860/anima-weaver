@@ -167,9 +167,24 @@ def _run_lms(args: list[str], timeout: int = 60) -> tuple[int, str, str]:
 
 # ── Model management ───────────────────────────────────────────────
 
+def _query_models_http(base_url: str = _DEFAULT_BASE_URL) -> list[str]:
+    """HTTP 查询 OpenAI 兼容端点 GET {base}/models（2026-10-16 用户反馈：
+    ComfyUI 进程里 lms CLI 常因 PATH/管理 API 未启用而查不到模型，但 LM
+    Studio 的 OpenAI 服务通常一直开着 —— 改 HTTP 优先，3s 超时）。"""
+    try:
+        resp = requests.get(f"{base_url.rstrip('/')}/models", timeout=3)
+        if resp.status_code == 200:
+            ids = [m.get("id") for m in resp.json().get("data", [])
+                   if isinstance(m, dict) and m.get("id")]
+            return sorted(set(ids))
+    except Exception:
+        pass
+    return []
+
+
 def _query_models() -> list[str]:
     """
-    真实查询（会阻塞）：跑 ``lms ls`` 取模型列表。
+    真实查询（会阻塞）：HTTP 优先，失败再退回 ``lms ls``。
 
     这是 get_models() 的内部实现，**不要直接对外** ——
     外面应统一走非阻塞的 get_models()（03 补丁）。轻量查询 timeout=5s。
@@ -179,6 +194,9 @@ def _query_models() -> list[str]:
     list[str]
         Model identifiers.
     """
+    models = _query_models_http()
+    if models:
+        return models
     rc, stdout, stderr = _run_lms(["ls"], timeout=5)
     if rc != 0:
         return []

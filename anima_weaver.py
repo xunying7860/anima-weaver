@@ -204,12 +204,11 @@ class AnimaWeaver:
         return {
             # ══ 一级：常驻，永远可见 ══════════════════════════════════
             "required": {
-                # 官方用语：选项值为中文；旧英文值挂在尾部仅为兼容旧工作流
-                # （COMBO 服务端校验先于 compose 的兼容映射，不列就会被拒收），
-                # 新节点请用中文值；旧工作流跑 tools/migrate_workflows.py 改写
-                "模式": (["手动", "随机", "混合",
-                       "manual", "random", "hybrid"], {"default": "混合",
-                                  "tooltip": "手动=只用槽位；随机=只抽签；混合=抽签+槽位叠加。manual/random/hybrid 为旧值兼容，建议迁移"}),
+                # 官方用语：选项值纯中文（用户反馈：下拉里旧英文值与中文重复）。
+                # 旧英文值由 compose 入口的别名表兼容读取；保存过旧值的工作流
+                # 需跑 tools/migrate_workflows.py 改写，否则服务端 COMBO 校验拒收
+                "模式": (["手动", "随机", "混合"], {"default": "混合",
+                                  "tooltip": "手动=只用槽位；随机=只抽签；混合=抽签+槽位叠加"}),
                 "标签比例": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0,
                                     "step": 0.05,
                                     "tooltip": "标签与自然语言混合比例：1.0=纯标签，0=纯自然语言"}),
@@ -224,9 +223,9 @@ class AnimaWeaver:
 
             # ══ 二级：分组，默认收起（勾选组开关展开）══════════════════
             "optional": {
-                # ━━ 组1 标签槽位（吸收「提示词槽位」节点）━━━━━━━━━━━━━━
-                "▸ 标签槽位": ("BOOLEAN", {"default": False,
-                                      "tooltip": "组开关：勾选展开下方槽位控件"}),
+                # ━━ 组1 固定标签（吸收「提示词槽位」节点；2026-10-16 更名）━━
+                "▸ 固定标签": ("BOOLEAN", {"default": False,
+                                      "tooltip": "组开关：勾选展开下方固定槽位控件"}),
                 "人数/身份": ("STRING", {"multiline": True, "default": ""}),
                 "外貌": ("STRING", {"multiline": True, "default": ""}),
                 "服装": ("STRING", {"multiline": True, "default": ""}),
@@ -237,8 +236,8 @@ class AnimaWeaver:
                 "细节/氛围": ("STRING", {"multiline": True, "default": ""}),
                 "自然语言描述": ("STRING", {"multiline": True, "default": ""}),
 
-                # ━━ 组2 过滤控制（吸收「底部控制」节点）━━━━━━━━━━━━━━━━
-                "▸ 过滤控制": ("BOOLEAN", {"default": False}),
+                # ━━ 组2 过滤标签（吸收「底部控制」节点；2026-10-16 更名）━━━
+                "▸ 过滤标签": ("BOOLEAN", {"default": False}),
                 "标签列表必含": ("STRING", {"multiline": True, "default": ""}),
                 "过滤标签": ("STRING", {"multiline": True, "default": ""}),
                 "排除含标签列表": ("STRING", {"multiline": True, "default": ""}),
@@ -251,9 +250,8 @@ class AnimaWeaver:
 
                 # ━━ 组3 LLM 设置 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 "▸ LLM设置": ("BOOLEAN", {"default": False}),
-                "自然语言来源": (["手动", "LM Studio",
-                             "manual", "lm_studio"], {"default": "手动",
-                                          "tooltip": "手动=用「自然语言描述」槽文本；LM Studio=调本地/云端模型生成。manual/lm_studio 为旧值兼容，建议迁移"}),
+                "自然语言来源": (["手动", "LM Studio"], {"default": "手动",
+                                          "tooltip": "手动=用「自然语言描述」槽文本；LM Studio=调本地/云端模型生成"}),
                 "强制详细自然语言": ("BOOLEAN", {"default": False,
                                           "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 512 tokens）"}),
                 "模型": (model_list,),
