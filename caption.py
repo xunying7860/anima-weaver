@@ -188,6 +188,11 @@ class AnimaImageCaption:
             print(f"[ImageCaption] get_models error: {e}")
         if not model_list:
             model_list = ["(no models found)"]
+        # P3 修正：占位符常列在列表尾部 —— 旧工作流保存的占位值在真列表
+        # 到达后不再被 COMBO 校验拒绝；运行侧占位符一律按无模型兜底。
+        for _s in ("(no models found)", "(检测中…)"):
+            if _s not in model_list:
+                model_list.append(_s)
 
         # none = 禁用 LLM（透传变化文本，配合 wd14 标签器直接保存 txt）
         model_options = ["none"] + model_list
@@ -354,7 +359,7 @@ class AnimaImageCaption:
         tag = f" [{_file_tag}]" if _file_tag else ""
         if _api_key:
             model_for_api = cloud_model or _lm_model
-            if model_for_api and model_for_api != "(no models found)":
+            if model_for_api and model_for_api not in ("(no models found)", "(检测中…)"):
                 print(f"[Caption] Requesting{tag} via cloud model {model_for_api}")
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
@@ -365,7 +370,7 @@ class AnimaImageCaption:
                     image_b64=image_b64,
                 ) or ""
         else:
-            if _lm_model and _lm_model != "(no models found)":
+            if _lm_model and _lm_model not in ("(no models found)", "(检测中…)"):
                 if not _preloaded:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs_raw.get("上下文长度", 4096))
@@ -395,7 +400,7 @@ class AnimaImageCaption:
         nl = ""
         if api_key:
             model_for_api = cloud_model or lm_model
-            if model_for_api and model_for_api != "(no models found)":
+            if model_for_api and model_for_api not in ("(no models found)", "(检测中…)"):
                 nl = generate_nl_from_lm_studio(
                     user_msg, base_url,
                     api_key=api_key, model_name=model_for_api,
@@ -405,7 +410,7 @@ class AnimaImageCaption:
                     image_b64=image_b64,
                 )
         else:
-            if lm_model and lm_model != "(no models found)":
+            if lm_model and lm_model not in ("(no models found)", "(检测中…)"):
                 ctx = int(kwargs.get("上下文长度", 4096))
                 auto_ctx = bool(kwargs.get("自动上下文长度", False))
                 if auto_ctx:
@@ -509,7 +514,7 @@ class AnimaImageCaption:
             _model_preloaded = False
             _lm_model = str(kwargs.get("模型", ""))
             _api_key = str(kwargs.get("API密钥", "")).strip()
-            if not _api_key and _lm_model and _lm_model != "(no models found)":
+            if not _api_key and _lm_model and _lm_model not in ("(no models found)", "(检测中…)"):
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
@@ -619,7 +624,7 @@ class AnimaImageCaption:
             _model_preloaded = False
             _lm_model = str(kwargs.get("模型", ""))
             _api_key_fb = str(kwargs.get("API密钥", "")).strip()
-            if not _api_key_fb and _lm_model and _lm_model != "(no models found)":
+            if not _api_key_fb and _lm_model and _lm_model not in ("(no models found)", "(检测中…)"):
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
@@ -801,7 +806,7 @@ class AnimaImageCaption:
             from .lm_studio import ensure_model_loaded, generate_nl_from_lm_studio, unload_all
             if api_key:
                 model_for_api = cloud_model or lm_model
-                if model_for_api and model_for_api != "(no models found)":
+                if model_for_api and model_for_api not in ("(no models found)", "(检测中…)"):
                     nl = generate_nl_from_lm_studio(
                         user_msg, base_url,
                         api_key=api_key, model_name=model_for_api,
@@ -811,7 +816,7 @@ class AnimaImageCaption:
                         image_b64=image_b64,
                     )
             else:
-                if lm_model and lm_model != "(no models found)":
+                if lm_model and lm_model not in ("(no models found)", "(检测中…)"):
                     if not kwargs.get("_preloaded"):
                         ctx = int(kwargs.get("上下文长度", 4096))
                         auto_ctx = bool(kwargs.get("自动上下文长度", False))

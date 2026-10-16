@@ -175,6 +175,12 @@ class AnimaWeaver:
             pass
         if not model_list:
             model_list = ["(no models found)"]
+        # P3 修正：占位符常列在列表尾部 —— 旧工作流里保存的占位值（检测中/
+        # 无模型）在真列表到达后不会再被 COMBO 校验拒绝（Value not in list）；
+        # 运行侧所有「无模型」判断都把占位符当 manual 兜底处理。
+        for _s in ("(no models found)", "(检测中…)"):
+            if _s not in model_list:
+                model_list.append(_s)
 
         # ── P2: 分组 INPUT_TYPES（配合 js/anima_groups.js 折叠）────────
         # 硬约束1: 组开关（▸ xxx）必须排在它管理的 widget 前面（dict 顺序=前端顺序）
@@ -531,7 +537,7 @@ class AnimaWeaver:
         _model_preloaded = False
         if nl_source == "lm_studio" and not kwargs.get("API密钥", ""):
             lm_model_name = str(kwargs.get("模型", ""))
-            if lm_model_name and lm_model_name != "(no models found)":
+            if lm_model_name and lm_model_name not in ("(no models found)", "(检测中…)"):
                 try:
                     from .lm_studio import ensure_model_loaded
                     ctx = int(kwargs.get("上下文长度", 4096))
@@ -832,7 +838,7 @@ class AnimaWeaver:
         """
         if nl_source == "lm_studio" and tag_prompt.strip():
             lm_model = kwargs.get("模型", "")
-            if lm_model and lm_model != "(no models found)":
+            if lm_model and lm_model not in ("(no models found)", "(检测中…)"):
                 model_was_loaded = False
                 nl = ""
                 try:
