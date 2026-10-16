@@ -331,7 +331,7 @@
           "name": "分辨率串",
           "shape": 7,
           "type": "STRING",
-          "link": 255
+          "link": null
         },
         {
           "name": "反推串",
@@ -802,40 +802,32 @@
       ],
       "outputs": [
         {
+          "name": "随机种子",
+          "type": "INT",
+          "links": null,
+          "slot_index": 0
+        },
+        {
+          "name": "种子串",
+          "type": "STRING",
+          "links": null,
+          "slot_index": 1
+        },
+        {
           "name": "宽度",
           "type": "INT",
-          "links": null
+          "links": [
+            256
+          ],
+          "slot_index": 2
         },
         {
           "name": "高度",
           "type": "INT",
-          "links": null
-        },
-        {
-          "name": "分辨率",
-          "type": "STRING",
-          "links": []
-        },
-        {
-          "name": "分辨率串",
-          "type": "STRING",
-          "links": [
-            255
-          ]
-        },
-        {
-          "name": "宽度串",
-          "type": "STRING",
-          "links": [
-            256
-          ]
-        },
-        {
-          "name": "高度串",
-          "type": "STRING",
           "links": [
             257
-          ]
+          ],
+          "slot_index": 3
         }
       ],
       "properties": {
@@ -849,9 +841,10 @@
         }
       },
       "widgets_values": [
+        false,
         true,
-        1,
-        "1:1 (square)",
+        1.0,
+        "1:1",
         8
       ]
     },
@@ -889,12 +882,6 @@
           "link": null
         },
         {
-          "name": "分辨率",
-          "shape": 7,
-          "type": "STRING",
-          "link": null
-        },
-        {
           "name": "种子串",
           "shape": 7,
           "type": "STRING",
@@ -907,12 +894,6 @@
           "link": 270
         },
         {
-          "name": "分辨率串",
-          "shape": 7,
-          "type": "STRING",
-          "link": null
-        },
-        {
           "name": "反推串",
           "shape": 7,
           "type": "STRING",
@@ -923,36 +904,30 @@
         {
           "name": "生成的提示词",
           "type": "STRING",
-          "links": null
+          "links": [
+            272
+          ],
+          "slot_index": 0
         },
         {
           "name": "调试信息",
           "type": "STRING",
-          "links": null
-        },
-        {
-          "name": "提示词串",
-          "type": "STRING",
-          "links": [
-            272
-          ]
+          "links": null,
+          "slot_index": 1
         },
         {
           "name": "画师串",
           "type": "STRING",
           "links": [
             294
-          ]
-        },
-        {
-          "name": "分辨率串",
-          "type": "STRING",
-          "links": null
+          ],
+          "slot_index": 2
         },
         {
           "name": "反推串",
           "type": "STRING",
-          "links": null
+          "links": null,
+          "slot_index": 3
         }
       ],
       "properties": {
@@ -991,7 +966,7 @@
         false,
         "lm_studio",
         true,
-        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        "abliterated@iq3_s",
         "http://localhost:1234/v1",
         "",
         "deepseek-chat",
@@ -1104,17 +1079,9 @@
   ],
   "links": [
     [
-      255,
-      115,
-      3,
-      112,
-      3,
-      "STRING"
-    ],
-    [
       256,
       115,
-      4,
+      2,
       112,
       5,
       "STRING"
@@ -1122,7 +1089,7 @@
     [
       257,
       115,
-      5,
+      3,
       112,
       6,
       "STRING"
@@ -1164,7 +1131,7 @@
       117,
       0,
       120,
-      4,
+      3,
       "STRING"
     ],
     [
@@ -1172,13 +1139,13 @@
       113,
       2,
       120,
-      5,
+      4,
       "STRING"
     ],
     [
       272,
       120,
-      2,
+      0,
       112,
       1,
       "STRING"
@@ -1266,7 +1233,7 @@
     [
       294,
       120,
-      3,
+      2,
       112,
       2,
       "STRING"
