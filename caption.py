@@ -104,6 +104,35 @@ def _apply_prefix(text: str, prefix: str) -> str:
     return text
 
 
+# ── 输出格式（并入原「Anima列表转多行」节点逻辑）────────────────────
+# 原 list_to_multiline.py 的有效逻辑只有 4 行（把 list 拼成 "\n"），
+# 这里把它并进反推节点，做成一个「输出格式」下拉。
+OUTPUT_FORMATS = ("多行文本", "JSON数组", "逗号分隔")
+DEFAULT_OUTPUT_FORMAT = "多行文本"
+
+
+def _format_output(items: list[str], fmt: str = DEFAULT_OUTPUT_FORMAT) -> str:
+    """
+    把描述文本列表按「输出格式」拼成一个字符串。
+
+    - 多行文本（默认）：保持旧行为 ``"\\n".join(items)``，**逐字节一致**
+    - JSON数组：``["a", "b"]``（剔除空行；转义交给 json.dumps）
+    - 逗号分隔：``a, b``（剔除空行）
+
+    默认格式与旧行为逐字节一致，老工作流不受影响。
+    """
+    fmt = (fmt or DEFAULT_OUTPUT_FORMAT).strip()
+    if fmt == "JSON数组":
+        import json as _json
+        clean = [str(t).strip() for t in items if t is not None and str(t).strip()]
+        return _json.dumps(clean, ensure_ascii=False)
+    if fmt == "逗号分隔":
+        clean = [str(t).strip() for t in items if t is not None and str(t).strip()]
+        return ", ".join(clean)
+    # 默认「多行文本」：不删空行，保持旧行为完全不变
+    return "\n".join(str(t) for t in items)
+
+
 def natural_key(s: str):
     """自然排序键：'knmzx (2).jpg' 排在 'knmzx (10).png' 之前。"""
     import re as _re
@@ -269,6 +298,11 @@ class AnimaImageCaption:
                     {"default": False,
                      "tooltip": "启用后将每张图的描述保存为同名的 .txt 文件到同一目录"},
                 ),
+                "输出格式": (
+                    list(OUTPUT_FORMATS),
+                    {"default": DEFAULT_OUTPUT_FORMAT,
+                     "tooltip": "描述文本的输出格式：多行文本=每行一条（原行为，默认）；JSON数组=[\"...\", ...]；逗号分隔=单行逗号拼接。原「Anima列表转多行」节点的功能已并入此处"},
+                ),
             },
         }
 
@@ -338,7 +372,7 @@ class AnimaImageCaption:
                     auto_ctx = bool(kwargs_raw.get("自动上下文长度", False))
                     if auto_ctx:
                         ctx = int(kwargs_raw.get("最大并发数", 4)) * 2048
-                    ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx)
+                    ensure_model_loaded(_lm_model, context_length=ctx, parallel=int(kwargs_raw.get("最大并发数", 4)) if auto_ctx else None, force=auto_ctx)
                 print(f"[Caption] Requesting{tag} via local model {_lm_model}")
                 return generate_nl_from_lm_studio(
                     user_msg, base_url,
@@ -437,7 +471,8 @@ class AnimaImageCaption:
             else:
                 print("[Caption] none模式: 保存为txt已启用但未找到图片路径")
 
-        out = "\n".join(combined)
+        # 按「输出格式」拼接（默认「多行文本」= 旧行为逐字节一致）
+        out = _format_output(combined, str(kwargs.get("输出格式", DEFAULT_OUTPUT_FORMAT)))
         return (out, cap_prompt, cap_artist)
 
     def describe(self, **kwargs) -> tuple[str, str, str]:
@@ -548,7 +583,7 @@ class AnimaImageCaption:
                 if r:
                     parts.append(r)
                 _combined_seed.append(", ".join(parts) if parts else "")
-            out_reverse = "\n".join(_combined_seed)
+            out_reverse = _format_output(_combined_seed, str(kwargs.get("输出格式", DEFAULT_OUTPUT_FORMAT)))
             return (out_reverse, cap_prompt, cap_artist)
 
         # ── Folder batch mode: load images from a folder path ──
@@ -725,7 +760,7 @@ class AnimaImageCaption:
                             print(f"[Caption] Failed to save txt for {fp}: {e}")
                 print(f"[Caption] Saved {saved}/{len(image_files)} txt files")
 
-            out_reverse = "\n".join(_combined)
+            out_reverse = _format_output(_combined, str(kwargs.get("输出格式", DEFAULT_OUTPUT_FORMAT)))
             return (out_reverse, cap_prompt, cap_artist)
 
         # ── Single mode ──────────────────────────────────────────────
@@ -737,7 +772,6 @@ class AnimaImageCaption:
         kwargs["随机种子"] = raw_seed
 
         custom_prompt = str(kwargs.get("系统提示词", "")).strip()
-        desc_fmt = str(kwargs.get("描述格式", "")).strip()
 
         # Determine system prompt: custom > image → system > no-image → batch
         has_image = kwargs.get("图像") is not None
@@ -809,7 +843,7 @@ class AnimaImageCaption:
                 pass
 
         prefix_single = str(kwargs.get("固定前缀", "")).strip()
-        nl_out = _apply_prefix(nl or "", prefix_single)
+        nl_out = _format_output([_apply_prefix(nl or "", prefix_single)], str(kwargs.get("输出格式", DEFAULT_OUTPUT_FORMAT)))
         return (nl_out, "", "")
 
 

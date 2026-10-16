@@ -11,11 +11,9 @@ from __future__ import annotations
 import json
 import os
 import platform
-import random
 import re
 import shutil
 import subprocess
-import sys
 import threading
 import time
 from typing import Any, Optional
@@ -120,37 +118,68 @@ def _run_lms(args: list[str], timeout: int = 60) -> tuple[int, str, str]:
 
     cmd = [lms_path] + args
 
+    # 让子进程自成进程组，超时后可以整组杀掉（否则 lms 可能变成僵尸占住端口）。
+    popen_kwargs: dict[str, Any] = {
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "text": True,
+        "encoding": "utf-8",
+        "errors": "replace",
+    }
+    if os.name == "nt":
+        popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+    else:
+        popen_kwargs["start_new_session"] = True
+
     try:
-        proc = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=timeout,
-        )
-        return (proc.returncode, proc.stdout or "", proc.stderr or "")
+        proc = subprocess.Popen(cmd, **popen_kwargs)
     except FileNotFoundError:
         return (1, "", f"lms binary not found at {lms_path}")
-    except subprocess.TimeoutExpired:
-        return (124, "", f"lms command timed out after {timeout}s")
     except Exception as exc:
         return (1, "", str(exc))
+
+    try:
+        stdout, stderr = proc.communicate(timeout=timeout)
+        return (proc.returncode, stdout or "", stderr or "")
+    except subprocess.TimeoutExpired:
+        # 超时 → 杀整个进程组，再回收，避免残留子进程
+        try:
+            if os.name == "nt":
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                    capture_output=True,
+                )
+            else:
+                import signal
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        except Exception:
+            pass
+        try:
+            proc.kill()
+        except Exception:
+            pass
+        try:
+            proc.communicate(timeout=5)
+        except Exception:
+            pass
+        return (124, "", f"lms command timed out after {timeout}s")
 
 
 # ── Model management ───────────────────────────────────────────────
 
-def get_models() -> list[str]:
+def _query_models() -> list[str]:
     """
-    Query LM Studio for a list of available models via ``lms ls``.
+    真实查询（会阻塞）：跑 ``lms ls`` 取模型列表。
+
+    这是 get_models() 的内部实现，**不要直接对外** ——
+    外面应统一走非阻塞的 get_models()（03 补丁）。轻量查询 timeout=5s。
 
     Returns
     -------
     list[str]
-        Model identifiers (e.g. ``["local-model-name", ...]``).
-        Empty list if not found or on error.
+        Model identifiers.
     """
-    rc, stdout, stderr = _run_lms(["ls"])
+    rc, stdout, stderr = _run_lms(["ls"], timeout=5)
     if rc != 0:
         return []
 
@@ -176,6 +205,74 @@ def get_models() -> list[str]:
         models.append(name)
 
     return models
+
+
+# ── 模型列表缓存（03 补丁）──────────────────────────────────────────
+# 背景：ComfyUI 每次刷新页面 / 打开节点菜单都会请求 /object_info，
+# anima_weaver.py:79 与 caption.py 的 INPUT_TYPES 都会调 get_models()，
+# 也就是每次 fork 一个 lms 子进程。装了 LM Studio 但服务没响应时最坏阻塞 60s。
+# 解决：缓存 5 分钟 + 过期后台线程刷新 + 未命中先返回缓存或占位，永不阻塞调用方。
+_MODEL_CACHE: Optional[list[str]] = None
+_MODEL_TS: float = 0.0
+_MODEL_TTL: float = 300.0          # 5 分钟
+_MODEL_LOCK = threading.Lock()
+_MODEL_REFRESHING: bool = False
+_MODEL_PLACEHOLDER = "(检测中…)"
+
+
+def get_models() -> list[str]:
+    """
+    非阻塞版模型列表查询（03 补丁）。函数签名与返回类型 ``list[str]`` 保持不变，
+    因此 anima_weaver.py:79 / caption.py 无需改动即可受益。
+
+    - 命中缓存（5 分钟内）：直接返回缓存
+    - 未命中 / 已过期：立刻返回占位符（或上次的结果），后台线程去刷新
+    任何情况下都不会阻塞调用方。
+    """
+    # 只在此函数里给 _MODEL_REFRESHING 赋值；_MODEL_CACHE/_MODEL_TS 仅读取（写入在 _worker 内）
+    global _MODEL_REFRESHING
+
+    now = time.monotonic()
+    with _MODEL_LOCK:
+        if _MODEL_CACHE is not None and (now - _MODEL_TS) < _MODEL_TTL:
+            return list(_MODEL_CACHE)
+        # 已有后台线程在刷新 → 不重复起线程，返回现有内容或占位
+        if _MODEL_REFRESHING:
+            return list(_MODEL_CACHE) if _MODEL_CACHE else [_MODEL_PLACEHOLDER]
+        _MODEL_REFRESHING = True
+
+    def _worker():
+        global _MODEL_CACHE, _MODEL_TS, _MODEL_REFRESHING
+        try:
+            models = _query_models()
+            with _MODEL_LOCK:
+                if models:
+                    _MODEL_CACHE = models
+                _MODEL_TS = time.monotonic()
+        except Exception:
+            # 失败也记时间，避免疯狂重试
+            with _MODEL_LOCK:
+                _MODEL_TS = time.monotonic()
+        finally:
+            with _MODEL_LOCK:
+                _MODEL_REFRESHING = False
+
+    threading.Thread(target=_worker, name="anima-lms-ls", daemon=True).start()
+
+    with _MODEL_LOCK:
+        return list(_MODEL_CACHE) if _MODEL_CACHE else [_MODEL_PLACEHOLDER]
+
+
+def get_models_cached() -> list[str]:
+    """兼容别名（03 补丁命名）：等价于 get_models()。"""
+    return get_models()
+
+
+def invalidate_model_cache() -> None:
+    """用户点「刷新模型列表」时调用：把时间戳清零，下次调用即触发后台刷新。"""
+    global _MODEL_TS
+    with _MODEL_LOCK:
+        _MODEL_TS = 0.0
 
 
 def load_model(
@@ -462,7 +559,10 @@ def generate_nl_from_lm_studio(
     if not api_key:
         payload["enable_thinking"] = False
 
-    url = f"{base_url.rstrip("/")}/chat/completions"
+    # 修复 BUG-1：原写法 f"{base_url.rstrip("/")}/chat/completions" 在同类型引号内嵌套，
+    # 只有 Python 3.12+ (PEP 701) 才允许；3.10/3.11（ComfyUI 主流环境）会 SyntaxError。
+    # 改成显式字符串拼接，语义完全一致且全版本可用。
+    url = base_url.rstrip("/") + "/chat/completions"
     headers = {"Content-Type": "application/json"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
@@ -471,9 +571,6 @@ def generate_nl_from_lm_studio(
         resp = requests.post(url, json=payload, headers=headers, timeout=timeout)
         resp.raise_for_status()
         data = resp.json()
-        if "choices" in data:
-            if data['choices']:
-                msg = data['choices'][0].get('message', {})
         choices = data.get("choices", [])
         if not choices:
             err_msg = data.get("error", {}).get("message", str(data)[:200])
