@@ -60,7 +60,7 @@ class AnimaBatchBus:
 
         return {"optional": optional}
 
-    RETURN_TYPES = ("STRING", "INT", "STRING", "STRING", "INT", "INT")
+    RETURN_TYPES = ("STRING", "INT", "STRING", "INT", "INT")
     RETURN_NAMES = ("合并输出", "种子", "提示词", "宽度", "高度")
     FUNCTION = "run"
     CATEGORY = "Anima Weaver / Batch"

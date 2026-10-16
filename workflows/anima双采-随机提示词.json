@@ -5,190 +5,6 @@
   "last_link_id": 440,
   "nodes": [
     {
-      "id": 231,
-      "type": "Text Multiline",
-      "pos": [
-        -4530,
-        2490
-      ],
-      "size": [
-        790,
-        600
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "字符串",
-          "name": "STRING",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "自然裸露(现实)",
-      "properties": {
-        "Node name for S&R": "Text Multiline",
-        "cnr_id": "pr-was-node-suite-comfyui-47064894",
-        "ver": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        },
-        "widget_ue_connectable": {
-          "text": true
-        }
-      },
-      "widgets_values": [
-        "角色定义\n你是一位精通 Anima 模型特性的 AI 绘画提示词专家。你的核心任务是将用户输入的任何描述（无论简单或复杂，中文或英文）优化为符合 Anima 模型逻辑的高质量**写实风格**英文正向提示词。\n关键转换原则：\n默认状态： 将女性角色默认转化为**写实裸露**（Nude/Realistic）状态，重点是“**无内裤**”或者“**自然走光**”。\n自然裸露： 强调非刻意摆拍的真实裸露感，无需强制描述双腿分开。根据角色的动作（行走、坐姿、站立、骑行）和镜头视角，真实展示私密部位。不是全身赤裸的模特照，而是生活中、战斗中、工作中、骑行中的自然走光式裸露。\n私密部位可见： 必须明确体现无内裤状态，并可视地露出阴户和外阴以及阴毛。\n男性处理： 若输入明确为男性，保持正常状态，无需强制暴露私密部位，除非语境强烈暗示。\n风格限制： 保持**写实摄影风格**（Photorealistic/Realism），不支持动漫或卡通插画。\n\n核心知识库\n模型特性： Anima 模型，20亿参数，擅长写实摄影，支持非写实艺术（油画、概念设计）。\n训练数据： Realism Tags + Natural Language + 混合模式。\n数据集： Realism (Realistic) 和 DeviantArt（用于写实风格）。\n性别判断： 默认输入为女性，除非明确指明男性或场景明显为男性主导。\n\n优化规则\nA. 质量与写实前缀（必须添加）\n在提示词最开头强制添加： masterpiece, best quality, photorealistic, realistic, 8k, ultra-detailed, score_7, safe,\n\nB. 核心“写实走光”标签注入（针对女性角色）\n在生成提示词时，必须根据描述动态插入以下类型的标签，以确立“无内裤、真实露出”的基调：\n\n无内裤/下体裸露： no panties, bottomless, visible labia, visible pubic hair, bare pussy, vulva visible, cameltoe (若紧身衣物下可见轮廓), exposed pussy, visible panty line.\n自然暴露感： caught off guard, caught in action, casual nudity, unposed, candid, natural lighting, cinematic lighting.\n衣物与裸露结合： 若穿着上衣但无内裤，强调 topless；若穿着裙子，强调 skirt blown, upskirt；若全身衣物但无内裤，强调 bottomless。\n视线与互动： looking at viewer, eye contact (增强真实感)，blush (可选，增加真实羞涩或坦然感)。\n\nC. 标签结构重组（遵循官方推荐顺序）\n请按以下顺序排列标签： [质量/风格/元数据/年份/安全标签] [1girl/1boy/1other] [核心无内裤/写实裸露状态标签 (重点)] [角色名] [系列名] [画师风格] [通用描述标签/动作/环境]\n\nD. 格式化处理\n通用标签： 全部使用小写，使用空格代替下划线（例如：brown hair 而不是 brown_hair）。\n特殊标签： 只有 score_x 标签保留下划线（如 score_7）。\n画师标签： 必须使用 @ 符号前缀。例如：@big chungus。\n角色名和系列名： 遵循标准英文大小写规则。\n权重语法： 使用高权重语法，例如：(chibi:2)。\n\nE. 自然语言与混合模式\n描述重点： 即使是标签模式，也要确保描述清晰。如果转为自然语言，至少包含2个句子，重点描述女性的无内裤状态和真实动作带来的裸露感。\n混合模式： 允许标签与自然语言混合。\n多角色： 如果有多个角色，需分别描述其外观，但主要焦点保持在核心女性角色的无内裤状态上。\n\nF. 数据集标签（写实风格）\n如果用户指定写实风格，在提示词开头添加 realistic 或 photorealistic 标签。\n\n输出格式\n直接输出优化后的英文正向提示词。\n不要包含负面提示词（默认最佳，无需列出）。\n不要包含过多的解释性文字。\n使用代码块包裹输出。\n\n使用示例\n示例1： 用户输入：一个在雨中哭泣的赛博朋克女孩，霓虹灯背景，画风要像新海诚。（注：改为写实风格，强调皮肤纹理和真实走光）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, cyberpunk girl, no panties, visible labia, visible pubic hair, bare pussy, wet skin, tears, rain, wet hair, neon lights, city background, night, glowing, reflective ground, looking at viewer, natural pose, unposed, detailed eyes, blue hair, futuristic clothes, emotional, depth of field, cinematic lighting, realistic skin texture, soft lighting, realistic eyes\n\n示例2： 用户输入：画一个魔法少女，下半身裸露，露出阴毛，表情自然，没有刻意摆姿势。（注：改为写实风格）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, magical girl, no panties, visible labia, visible pubic hair, bare pussy, detailed labia, naked lower body, natural pose, unposed, casting spell, starry sky, night, moonlight, glowing wand, long hair, looking at viewer, magical particles, stars background, sparkling, ethereal atmosphere, cinematic angle, realistic skin texture, realistic eyes, realistic hair texture\n\n示例3： 用户输入：一个女性全裸，但没有那种刻意展示的感觉，是自然站立，无内裤，能看到外阴。（注：改为写实风格，强调解剖细节）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, fully nude, no panties, visible labia, visible pubic hair, bare pussy, exposed pussy, natural pose, unposed, standing, smooth skin, soft lighting, detailed anatomy, casual nudity, looking at viewer, weight on one leg, realistic skin texture, realistic eyes, subtle shadows, natural lighting\n\n示例4： 用户输入：男性骑士，穿着盔甲，史诗感，写实油画风格。（注：保持男性，风格改为写实）\n输出：realistic, masterpiece, best quality, photorealistic, 8k, safe, 1boy, knight, holding sword, full armor, muscular, epic composition, dramatic lighting, fantasy, battlefield, dynamic pose, intricate details, heavy brushstrokes, canvas texture, intense gaze, adult, mature, realistic skin texture\n\n示例5： 用户输入：帮我生成一个在雨中哭泣的赛博朋克女孩，霓虹灯背景，写实风格，要像照片一样。（注：默认女性，强调无内裤的自然裸露，照片级真实）\n输出：masterpiece, best quality, photorealistic, realistic, 8k, safe, 1girl, cyberpunk girl, no panties, visible labia, visible pubic hair, bare pussy, wet skin, tears, rain, wet hair, neon lights, city background, night, glowing, reflective ground, looking at viewer, natural pose, unposed, detailed eyes, blue hair, futuristic clothes, emotional, depth of field, realistic skin texture, cinematic lighting"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
-      "id": 210,
-      "type": "Text Multiline",
-      "pos": [
-        -4660,
-        2030
-      ],
-      "size": [
-        1220,
-        270
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "字符串",
-          "name": "STRING",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "输入提示词",
-      "properties": {
-        "Node name for S&R": "Text Multiline",
-        "cnr_id": "pr-was-node-suite-comfyui-47064894",
-        "ver": "ea935d1044ae5a26efa54ebeb18fe9020af49a45",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        },
-        "widget_ue_connectable": {
-          "text": true
-        }
-      },
-      "widgets_values": [
-        "@wickellia, @billyhhyb,@wlop,@sade abyss,@yoellim5,@tainosuke,@billyhhyb, \n\n@nixeu,@varamill,@olchas,@yasuhiko yoshikazu,@han-0v0,@sarena,@calendulamew,@astor alexander, \n\n no panties, pantless, bare pussy, vulva visible, pubic hair, cameltoe"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
-      "id": 257,
-      "type": "Int",
-      "pos": [
-        618.8406417366459,
-        4596.408645264304
-      ],
-      "size": [
-        315.8653869628906,
-        58
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "label": "整数",
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            340,
-            341
-          ]
-        }
-      ],
-      "title": "总步数",
-      "properties": {
-        "Node name for S&R": "Int",
-        "ue_properties": {
-          "version": "7.8",
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        20
-      ]
-    },
-    {
-      "id": 258,
-      "type": "Int",
-      "pos": [
-        617.5577437874272,
-        4704.189406983054
-      ],
-      "size": [
-        315.8653869628906,
-        58
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "label": "整数",
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            342,
-            343
-          ]
-        }
-      ],
-      "title": "分段步数",
-      "properties": {
-        "Node name for S&R": "Int",
-        "ue_properties": {
-          "version": "7.8",
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        8
-      ]
-    },
-    {
       "id": 253,
       "type": "LoraLoaderModelOnly",
       "pos": [
@@ -207,7 +23,7 @@
           "label": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 402
+          "link": 448
         },
         {
           "label": "lora_name",
@@ -306,7 +122,7 @@
           "slot_index": 0,
           "links": [
             9,
-            335
+            450
           ]
         }
       ],
@@ -386,114 +202,6 @@
       "widgets_values": [],
       "color": "#223",
       "bgcolor": "#335"
-    },
-    {
-      "id": 267,
-      "type": "CR Text",
-      "pos": [
-        -1022.7398207074172,
-        3998.9831531012446
-      ],
-      "size": [
-        277.12527101697845,
-        156.86681762131207
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": [
-            367
-          ]
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "手写部分",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "masterpiece, best quality, score_7, "
-      ]
-    },
-    {
-      "id": 268,
-      "type": "CR Text",
-      "pos": [
-        -1024.0872560915986,
-        4193.448276764118
-      ],
-      "size": [
-        277.2414207940583,
-        359.1112159976676
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 4,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": [
-            369
-          ]
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "手写画师/触发词",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        " @zirba, @wzry_ssx, "
-      ]
     },
     {
       "id": 5,
@@ -683,7 +391,7 @@
           "label": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 403
+          "link": 449
         }
       ],
       "outputs": [
@@ -751,52 +459,6 @@
       "widgets_values": []
     },
     {
-      "id": 278,
-      "type": "ShowText|pysssss",
-      "pos": [
-        47.46608981798575,
-        3986.309930890326
-      ],
-      "size": [
-        519.412003385122,
-        686.5834939773144
-      ],
-      "flags": {},
-      "order": 35,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "link": 364
-        }
-      ],
-      "outputs": [
-        {
-          "label": "字符串",
-          "name": "STRING",
-          "shape": 6,
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "合并后提示词",
-      "properties": {
-        "cnr_id": "comfyui-custom-scripts",
-        "ver": "1.2.5",
-        "Node name for S&R": "ShowText|pysssss",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "masterpiece, best quality, score_7, "
-      ]
-    },
-    {
       "id": 283,
       "type": "UNETLoader",
       "pos": [
@@ -816,7 +478,8 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            404
+            448,
+            449
           ]
         }
       ],
@@ -834,69 +497,6 @@
         "anima\\anima_baseV10.safetensors",
         "default"
       ]
-    },
-    {
-      "id": 284,
-      "type": "ReservedVRAMSetter",
-      "pos": [
-        1265.5610249606657,
-        4033.9835624008283
-      ],
-      "size": [
-        282.665625,
-        218
-      ],
-      "flags": {
-        "collapsed": true
-      },
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "输入",
-          "shape": 7,
-          "type": "*",
-          "link": 404
-        }
-      ],
-      "outputs": [
-        {
-          "name": "输出",
-          "type": "*",
-          "links": [
-            402,
-            403
-          ]
-        },
-        {
-          "name": "种子",
-          "type": "INT",
-          "links": null
-        },
-        {
-          "name": "预留值(GB)",
-          "type": "FLOAT",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ReservedVRAMSetter",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        1.5,
-        "自动",
-        0,
-        1.5,
-        false,
-        true
-      ],
-      "color": "#FFD700",
-      "bgcolor": "#000000"
     },
     {
       "id": 36,
@@ -1595,58 +1195,6 @@
       ]
     },
     {
-      "id": 274,
-      "type": "CR Text",
-      "pos": [
-        -2743.2464760729613,
-        5951.470295473194
-      ],
-      "size": [
-        1875.1039830747409,
-        385.22401126024715
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "STRING",
-          "widget": {
-            "name": "text"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "文本",
-          "name": "text",
-          "type": "*",
-          "links": null
-        },
-        {
-          "label": "显示帮助",
-          "name": "show_help",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "title": "说明",
-      "properties": {
-        "Node name for S&R": "CR Text",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "参考过滤标签：\nmonochrome, greyscale,\ncross-section, cervix, cervical_penetration, uterus, x-ray, internal_cumshot,\nlactation, forced_lactation, male_lactation, projectile_lactation, lactation_through_clothes, breast_milk,\nmale_focus, male_penetrated, interracial, dark-skinned_male,\ngaping, extreme_gaping,\nprolapse, anal_prolapse, fisting, anal_fisting,\nanal, anal_only, after_anal, anal_fluid,\nanal_object_insertion, butt_plug, jewel_butt_plug, anal_beads, vibrator_in_anus,\nanus, cum_in_ass, spread_anus, spread_ass, anus_peek, puckered_anus, dark_anus, presenting_anus, spreading_own_anus, anus_cutout, censored_anus, spread_anus_under_clothes, colored_anus,\npubic_hair, female_pubic_hair, pubic_hair_peek, colored_pubic_hair, sparse_pubic_hair, mismatched_pubic_hair, excessive_pubic_hair, shaped_pubic_hair,\ncondom, used_condom, condom_wrapper, condom_in_mouth, holding_condom, condom_on_penis, multiple_condoms, condom_packet_strip, pointless_condom, condom_belt, condom_box, used_condom_on_penis, condom_left_inside, colored_condom, okamoto_condoms, condom_wrapper_in_clothes, condom_thigh_strap, buying_condoms, broken_condom, used_condom_in_clothes,\n1boy,\n\n\n参考排除标签列表：\ncomic, 4koma, multiple_girls, multiple_boys, multiple_views, reference_sheet, 1girl, 2girls, 3girls, 4girls, 5girls, 6+girls, 2boys, 3boys, 4boys, 5boys, 6+boys, gangbang, threesome, mmf_threesome, ffm_threesome, group_sex, cooperative_fellatio, cooperative_paizuri, double_handjob, surrounded_by_penises, furry, obese, yaoi, yuri, otoko_no_ko, strap-on, futa_with_female, futa_without_pussy, implied_futanari, futanari, diaper, fart, pee, peeing, pee_puddle, pee_stain, peeing_self, golden_shower, scat, guro, ero_guro, intestines, vore, horse_penis\n\n\n参考排除标签分类：\nartist, character_name, copyright, meta, clothes_and_accessories, female_physical_descriptors, named_garment_exposure, specific_garment_interactions, speech_and_text, standard_physical_descriptors, metadata_and_attribution, intentional_design_exposure, two_handed_character_items, holding_large_items, content_censorship_methods"
-      ]
-    },
-    {
       "id": 248,
       "type": "KSamplerAdvanced",
       "pos": [
@@ -1704,15 +1252,6 @@
           "link": 434
         },
         {
-          "label": "steps",
-          "name": "steps",
-          "type": "INT",
-          "widget": {
-            "name": "steps"
-          },
-          "link": 340
-        },
-        {
           "label": "cfg",
           "name": "cfg",
           "type": "FLOAT",
@@ -1747,15 +1286,6 @@
             "name": "start_at_step"
           },
           "link": null
-        },
-        {
-          "label": "end_at_step",
-          "name": "end_at_step",
-          "type": "INT",
-          "widget": {
-            "name": "end_at_step"
-          },
-          "link": 342
         },
         {
           "label": "return_with_leftover_noise",
@@ -1869,15 +1399,6 @@
           "link": null
         },
         {
-          "label": "steps",
-          "name": "steps",
-          "type": "INT",
-          "widget": {
-            "name": "steps"
-          },
-          "link": 341
-        },
-        {
           "label": "cfg",
           "name": "cfg",
           "type": "FLOAT",
@@ -1903,15 +1424,6 @@
             "name": "scheduler"
           },
           "link": null
-        },
-        {
-          "label": "start_at_step",
-          "name": "start_at_step",
-          "type": "INT",
-          "widget": {
-            "name": "start_at_step"
-          },
-          "link": 343
         },
         {
           "label": "end_at_step",
@@ -1995,7 +1507,7 @@
           "label": "clip",
           "name": "clip",
           "type": "CLIP",
-          "link": 335
+          "link": 450
         },
         {
           "label": "text",
@@ -2004,7 +1516,7 @@
           "widget": {
             "name": "text"
           },
-          "link": 440
+          "link": 447
         }
       ],
       "outputs": [
@@ -2033,100 +1545,6 @@
       },
       "widgets_values": [
         ""
-      ]
-    },
-    {
-      "id": 280,
-      "type": "JoinStringMulti",
-      "pos": [
-        -1018.2184714201973,
-        4620.868863322235
-      ],
-      "size": [
-        270,
-        190
-      ],
-      "flags": {
-        "collapsed": false
-      },
-      "order": 29,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "字符串_1",
-          "name": "string_1",
-          "type": "STRING",
-          "link": 367
-        },
-        {
-          "label": "字符串_2",
-          "name": "string_2",
-          "shape": 7,
-          "type": "STRING",
-          "link": 439
-        },
-        {
-          "label": "输入数量",
-          "name": "inputcount",
-          "type": "INT",
-          "widget": {
-            "name": "inputcount"
-          },
-          "link": null
-        },
-        {
-          "label": "分隔符",
-          "name": "delimiter",
-          "type": "STRING",
-          "widget": {
-            "name": "delimiter"
-          },
-          "link": null
-        },
-        {
-          "label": "输出为列表",
-          "name": "return_list",
-          "type": "BOOLEAN",
-          "widget": {
-            "name": "return_list"
-          },
-          "link": null
-        },
-        {
-          "label": "字符串_3",
-          "name": "string_3",
-          "shape": 7,
-          "type": "STRING",
-          "link": 369
-        }
-      ],
-      "outputs": [
-        {
-          "label": "字符串",
-          "name": "string",
-          "type": "STRING",
-          "links": [
-            364,
-            440
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-kjnodes",
-        "ver": "1.3.0",
-        "Node name for S&R": "JoinStringMulti",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        },
-        "aux_id": "kijai/ComfyUI-KJNodes"
-      },
-      "widgets_values": [
-        3,
-        "",
-        false,
-        null
       ]
     },
     {
@@ -2184,7 +1602,7 @@
           "type": "*",
           "links": [
             411,
-            439
+            445
           ]
         },
         {
@@ -2218,6 +1636,96 @@
         0,
         1000,
         true
+      ]
+    },
+    {
+      "id": 9001,
+      "type": "StringConcatenate",
+      "pos": [
+        636.6519210335209,
+        4156.288039795554
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "link": 445
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            446
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "masterpiece, best quality, score_7, ",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 9002,
+      "type": "StringConcatenate",
+      "pos": [
+        636.6519210335209,
+        4316.288039795554
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "link": 446
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            447
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "",
+        " @zirba, @wzry_ssx, ",
+        ""
       ]
     }
   ],
@@ -2303,14 +1811,6 @@
       "IMAGE"
     ],
     [
-      335,
-      34,
-      0,
-      256,
-      0,
-      "CLIP"
-    ],
-    [
       336,
       256,
       0,
@@ -2327,62 +1827,6 @@
       "CONDITIONING"
     ],
     [
-      340,
-      257,
-      0,
-      248,
-      6,
-      "INT"
-    ],
-    [
-      341,
-      257,
-      0,
-      249,
-      6,
-      "INT"
-    ],
-    [
-      342,
-      258,
-      0,
-      248,
-      11,
-      "INT"
-    ],
-    [
-      343,
-      258,
-      0,
-      249,
-      10,
-      "INT"
-    ],
-    [
-      364,
-      280,
-      0,
-      278,
-      0,
-      "STRING"
-    ],
-    [
-      367,
-      267,
-      0,
-      280,
-      0,
-      "STRING"
-    ],
-    [
-      369,
-      268,
-      0,
-      280,
-      5,
-      "STRING"
-    ],
-    [
       374,
       234,
       0,
@@ -2395,30 +1839,6 @@
       282,
       0,
       5,
-      0,
-      "MODEL"
-    ],
-    [
-      402,
-      284,
-      0,
-      253,
-      0,
-      "MODEL"
-    ],
-    [
-      403,
-      284,
-      0,
-      282,
-      0,
-      "MODEL"
-    ],
-    [
-      404,
-      283,
-      0,
-      284,
       0,
       "MODEL"
     ],
@@ -2543,22 +1963,6 @@
       "INT"
     ],
     [
-      439,
-      307,
-      2,
-      280,
-      1,
-      "STRING"
-    ],
-    [
-      440,
-      280,
-      0,
-      256,
-      1,
-      "STRING"
-    ],
-    [
       441,
       309,
       0,
@@ -2589,6 +1993,54 @@
       307,
       3,
       "STRING"
+    ],
+    [
+      445,
+      307,
+      2,
+      9001,
+      1,
+      "STRING"
+    ],
+    [
+      446,
+      9001,
+      0,
+      9002,
+      0,
+      "STRING"
+    ],
+    [
+      447,
+      9002,
+      0,
+      256,
+      1,
+      "STRING"
+    ],
+    [
+      448,
+      283,
+      0,
+      253,
+      0,
+      "MODEL"
+    ],
+    [
+      449,
+      283,
+      0,
+      282,
+      0,
+      "MODEL"
+    ],
+    [
+      450,
+      34,
+      0,
+      256,
+      0,
+      "CLIP"
     ]
   ],
   "groups": [
