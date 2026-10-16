@@ -6,48 +6,25 @@ Optional 种子串 input for batch mode.
 
 from __future__ import annotations
 
-import os
 import random
 from typing import Any
 
-_ARTIST_COUNT = 0
-_ARTIST_CACHE: dict[int, str] = {}
+# P1: 画师索引统一走 artist_index 单例
+# （进程内只加载一次，O(1) 序号查名；替代原来每次调用全文件扫描）
+try:
+    from .artist_index import count as _artist_count, name as _artist_name
+except ImportError:
+    from artist_index import count as _artist_count, name as _artist_name
 
 
 def _get_artist_count() -> int:
-    global _ARTIST_COUNT
-    if _ARTIST_COUNT > 0:
-        return _ARTIST_COUNT
-    path = os.path.join(os.path.dirname(__file__), "tags", "Anima2B_Artist_Index_59k.txt")
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            count = 0
-            for line in f:
-                if line.strip().startswith("@"):
-                    count += 1
-        _ARTIST_COUNT = count
-        return count
-    except Exception:
-        return 59676
+    """画师总数（artist_index.count：加载一次，O(1)）。"""
+    return _artist_count()
 
 
 def _get_artist_name(idx: int) -> str:
-    if idx in _ARTIST_CACHE:
-        return _ARTIST_CACHE[idx]
-    path = os.path.join(os.path.dirname(__file__), "tags", "Anima2B_Artist_Index_59k.txt")
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            ct = 0
-            for line in f:
-                line = line.strip()
-                if line.startswith("@"):
-                    ct += 1
-                    if ct == idx:
-                        _ARTIST_CACHE[idx] = line
-                        return line
-    except Exception:
-        pass
-    return f"#{idx}"
+    """按 1-based 序号取画师名（artist_index.name：O(1)，替代旧的全文件扫描）。"""
+    return _artist_name(idx)
 
 
 class ArtistSeed:
