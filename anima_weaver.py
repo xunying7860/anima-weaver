@@ -506,13 +506,15 @@ class AnimaWeaver:
                     # random.randint，同 seed 重跑画师会变）
                     srng = SeedRNG(int(kwargs.get("随机种子", 0)))
                     s = srng.get("artist").randint(1, len(artists))
-                idx = max(0, min(s - 1, len(artists) - 1))
-                chosen = artists[idx]
-                if final:
-                    final = final.rstrip(", ") + ", " + chosen
-                else:
-                    final = chosen
-                # s == 0: 无画师，跳过
+                # 回归修复：s == 0 必须跳过（旧版有 elif s > 0 守卫，重写时
+                # 丢失导致 0 落到 idx=0 → 永远追加画师表第1位 @dairi）
+                if s > 0:
+                    idx = max(0, min(s - 1, len(artists) - 1))
+                    chosen = artists[idx]
+                    if final:
+                        final = final.rstrip(", ") + ", " + chosen
+                    else:
+                        final = chosen
 
         return (final, nl_prompt)
 
