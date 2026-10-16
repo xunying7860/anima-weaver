@@ -37,10 +37,8 @@ to specialise, not a zero-shot decision engine."
   - 默认关闭：由 kwargs 键「启用laya门控」驱动（默认 False），
     不改 INPUT_TYPES（控件由母代理阶段 2 统一加）。
   - 加载必须后台线程（25~35 秒，绝不阻塞启动/首跑）。
-  - laya 包/模型缺失时三个入口全部优雅降级，永不抛异常：
-      judge_keep      -> 保留原样
-      judge_prefer    -> 留 A
-      judge_candidates-> 取第 0 个
+  - laya 包/模型缺失时入口优雅降级，永不抛异常：
+      judge_keep -> 保留原样
 
 正确的启用顺序（先微调再开门）：
     确定性修复 -> 生成 N2 训练数据 -> 微调 -> 温度校准 -> 开「启用laya门控」
@@ -116,19 +114,6 @@ def warmup(model_id: str = DEFAULT_MODEL_ID, max_len: int = 2048) -> None:
 
 def is_ready() -> bool:
     return _state["status"] == "ready"
-
-
-def is_enabled(kwargs: dict) -> bool:
-    """
-    节点侧开关：kwargs 键「启用laya门控」，默认 False。
-    （零样本 0.362 负收益，所以默认关；微调+校准后再开。）
-    """
-    return bool(kwargs.get("启用laya门控", False))
-
-
-def status() -> dict:
-    """调试用：当前加载状态。"""
-    return dict(_state)
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -275,11 +260,11 @@ def _score(tag_prompt: str) -> Optional[dict]:
 
 
 # ─────────────────────────────────────────────────────────────────
-# 三个入口（包/模型缺失时全部优雅降级，永不抛异常）
+# 入口（包/模型缺失时优雅降级，永不抛异常）
 # ─────────────────────────────────────────────────────────────────
 def judge_keep(tag_prompt: str, threshold: float = SOFT_THRESHOLD) -> str:
     """
-    入口 1：质量门（cascade 的第一级）。
+    质量门（cascade 的第一级）。
       保留 -> 返回原串；拒绝 -> 返回 ""（调用方决定重抽或保留）。
 
     降级路径（全部返回原串，节点照常工作）：
@@ -294,109 +279,3 @@ def judge_keep(tag_prompt: str, threshold: float = SOFT_THRESHOLD) -> str:
     if r["confidence"] < MIN_CONFIDENCE:
         return tag_prompt
     return tag_prompt if r["passed"] else ""
-
-
-def judge_prefer(a: str, b: str) -> str:
-    """
-    入口 2：二选一（例如「两个冲突标签留哪个」）。
-      模型就绪 -> 问一个 choice 题；否则降级留 A（保留原样）。
-    """
-    if not is_ready() or not a:
-        return a
-    if not b:
-        return a
-    try:
-        result = _agent.predict(
-            {"tags": f"Option A: {a}\nOption B: {b}"},
-            {
-                "prefer": {
-                    "type": "choice",
-                    "options": {"A": "option A", "B": "option B"},
-                    "instructions": "Which option is more consistent and usable?",
-                },
-            },
-        )
-        ans = result.get("answers", {}).get("prefer")
-        if ans:
-            choice = ans.get("choice")
-            if choice == "B":
-                return b
-        return a
-    except Exception:
-        return a
-
-
-def judge_candidates(candidates: list) -> int:
-    """
-    入口 3：N 选 1（返回下标）。choice 超过 20 个选项就崩（官方限制），
-    超过则截断到前 20 个。未就绪 / 空列表 -> 0（取第 0 个）。
-    """
-    if not candidates:
-        return 0
-    if not is_ready():
-        return 0
-    if len(candidates) > 20:
-        candidates = candidates[:20]
-    try:
-        options = {f"opt{i}": (c if isinstance(c, str) else str(c))
-                   for i, c in enumerate(candidates)}
-        result = _agent.predict(
-            {"tags": "\n".join(f"Option {k}: {v}" for k, v in options.items())},
-            {
-                "pick": {
-                    "type": "choice",
-                    "options": options,
-                    "instructions": "Pick the most coherent candidate",
-                },
-            },
-        )
-        ans = result.get("answers", {}).get("pick")
-        if ans:
-            choice = ans.get("choice")
-            if choice in options:
-                return int(choice[3:])
-        return 0
-    except Exception:
-        return 0
-
-
-# ─────────────────────────────────────────────────────────────────
-# 重抽循环（可选，供 compose 使用）
-# ─────────────────────────────────────────────────────────────────
-def reroll(build_fn, seed_rng, max_attempts: int = 3) -> tuple:
-    """
-    拒绝采样。build_fn(seed) -> (tag_prompt, payload)
-
-    返回 (payload, info)。max_attempts=0 或 Laya 不可用时，
-    等价于现状（抽一次就走），行为零改变。
-    """
-    # 没预热好 / 没装 laya / 关闭重抽 —— 直接退回现状
-    if max_attempts <= 0 or not is_ready():
-        tag_prompt, payload = build_fn(seed_rng.seed)
-        return payload, {"attempts": 1, "gated": False, "score": None}
-
-    best_payload = None
-    best_score = -1.0
-
-    for attempt in range(1, max_attempts + 1):
-        seed = (seed_rng.seed * 0x85EBCA6B + attempt * 0xC2B2AE35) & 0xFFFFFFFFFFFFFFFF \
-            if attempt > 1 else seed_rng.seed
-        tag_prompt, payload = build_fn(seed)
-
-        r = _score(tag_prompt)
-
-        # 模型没把握 —— 别拦，放行
-        if r is None or r["confidence"] < MIN_CONFIDENCE:
-            return payload, {"attempts": attempt, "gated": False,
-                             "score": None if r is None else r["score"]}
-
-        if best_payload is None or r["score"] > best_score:
-            best_payload, best_score = payload, r["score"]
-
-        if r["passed"]:
-            return payload, {"attempts": attempt, "gated": True,
-                             "score": r["score"], "detail": r["detail"]}
-
-    # 全都没过 —— 返回最好的那个，不要返回空
-    return best_payload, {"attempts": max_attempts, "gated": True,
-                          "score": best_score, "rejected": True}

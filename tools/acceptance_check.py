@@ -23,7 +23,7 @@ import random
 import sys
 from collections import Counter
 
-FILES = ["anima_weaver.py", "caption.py", "lm_studio.py", "rules.py",
+FILES = ["anima_weaver.py", "lm_studio.py", "rules.py",
          "assembly.py", "__init__.py"]
 BLOCKING: list[str] = []
 WARN: list[str] = []
@@ -61,7 +61,7 @@ def check_syntax() -> None:
 
 def check_undefined() -> None:
     """2. 使用前未定义的名字（NameError 隐患）。"""
-    suspects = [("anima_weaver.py", "auto_ctx"), ("caption.py", "kwargs")]
+    suspects = [("anima_weaver.py", "auto_ctx")]
     for path, name in suspects:
         src = _src(path)
         if not src:

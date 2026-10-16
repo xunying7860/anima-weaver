@@ -3,12 +3,15 @@ AnimaBatchBus（Anima批量总线）—— 合并 / 拆分 二合一
 =====================================================
 
 由 sync_passthrough.py（合并：多路串 → 多行 JSON）+ passthrough_split.py
-（拆分：1 行 JSON → 7 路输出）合并而来，用「模式」下拉切换。两段逻辑逐行复刻原
+（拆分：1 行 JSON → 多路输出）合并而来，用「模式」下拉切换。两段逻辑逐行复刻原
 两个文件的实现，两种模式互为逆运算（合并产出的 JSON 行喂回拆分模式必须逐字段还原）。
 
-通道 ↔ JSON 键（顺序以源文件 sync_passthrough.py 的 _INPUT_NAMES / _JSON_KEYS 为准）：
-    种子串→种子 · 提示词串→提示词 · 画师串→画师 · 分辨率串→分辨率
+通道 ↔ JSON 键（2026-10 四节点版：**「画师」通道已删**，7 路 → 6 路；
+画师名由主节点「画师种子」直接拼进提示词，不再单独成串）：
+    种子串→种子 · 提示词串→提示词 · 分辨率串→分辨率
     反推串→反推 · 宽度串→宽度 · 高度串→高度
+⚠ 删的是中间项，输入/输出两端其余通道的 slot 都前移了一位；
+  旧工作流的连线由 tools/migrate_workflows.py 按名字重排（勿手工改数字）。
 
 关于「分辨率通道」的取舍（方案 §1.3 注里点出的代码/文档不一致）：
     README 说「7路→6路（移除分辨率通道）」，但代码里 sync_passthrough.py 的
@@ -17,12 +20,11 @@ AnimaBatchBus（Anima批量总线）—— 合并 / 拆分 二合一
     喂回拆分模式无法逐字段还原输入，两模式就不再互逆了。
 
 INPUT_TYPES 的 optional 顺序有讲究（改之前先读这段）：
-    前面 7 项是通道串（forceInput → 显示成连线端口），顺序与旧 SyncPassthrough
-    完全一致，所以旧工作流里接在 0~6 号端口上的连线不用动；
-    「JSON行」排在通道串之后（第 7 号端口）—— 旧 PassthroughSplit 的 JSON行 在 0 号端口，
-    合并后必然位移，已在 workflows/*.json 里同步改了对应 link 的 target_slot。
+    前面 6 项是通道串（forceInput → 显示成连线端口）；
+    「JSON行」排在通道串之后（第 6 号端口）—— 旧 PassthroughSplit 的 JSON行 在 0 号端口，
+    合并后必然位移，连线统一由 tools/migrate_workflows.py 按名字重排。
 
-返回值固定一套 8 元组（RETURN_TYPES / RETURN_NAMES 两种模式共用），用不到的位置填空串 / 0。
+返回值固定一套 7 元组（RETURN_TYPES / RETURN_NAMES 两种模式共用），用不到的位置填空串 / 0。
 """
 
 from __future__ import annotations
@@ -30,11 +32,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
-# ── 通道定义：(连线端口名, JSON 键)，顺序 = 源文件顺序，勿改 ──────────────
+# ── 通道定义：(连线端口名, JSON 键)。「画师」通道已删（画师进提示词），
+#    删的是中间项 → 其余通道两端 slot 各前移 1，旧连线按名字迁移 ──────────
 _CHANNELS: list[tuple[str, str]] = [
     ("种子串", "种子"),
     ("提示词串", "提示词"),
-    ("画师串", "画师"),
     ("分辨率串", "分辨率"),
     ("反推串", "反推"),
     ("宽度串", "宽度"),
@@ -77,8 +79,8 @@ class AnimaBatchBus:
         }
 
     # 两种模式共用同一套返回值，用不到的位置填空串 / 0
-    RETURN_TYPES = ("STRING", "INT", "STRING", "STRING", "STRING", "STRING", "INT", "INT")
-    RETURN_NAMES = ("合并输出", "种子", "提示词", "画师", "反推", "分辨率", "宽度", "高度")
+    RETURN_TYPES = ("STRING", "INT", "STRING", "STRING", "STRING", "INT", "INT")
+    RETURN_NAMES = ("合并输出", "种子", "提示词", "反推", "分辨率", "宽度", "高度")
     FUNCTION = "run"
     CATEGORY = "Anima Weaver / Batch"
 
@@ -125,8 +127,8 @@ class AnimaBatchBus:
                 obj[json_key] = rows[i] if i < len(rows) else ""
             lines_out.append(json.dumps(obj, ensure_ascii=False))
 
-        # 合并输出在本体，其余 7 个通道位填空串 / 0
-        return ("\n".join(lines_out), 0, "", "", "", "", 0, 0)
+        # 合并输出在本体，其余 6 个通道位填空串 / 0
+        return ("\n".join(lines_out), 0, "", "", "", 0, 0)
 
     # ── 拆分：1 行 JSON → 各路输出（复刻 passthrough_split.py::split）───
     def _split(self, kwargs: dict) -> tuple:
@@ -169,11 +171,11 @@ class AnimaBatchBus:
             return str(data.get(key, ""))
 
         # 顺序与 RETURN_NAMES 对齐：合并输出留空
+        # （旧 JSON 行里若还带「画师」字段，读不到键就跳过，其余 6 字段照旧还原）
         return (
             "",                                        # 合并输出
             get_int("种子", _SEED_DEFAULT),             # 种子  INT
             get_str("提示词"),                          # 提示词 STRING
-            get_str("画师"),                            # 画师   STRING
             get_str("反推"),                            # 反推   STRING
             get_str("分辨率"),                          # 分辨率 STRING
             get_int("宽度", _SIZE_DEFAULT),             # 宽度   INT

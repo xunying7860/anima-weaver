@@ -5,6 +5,8 @@ Scoring-based decision engine with 7-layer normalization.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 import random
 import re
@@ -254,7 +256,20 @@ NORM_LAYERS = [
 ]
 
 
-def normalize(tokens: list[str]) -> list[str]:
+# ── P8-5 归一化快速通道（实测 3.1x，逐 token 与原算法一致）────────
+# 真实提示词里 ~97% 的 token 不会被任何层改写，逐 token 跑 8 层
+# × ~25 条正则纯属白跑（4.06 ms/次）。两级短路：
+#   1) _CANON_FAST：import 时用「原算法」预计算所有规范形/关键词集
+#      成员及其下划线变体的结果 —— 逐字一致的查表（alone→solo 这类
+#      「看似规范但会被改写」的条目由原算法给出正确答案，比手写
+#      canonical 集合更稳）；
+#   2) _maybe_matchable：token 不含任何层可能匹配的字面片段时原样
+#      返回（模式匹配必然包含其字面片段，过滤保守、不会漏改）。
+# 其余 token 走预编译分层，语义与 normalize_orig 完全一致。
+
+
+def normalize_orig(tokens: list[str]) -> list[str]:
+    """原始 8 层归一化（保留作对拍基准，勿删）。"""
     result = []
     for t in tokens:
         t = t.strip().lower()
@@ -267,6 +282,94 @@ def normalize(tokens: list[str]) -> list[str]:
                     new_t = re.sub(pattern, replacement, t)
                 else:
                     new_t = re.sub(pattern, replacement, t)
+                if new_t != t:
+                    t = new_t
+                    matched = True
+                    break
+            if matched:
+                break
+        result.append(t)
+    return result
+
+
+_LAYERS_C = [[(re.compile(p), r) for p, r in layer.items()]
+             for layer in NORM_LAYERS]
+
+_KEYWORD_SETS = (PERSON, COUPLE, GROUP_SMALL, GROUP_LARGE, MULTIPLE, POV, OTS,
+                 PANORAMA, WIDE_ANGLE, AERIAL, FIGHTING, ACTION, ACROBAT,
+                 FACE, BUST, AMERICAN, UPPER, LOWER, FOCUS, FULL, SITTING,
+                 LYING, CURLED, STILL, STILL_WIDE, ARGUE, TALL, SELFIE,
+                 CHIBI, LOW_ANGLE, HIGH_ANGLE)
+
+
+def _build_canon_fast() -> dict:
+    """用原算法预计算规范形/关键词/下划线变体的归一化结果。"""
+    cands: set = set()
+    for layer in NORM_LAYERS:
+        for rep in layer.values():
+            if isinstance(rep, str):
+                cands.add(rep)
+                if " " in rep:
+                    cands.add(rep.replace(" ", "_"))
+    for fs in _KEYWORD_SETS:
+        for w in fs:
+            cands.add(w)
+            if " " in w:
+                cands.add(w.replace(" ", "_"))
+    return {c: normalize_orig([c])[0] for c in cands}
+
+
+_CANON_FAST = _build_canon_fast()
+
+
+def _build_match_filter():
+    r"""收集所有层的必需字面片段（长度≥2）；整条模式全是单字符的
+    （如 p\.?o\.?v）退化为「必需字符全部出现」。sound：模式能匹配
+    的 token 必然满足其一，因此过滤只会放行、不会漏改。"""
+    chunks: set = set()
+    minsets: list = []
+    for layer in NORM_LAYERS:
+        for pat in layer:
+            src = pat.replace("\\b", " ")
+            found = set(re.findall(r"[a-z0-9']{2,}", src))
+            if found:
+                chunks |= found
+            else:
+                minsets.append(set(re.findall(r"[a-z0-9]", src)))
+    chunk_re = re.compile("|".join(
+        re.escape(c) for c in sorted(chunks, key=len, reverse=True)))
+    return chunk_re, minsets
+
+
+_CHUNK_RE, _MIN_CHARSETS = _build_match_filter()
+
+
+def _maybe_matchable(t: str) -> bool:
+    if _CHUNK_RE.search(t):
+        return True
+    for chars in _MIN_CHARSETS:
+        if all(ch in t for ch in chars):
+            return True
+    return False
+
+
+def normalize(tokens: list[str]) -> list[str]:
+    result = []
+    for t in tokens:
+        t = t.strip().lower()
+        if not t:
+            continue
+        hit = _CANON_FAST.get(t)
+        if hit is not None:
+            result.append(hit)
+            continue
+        if not _maybe_matchable(t):
+            result.append(t)
+            continue
+        for layer in _LAYERS_C:
+            matched = False
+            for pattern, replacement in layer:
+                new_t = pattern.sub(replacement, t)
                 if new_t != t:
                     t = new_t
                     matched = True
@@ -462,16 +565,28 @@ class RandomResolution:
     def INPUT_TYPES(s) -> dict[str, Any]:
         return {
             "required": {
-                "模式": ("BOOLEAN", {"default": False, "tooltip": "True=自动(分析提示词), False=手动"}),
-                "随机画幅": ("BOOLEAN", {"default": True, "tooltip": "手动模式/自动补齐: 随机选比例"}),
+                "模式": ("BOOLEAN", {"default": False,
+                                   "tooltip": "开启=自动（分析提示词选画幅）；关闭=手动（用固定比例）"}),
+                "随机画幅": ("BOOLEAN", {"default": True,
+                                     "tooltip": "手动模式/自动兜底：比例随机选择；关闭则恒用「固定比例」"}),
                 "百万像素": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 32.0, "step": 0.01}),
                 "固定比例": (ASPECT_NAMES, {"default": "3:4"}),
-                "对齐到": ("INT", {"default": 8, "min": 1, "max": 256, "step": 1}),
+                "对齐到": ("INT", {"default": 8, "min": 1, "max": 256, "step": 1,
+                                "tooltip": "宽高对齐到的倍数"}),
+                # 内置随机种子追加在 required 末尾 —— 旧工作流的
+                # widgets_values 前 5 项下标不受影响，前端自动补新值
+                "随机种子": ("INT", {
+                    "default": 0, "min": 0, "max": 0xFFFF_FFFF_FFFF_FFFF, "step": 1,
+                    "control_after_generate": True,
+                    "tooltip": "0=每次执行内部随机；>0=按此种子确定性选画幅。仅在不接「种子串」时生效；本次实际使用的种子输出到「随机种子」槽。",
+                }),
             },
             "optional": {
-                "随机种子": ("INT", {"forceInput": True, "default": 0, "min": 0, "max": 0x7FFFFFFF}),
-                "种子串": ("STRING", {"forceInput": True, "multiline": True}),
-                "提示词": ("STRING", {"forceInput": True, "multiline": True}),
+                # 原「随机种子」forceInput 端口已删（改为内置 widget）
+                "种子串": ("STRING", {"forceInput": True, "multiline": True,
+                                   "tooltip": "接入批量种子串（每行一个种子），逐行选画幅；非空时内置种子让位"}),
+                "提示词": ("STRING", {"forceInput": True, "multiline": True,
+                                   "tooltip": "自动模式的提示词（每行一条，与种子串行对齐）"}),
             },
         }
 
@@ -481,59 +596,76 @@ class RandomResolution:
     FUNCTION = "pick"
     OUTPUT_NODE = False
 
+    @classmethod
+    def IS_CHANGED(cls, **kwargs) -> float:
+        """随机种子=0 且未接种子串 → 每次执行结果都随机，必须强制重算
+        （否则 ComfyUI 复用缓存，「每次随机」形同虚设）；其余输入确定
+        性哈希，同参数可复现且免重算。"""
+        try:
+            if int(kwargs.get("随机种子", 0) or 0) <= 0 \
+                    and not str(kwargs.get("种子串", "") or "").strip():
+                return random.random()
+        except (TypeError, ValueError):
+            return random.random()
+        try:
+            payload = json.dumps(
+                {str(k): str(v) for k, v in kwargs.items()},
+                sort_keys=True, ensure_ascii=False)
+        except (TypeError, ValueError):
+            payload = repr(sorted((str(k), str(v)) for k, v in kwargs.items()))
+        h = hashlib.blake2b(payload.encode("utf-8", "replace"),
+                            digest_size=8).digest()
+        return float(int.from_bytes(h, "big")) / float(1 << 64)
+
     def pick(self, 模式: bool, 随机画幅: bool, 百万像素: float, 固定比例: str,
-             对齐到: int = 8, 随机种子: int | None = None,
+             对齐到: int = 8, 随机种子: int = 0,
              种子串: str = "", 提示词: str = "") -> tuple[int, str, str, str]:
-        seed_str = 种子串.strip()
-        prompt_str = 提示词.strip() if 提示词 else ""
-
         seeds = []
-        if seed_str:
-            for s in seed_str.split("\n"):
-                s = s.strip()
-                if s:
-                    try:
-                        seeds.append(int(s))
-                    except ValueError:
-                        pass
+        for s in (种子串 or "").split("\n"):
+            s = s.strip()
+            if s:
+                try:
+                    seeds.append(int(s))
+                except ValueError:
+                    pass
+        prompt_lines = [l.strip() for l in (提示词 or "").split("\n")
+                        if l.strip()]
 
-        if not 模式:
-            if seeds:
-                ws, hs = [], []
-                for sv in seeds:
-                    w, h = _pick_manual(随机画幅, 固定比例, 百万像素, 对齐到, sv)
-                    ws.append(str(w))
-                    hs.append(str(h))
-                fw, fh = _pick_manual(随机画幅, 固定比例, 百万像素, 对齐到, seeds[0])
-                return (fw, "\n".join(map(str, seeds)), "\n".join(ws), "\n".join(hs))
-            sv = int(随机种子) if 随机种子 is not None and str(随机种子) != "" else None
-            w, h = _pick_manual(随机画幅, 固定比例, 百万像素, 对齐到, sv)
-            return (w, str(sv) if sv else "", str(w), str(h))
+        # ── 内置种子解析：0 = 每次执行内部随机；>0 = 确定性复现 ──
+        try:
+            in_seed = int(随机种子 or 0)
+        except (TypeError, ValueError):
+            in_seed = 0
+        eff_seed = in_seed if in_seed > 0 else random.randint(
+            1, 0xFFFF_FFFF_FFFF_FFFF)
 
-        prompt_lines = [l.strip() for l in prompt_str.split("\n") if l.strip()] if prompt_str else []
-
-        if not seeds:
-            ratio = analyze_prompt(prompt_lines[0]) if prompt_lines else "3:4"
-            w, h = _resolve(百万像素, ratio, 对齐到)
-            return (random.randint(0, 0x7FFFFFFF), "", str(w), str(h))
-
-        ws, hs = [], []
-        for i, sv in enumerate(seeds):
-            if i < len(prompt_lines):
-                ratio = analyze_prompt(prompt_lines[i])
-            else:
-                if 随机画幅:
-                    rng = random.Random(sv)
-                    ratio = rng.choice(ASPECT_NAMES)
+        # ── 批量：种子串接管逐行选画幅，内置种子仅作缺省（不参与）──
+        if seeds:
+            ws, hs = [], []
+            for i, sv in enumerate(seeds):
+                if 模式 and i < len(prompt_lines):
+                    ratio = analyze_prompt(prompt_lines[i])
                 else:
-                    ratio = 固定比例
-            w, h = _resolve(百万像素, ratio, 对齐到)
-            ws.append(str(w))
-            hs.append(str(h))
+                    # 手动模式，或自动模式但该行没有提示词 → 回退随机/固定
+                    ratio = (random.Random(sv).choice(ASPECT_NAMES)
+                             if 随机画幅 else 固定比例)
+                w, h = _resolve(百万像素, ratio, 对齐到)
+                ws.append(str(w))
+                hs.append(str(h))
+            # 修 bug：第 1 个输出槽是「随机种子」，旧代码误返回宽度 fw
+            return (seeds[0], "\n".join(map(str, seeds)),
+                    "\n".join(ws), "\n".join(hs))
 
-        first_ratio = analyze_prompt(prompt_lines[0]) if prompt_lines else "3:4"
-        fw, fh = _resolve(百万像素, first_ratio, 对齐到)
-        return (fw, "\n".join(map(str, seeds)), "\n".join(ws), "\n".join(hs))
+        # ── 单次：用内置种子 ──
+        if 模式:
+            ratio = analyze_prompt(prompt_lines[0]) if prompt_lines else "3:4"
+        else:
+            ratio = (random.Random(eff_seed).choice(ASPECT_NAMES)
+                     if 随机画幅 else 固定比例)
+        w, h = _resolve(百万像素, ratio, 对齐到)
+        # 未接种子串时「种子串」输出恒为空串：不把内置种子伪装成
+        # 批量串（下游靠这个区分单次/批量，与主节点语义刻意一致）
+        return (eff_seed, "", str(w), str(h))
 
 
 NODE_CLASS_MAPPINGS = {"RandomResolution": RandomResolution}

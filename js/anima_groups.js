@@ -8,6 +8,11 @@
  *   每个分组前面放一个 BOOLEAN 开关（▸ 标签槽位 / ▸ 过滤控制 / ...）
  *   勾选 → 展开该组的控件；取消 → 收起。
  *
+ * 两级分组（2026-10 四节点版）：LLM设置 / 批量 / laya判定 / 系统提示词
+ * 挂在一级组「▸ 高级」之下 —— ▸ 高级 关闭时，四个子开关连同成员
+ * 全部隐藏（chainOpen 逐层检查所有祖先开关）；widget 数组顺序不变，
+ * 嵌套关系只存在于本文件的 NESTED 表里，Python 侧无需感知。
+ *
  * 设计要点（都是踩过的坑，别改）：
  *
  * 1. 组开关用**原生 BOOLEAN widget**，不是 DOM widget。
@@ -30,34 +35,58 @@
  *    这是我们要的行为：用户填了再折叠，值依然生效；后端 compose() 完全不用改。
  */
 
-// 分组定义：开关名 -> 该组包含的 widget 名
-// 改名时记得和 Python 侧 INPUT_TYPES 保持一致
-const GROUPS = {
-  "▸ 标签槽位": [
+// 分组定义（两级）：开关名 -> { parent: 父组开关名或null, members: 成员 widget 名 }
+// 改名时记得和 Python 侧 INPUT_TYPES 保持一致。
+// 注意：内置「随机种子」是 required 里的常驻 widget，不写进任何组。
+const NESTED = {
+  "▸ 标签槽位": { parent: null, members: [
     "人数/身份", "外貌", "服装", "姿势/动作",
     "表情", "镜头", "场景/环境", "细节/氛围",
     "自然语言描述",
-  ],
-  "▸ 过滤控制": [
+  ]},
+  "▸ 过滤控制": { parent: null, members: [
     "标签列表必含", "过滤标签", "排除含标签列表", "排除标签分类",
     "通用标签", "争议标签", "敏感标签", "露骨标签",
-  ],
-  "▸ LLM设置": [
+  ]},
+  "▸ 高级": { parent: null, members: [
+    "画师种子", "冲突检查",
+    "▸ LLM设置", "▸ 批量", "▸ laya判定", "▸ 系统提示词",
+  ]},
+  "▸ LLM设置": { parent: "▸ 高级", members: [
     "自然语言来源", "强制详细自然语言", "模型", "API地址", "API密钥",
     "云端模型名", "上下文长度", "自动上下文长度", "最大截断长度",
     "生成后卸载",
-  ],
-  "▸ 批量": [
-    "批量数量", "种子串", "画师串", "反推串", "请求数", "最大并发数",
-  ],
-  "▸ 高级": [
-    "画师种子", "冲突检查", "系统提示词", "槽位数据", "底部数据",
-  ],
-  // laya 质量门（母代理阶段2新增第6组；开关名与 INPUT_TYPES 逐字一致）
-  "▸ laya判定": [
+  ]},
+  "▸ 批量": { parent: "▸ 高级", members: [
+    "批量数量", "请求数", "最大并发数",
+  ]},
+  "▸ laya判定": { parent: "▸ 高级", members: [
     "启用laya门控", "过滤质量标签",
-  ],
+  ]},
+  "▸ 系统提示词": { parent: "▸ 高级", members: [
+    "系统提示词", "详细NL系统提示词",
+  ]},
 };
+
+// 自己 + 所有祖先开关都必须勾选才算展开
+function chainOpen(node, name) {
+  let cur = name, guard = 0;
+  while (cur && guard++ < 10) {
+    const t = findWidget(node, cur);
+    if (!t || !t.value) return false;
+    cur = NESTED[cur] ? NESTED[cur].parent : null;
+  }
+  return true;
+}
+
+function wantShow(node, widgetName) {
+  for (const [toggle, def] of Object.entries(NESTED)) {
+    if (def.members.includes(widgetName) && !chainOpen(node, toggle)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 // ── 隐藏 / 显示 ────────────────────────────────────────────────────
 // 非破坏式：原始属性存在 widget 上，随时可还原
@@ -103,17 +132,20 @@ function findWidget(node, name) {
 function applyVisibility(node) {
   let changed = false;
 
-  for (const [toggleName, members] of Object.entries(GROUPS)) {
+  const setVis = (w, show) => {
+    if (!w) return;                           // 容错：widget 不存在就跳过
+    const before = !!w.__animaHidden;
+    if (show) showWidget(w); else hideWidget(w);
+    if (before !== !!w.__animaHidden) changed = true;
+  };
+
+  for (const [toggleName, def] of Object.entries(NESTED)) {
     const toggle = findWidget(node, toggleName);
     if (!toggle) continue;                    // 节点还没建完 / 改名了，跳过
-    const open = !!toggle.value;
-
-    for (const memberName of members) {
-      const w = findWidget(node, memberName);
-      if (!w) continue;                       // 容错：widget 不存在就跳过
-      const before = !!w.__animaHidden;
-      if (open) showWidget(w); else hideWidget(w);
-      if (before !== !!w.__animaHidden) changed = true;
+    // 子组开关本身随父链显隐（▸ 高级 关掉 → 四个子开关一起藏）
+    setVis(toggle, def.parent ? chainOpen(node, def.parent) : true);
+    for (const memberName of def.members) {
+      setVis(findWidget(node, memberName), wantShow(node, memberName));
     }
   }
 
@@ -131,7 +163,7 @@ function applyVisibility(node) {
 
 // ── 给组开关挂上回调 ───────────────────────────────────────────────
 function attachToggles(node) {
-  for (const toggleName of Object.keys(GROUPS)) {
+  for (const toggleName of Object.keys(NESTED)) {
     const toggle = findWidget(node, toggleName);
     if (!toggle || toggle.__animaHooked) continue;
     toggle.__animaHooked = true;

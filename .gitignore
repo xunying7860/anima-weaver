@@ -9,3 +9,12 @@ __pycache__/
 # 运行时生成的标签索引缓存（tag_index / tag_extract 自动重建，勿入库）
 tags/*.idx
 tags/*.idx.v2
+
+# 标签库（约 215 MB，git clone 后运行 python download_tags.py 下载，勿入库）
+tags/taglists-general.txt
+tags/taglists-questionable.txt
+tags/taglists-sensitive.txt
+tags/taglists-explicit.txt
+
+# 运行时状态（artist_index 自动生成，勿入库）
+_artist_seed_state.json

@@ -4,7 +4,7 @@
   <a href="README_CN.md">中文</a> | <b>English</b>
 </p>
 
-A ComfyUI custom node package for structured AI image prompt assembly. Supports tag/NL hybrid output, batch pipelines, image captioning / prompt refinement, random artist selection, and random resolution generation.
+A ComfyUI custom node package for structured AI image prompt assembly. Supports tag/NL hybrid output, batch pipelines, random artist selection, and random resolution generation.
 
 ---
 
@@ -12,14 +12,16 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 
 | Node | Category | Description |
 |------|----------|-------------|
-| **Anima随机提示词** | Anima Weaver | Core node: assembles tags → NL → complete prompt (slot/filter/batch widgets in 6 collapsible groups) |
-| **Anima反推** | Anima Weaver | VL model-based image captioning / prompt refinement (output format: multiline / JSON / comma) |
-| **随机分辨率选择器** | Anima Weaver | Random aspect ratio & resolution generator |
-| **画师Seed** | Anima Weaver / Seed | Artist selector (random / none / fixed) |
-| **批量种子** | Anima Weaver / Seed | N-seed generator shared across pipeline nodes; the core node's own batching can use its built-in 批量数量 widget instead |
-| **Anima批量总线** | Anima Weaver / Batch | Merge/split in one node: channels ↔ JSON-per-line (replaces 同步串行 + 串行拆分) |
-| **Anima加载图像** | Anima Weaver | Load images from folder → IMAGE list + MASK + file paths |
-| **Anima列表转多行** | Anima Weaver | Merge batch text items into multiline STRING (INPUT_IS_LIST) |
+| **Anima随机提示词** | Anima Weaver | Core node: assembles tags → NL → complete prompt (two-level collapsible groups, built-in random seed) |
+| **随机分辨率选择器** | Anima Weaver | Random aspect ratio & resolution generator (built-in random seed) |
+| **批量种子** | Anima Weaver / Batch | N-seed generator (max 4096) shared across pipeline nodes; also an alternative to the core node's built-in seed (for cross-node alignment) |
+| **Anima批量总线** | Anima Weaver / Batch | Merge/split in one node: 6 channels (seed/prompt/resolution/caption/width/height; artist channel removed) ↔ JSON-per-line (replaces 同步串行 + 串行拆分); used by both sample workflows |
+
+> As of 2026-10-16 the package is trimmed 8 → 4 nodes: Anima反推 (image captioning), 画师Seed,
+> Anima加载图像 and Anima列表转多行 are removed (artist selection is now the 画师种子 widget on the
+> core node — the artist name is appended to the prompt directly; caption passthrough lives in the
+> batch bus). The laya fine-tune script (`laya_finetune.py`) and its data (`data/laya_n2/`) were
+> removed too — recover them from the `pre-4node-20261016` tag.
 
 ---
 
@@ -28,7 +30,7 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 ### Prerequisites
 
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
-- Optional: [LM Studio](https://lmstudio.ai/) (for NL enhancement / Image Caption node)
+- Optional: [LM Studio](https://lmstudio.ai/) (for NL enhancement)
 
 ### Steps
 
@@ -51,6 +53,11 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 
 4. Restart ComfyUI.
 
+> **Tag library (~215 MB):** a `git clone` install needs `python download_tags.py` to fetch the
+> ~215 MB tag library; downloading the Release zip and extracting it is ready to use as-is.
+> Without the taglists, raffle (random/hybrid mode) returns empty (the node still runs;
+> the prompt only contains the manually-filled parts).
+
 ---
 
 ## Node Details
@@ -61,32 +68,89 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 
 ### Anima随机提示词
 
-Three operation modes:
+Three operation modes (option values now use the official Chinese labels; the old English
+values `manual`/`random`/`hybrid` are still accepted and mapped automatically):
 
 | Mode | Description |
 |------|-------------|
-| `manual` | User fills 8 tag slots manually, output ordered by Anima slot specification |
-| `random` | Randomly samples ~400K Danbooru tag entries, auto-classifies into slots |
-| `hybrid` | Raffle fills slots + manual tags appended; conflicting manual tags take precedence |
+| `手动` (manual) | User fills 8 tag slots manually, output ordered by Anima slot specification |
+| `随机` (random) | Randomly samples ~400K Danbooru tag entries, auto-classifies into slots |
+| `混合` (hybrid) | Raffle fills slots + manual tags appended; conflicting manual tags take precedence |
 
 **Tag Ratio** slider controls the tag-to-NL proportion (0.0 = pure NL ↔ 1.0 = pure tags).
 
 LM Studio NL enhancement: calls a local LLM to convert tags into fluent English descriptions.
 
-**系统提示词** (optional forceInput port, top-left): When connected, overrides the default NL generation system prompt. Behaves identically to the Image Caption node's custom prompt.
+**Built-in random seed:** the node now has a built-in `随机种子` widget (`control_after_generate`,
+randomize/increment). `0` = random internally each run; `>0` = deterministic reproduction.
+In batch mode a connected `种子串` takes over (the built-in seed steps aside); with only
+`批量数量` set, the built-in seed becomes a **parent seed** deriving N reproducible child seeds
+(the old `批量数量` used `random.randint` — the same parameters produced a different batch every run).
 
-**Batch mode:** When a `种子串` (seed string) from the Batch Seed node is connected, each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes all N seeds in parallel, and unloads on completion.
+| | Built-in seed (widget) | 种子串 (input port, under 高级 ▸ 批量) |
+|---|------------------------|--------------------------------------|
+| Source | The node's own INT control, `control_after_generate=True` | External 批量种子 / bus split output, multiline |
+| Value | `0` = random internally each run; `>0` = deterministic | One seed per line |
+| Single-shot mode | The only random source: drives raffle / slot sampling / artist sub-stream | Not connected |
+| Batch: 种子串 connected | **Does not participate** (seed string takes over per line, same as old behavior) | One independent seed per line |
+| Batch: only 批量数量 set | Upgraded to a **parent seed**: derives N reproducible child seeds | Not connected |
+| Priority | 种子串 non-empty → built-in seed steps aside | Takes over when non-empty |
 
-**Concurrent Batch LLM:** Both Anima随机提示词 and Anima反推 support `请求数` (request count, default 4) and `最大并发数` (max concurrency, default 4). In batch mode, the model is loaded once, then N HTTP requests run concurrently via `ThreadPoolExecutor`. This applies to both local LM Studio and cloud API endpoints. `自动上下文长度` (auto context length) can be enabled to automatically compute context window = max_concurrency × 2048 tokens (local models only).
+**Two-level groups:** widgets are organized in two collapsible levels (top-level groups:
+标签槽位 / 过滤控制 / 高级; four second-level groups hang under 高级):
 
-**Conflict checking:** Built-in 23-pair mutual exclusion table. Automatically detects conflicting tags and removes raffle-sourced conflicts while preserving manually-entered tags.
+```
+[top-level, always visible]
+  模式 · 标签比例 · 随机种子 (built-in widget, randomize / increment)
+▸ 标签槽位            ← top-level group
+    人数/身份 外貌 服装 姿势/动作 表情 镜头 场景/环境 细节/氛围 自然语言描述
+▸ 过滤控制            ← top-level group
+    标签列表必含 过滤标签 排除含标签列表 排除标签分类 通用/争议/敏感/露骨
+▸ 高级                ← top-level group (parent)
+    画师种子 · 冲突检查
+    ▸ LLM设置         ← second-level group (hidden entirely when the parent is off)
+        自然语言来源 强制详细自然语言 模型 API地址 API密钥 云端模型名
+        上下文长度 自动上下文长度 最大截断长度 生成后卸载
+    ▸ 批量            ← second-level group
+        批量数量 请求数 最大并发数 + [种子串] port
+    ▸ laya判定        ← second-level group
+        启用laya门控 过滤质量标签
+    ▸ 系统提示词      ← second-level group (new, switchable)
+        系统提示词 (hand-editable) 详细NL系统提示词 (hand-editable)
+```
+
+`▸ 高级` off → all four second-level groups and their widgets are hidden; `▸ 高级` on →
+the four sub-switches appear (all off by default); a sub-group's members show only when its
+switch is on.
+
+**System prompt group:** the 系统提示词 forceInput port is now a switchable, hand-editable
+multiline widget in the ▸ 系统提示词 group: empty = built-in default prompt; fill it in to
+override the default NL system prompt. 详细NL系统提示词 is only used when 强制详细自然语言
+is on; empty falls back to the default detailed prompt.
+
+**Batch mode:** When a `种子串` (seed string) from the Batch Seed node is connected, each seed
+undergoes independent Raffle + NL generation. The LLM is loaded once, processes all N seeds in
+parallel, and unloads on completion.
+
+**Concurrent Batch LLM:** supports `请求数` (request count, default 4) and `最大并发数`
+(max concurrency, default 4). In batch mode, the model is loaded once, then N HTTP requests run
+concurrently via `ThreadPoolExecutor`. This applies to both local LM Studio and cloud API
+endpoints. `自动上下文长度` (auto context length) can be enabled to automatically compute
+context window = max_concurrency × 2048 tokens (local models only).
+
+**Conflict checking:** Built-in 23-pair mutual exclusion table. Automatically detects conflicting
+tags and removes raffle-sourced conflicts while preserving manually-entered tags.
+
+**Artist (画师种子):** `-1` = random artist, `0` = no artist, `≥1` = fixed artist index.
+The artist name is appended to the end of the prompt — there is **no separate artist-string
+output** anymore (the old 画师Seed node is removed).
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| 模式 | COMBO | manual / random / hybrid |
+| 模式 | COMBO | 手动 / 随机 / 混合 (old English values auto-mapped) |
 | 标签比例 | FLOAT | Tag-to-NL ratio (0.0–1.0) |
-| 场景类型 | COMBO | Scene category for raffle sampling |
-| 自然语言来源 | COMBO | manual / lm_studio |
+| 随机种子 | INT | Built-in seed: 0=random each run, >0=deterministic; batch mode steps aside for a connected 种子串, or acts as parent seed when only 批量数量 is set |
+| 自然语言来源 | COMBO | 手动 / LM Studio (old English values auto-mapped) |
 | 强制详细自然语言 | BOOLEAN | Force NL to be very detailed (512 tokens) |
 | 模型 | COMBO | LM Studio model selection (choose `none` to disable LLM and pass through 变化文本) |
 | 生成后卸载 | BOOLEAN | Unload model after generation |
@@ -100,61 +164,15 @@ LM Studio NL enhancement: calls a local LLM to convert tags into fluent English 
 | 最大截断长度 | INT | Max output tokens (0=auto 256/512, 8–1080) |
 | 画师种子 | INT | -1=random artist, 0=no artist, ≥1=fixed artist index |
 | 冲突检查 | BOOLEAN | Enable conflict detection |
+| 系统提示词 | multiline STRING | Custom system prompt (in the ▸ 系统提示词 group, hand-editable; empty = built-in default) |
+| 详细NL系统提示词 | multiline STRING | Only used when 强制详细自然语言 is on; empty falls back to the default detailed prompt |
 
 **Outputs:**
 
 | Output | Type | Description |
 |--------|------|-------------|
-| `生成的提示词` | STRING | Final assembled prompt |
+| `生成的提示词` | STRING | Final assembled prompt (artist name already appended at the end) |
 | `调试信息` | STRING | Debug info: mode, seed, conflict results |
-| `画师串` | STRING | Multiline artists (batch mode) |
-| `分辨率串` | STRING | Multiline resolutions (batch mode) |
-| `反推串` | STRING | Multiline captions (batch mode) |
-
----
-
-### Anima反推
-
-When an image input is connected, invokes a VL (vision-language) model for image captioning. Without an image, operates in prompt refinement mode.
-
-**none mode (LLM disabled):** Select `none` in the model dropdown to skip LLM calls entirely — 变化文本 (e.g. multiline wd14 tagger output) passes through as-is, combined with 固定前缀 and output/saved directly. Typical workflow: `Anima加载图像 → wd14 tagger → Anima列表转多行 → 变化文本 → Anima反推(none) → save as txt`.
-
-**Prompt priority:** Custom system prompt > Image connected → caption mode > No image → refinement mode
-
-**Batch mode:** Accepts `种子串` (located below 随机种子) for per-seed independent generation (no image input in batch mode). LLM loads once, processes N seeds concurrently, unloads on completion.
-
-**Fixed prefix:** The `固定前缀` parameter lets you prepend a string (e.g., `masterpiece, best quality`) to every generated description.
-
-**Save as txt:** Enable `保存为txt` to save each description as a `.txt` file alongside the source image.
-
-**Align to multiple:** The `对齐倍数` parameter (default 14 for Qwen-VL series) ensures image dimensions are aligned to the specified multiple, preventing vision encoder failures.
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| 模型 | COMBO | LM Studio model selection (choose `none` to disable LLM and pass through 变化文本) |
-| API地址 | STRING | LM Studio / OpenAI-compatible API endpoint |
-| API密钥 | STRING | API key (blank for local) |
-| 云端模型名 | STRING | Cloud vision model name |
-| 上下文长度 | INT | Context window size (0–262144, default 8192) |
-| 自动上下文长度 | BOOLEAN | Auto-compute context = max_concurrency × 2048 (local only) |
-| 最大截断长度 | INT | Max output tokens (128–1024, default 1024) |
-| 生成后卸载 | BOOLEAN | Unload model after generation |
-| 请求数 | INT | Number of requests to generate (1–128, default 4) |
-| 最大并发数 | INT | Max concurrent predictions (1–128, default 4) |
-| 固定前缀 | STRING | Custom prefix prepended to each description |
-| 变化文本 | STRING (forceInput) | Variable text, one line per image, combined with prefix + description before saving to txt |
-| 图片路径 | STRING | Folder path to batch-process images (lower priority than 种子串) | (right-click → convert to input to connect Anima加载图像 file paths)
-| 对齐倍数 | INT | Align image dimensions to this multiple (default 14) |
-| 保存为txt | BOOLEAN | Save each description as a `.txt` file next to the source image |
-
-**Outputs:**
-
-| Output | Type | Description |
-|--------|------|-------------|
-| `描述文本` | STRING | Generated caption / refined text |
-| `提示词串` | STRING | Batch passthrough |
-| `画师串` | STRING | Batch passthrough |
-| `分辨率串` | STRING | Batch passthrough |
 
 ---
 
@@ -168,6 +186,12 @@ Independent node for random resolution generation.
 #### Auto Mode (Scoring-based Decision Engine v7)
 - With a prompt connected, the node automatically analyzes composition via **7-layer priority normalization + 3D scoring engine**
 - No manual rule maintenance needed — handles shot type, person count, pose, and viewpoint automatically
+
+**Built-in random seed:** built-in `随机种子` widget (`control_after_generate`):
+`0` = random each run / `>0` = deterministic aspect pick; a connected `种子串` takes over
+(the built-in seed is only a fallback when no string is connected). The `随机种子` INT output
+is the single seed actually used this run (the old code wrongly returned the width); the
+`种子串` STRING output passes through unchanged and is an empty string when nothing is connected.
 
 **Supported Aspect Ratios:** 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9
 
@@ -197,9 +221,8 @@ Independent node for random resolution generation.
 - Layer 6: Scene & environment
 - Layer 7: Angle
 
-**Output Changes:**
-- Removed 分辨率, 分辨率串, 宽度串, 高度串 outputs
-- 宽度/高度 changed to STRING type (manual=single value, auto=comma-separated multiline)
+**Outputs:**
+- 宽度/高度 are STRING type (manual=single value, auto=comma-separated multiline)
 - Final outputs: 随机种子(INT) + 种子串(STRING) + 宽度(STRING) + 高度(STRING)
 
 **Resolution Calculation:**
@@ -207,32 +230,20 @@ Independent node for random resolution generation.
 - Alignment step 16 (compatible with Illustrious / anima-base DiT)
 - Area loss < 3%
 
-### Batch Pipeline Changes
-- 同步串行: 7-channel → 6-channel (removed 分辨率串 channel)
-- 串行拆分: 7-channel → 6-channel (removed 分辨率 channel)
-- Anima随机提示词: removed 分辨率 input, 分辨率串 output
-- Anima反推: removed 分辨率 input, 分辨率串 output
-
----
-
-### 画师Seed
-
-Artist selection node backed by `Anima2B_Artist_Index_59k.txt` (~59K indexed artists).
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `artist_seed` | INT | `-1` = random artist, `0` = no artist (skip), `≥1` = fixed artist by index |
-| `种子串` | STRING | Accepts batch seeds for per-seed independent artist selection |
-
-**Outputs:** `artist_seed` (INT) + `状态` (STRING, formatted as `[index] @artist_name`)
-
 ---
 
 ### 批量种子
 
 Generates N random seeds for batch pipeline consumption (max 4096).
+Also an alternative to the core node's built-in seed (for cross-node alignment): connect its
+`种子串` output to the `种子串` ports of the prompt/resolution/sampler nodes when the same seed
+batch must drive several nodes; otherwise the core node can derive seeds from its built-in seed
++ `批量数量`.
 
 ### 同步串行
+
+> Both 同步串行 and 串行拆分 have been merged into **Anima批量总线** — this section is kept
+> for reference against the old version only.
 
 Merges 7 multiline STRING inputs into a single multiline JSON output (one complete data group per line). Supports row selection. Designed for use with Easy-Use Prompt Line node.
 
@@ -248,6 +259,9 @@ Merges 7 multiline STRING inputs into a single multiline JSON output (one comple
 ```
 
 ### 串行拆分
+
+> Both 同步串行 and 串行拆分 have been merged into **Anima批量总线** — this section is kept
+> for reference against the old version only.
 
 Receives a single JSON line from the Prompt Line node and splits it into 7 independent typed outputs:
 
@@ -266,31 +280,39 @@ Receives a single JSON line from the Prompt Line node and splits it into 7 indep
 ## Batch Pipeline Architecture
 
 ```
-Batch Seed(N)
+Batch Seed(N)   ← optional: the core node's built-in seed + 批量数量 can derive N reproducible child seeds
   │  Seed String STRING (N lines)
-  ├──→ 画师Seed → Artist String
-  ├──→ 随机分辨率选择器 → Resolution String
-  ├──→ Anima随机提示词 → Prompt/Artist/Res/Caption Strings
+  ├──→ 随机分辨率选择器 → Width/Height Strings
+  ├──→ Anima随机提示词 → Prompt String (artist already merged into the prompt, no separate column)
   │
   ▼
-同步串行 ──Merge JSON──→ Prompt Line (Easy-Use) ──→ 串行拆分
+Anima批量总线(merge) ──JSON lines──→ Prompt Line (Easy-Use) ──→ Anima批量总线(split)
                                                           │ Seed (INT) → KSampler
                                                           │ Width (INT) → Empty Latent
                                                           │ Height (INT) → Empty Latent
                                                           │ Prompt (STR) → CLIP
 ```
 
-Each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes N seeds in parallel (configurable via `请求数` and `最大并发数`, default 4 each), and unloads on completion — all seeds are then fed to the sampler in a single batch, minimizing VRAM overhead.
+Each seed undergoes independent Raffle + NL generation. The LLM is loaded once, processes N seeds
+in parallel (configurable via `请求数` and `最大并发数`, default 4 each), and unloads on
+completion — all seeds are then fed to the sampler in a single batch, minimizing VRAM overhead.
+The seed string can now be derived from the core node's built-in seed, so an external 批量种子
+node is no longer required; connect one when the same seed batch must align across nodes
+(prompt/resolution/sampler).
 
 ---
 
 ## Workflows
 
-Workflow files are located in the `workflows/` directory:
+Workflow files are located in the `workflows/` directory (6 → 2 in this release):
 
 | File | Description |
 |------|-------------|
-| `anima批量自动打标.json` | Batch image auto-tagging workflow (WD14 + Anima反推 + save txt) |
+| `anima双采-随机提示词.json` | Full image generation: batch seeds → prompt/resolution → batch bus → dual samplers → save |
+| `随机提示词-批量.json` | Prompt strings + per-channel display only, no sampling |
+
+The old `随机提示词润色.json` / `图片反推（自然语言）.json` / `随机提示词编织器-单次.json` /
+`anima批量自动打标.json` are removed — recover them from the `pre-4node-20261016` tag if needed.
 
 ---
 
@@ -305,16 +327,11 @@ Workflow files are located in the `workflows/` directory:
 | WizardLM-1.0-Uncensored-Llama2-13B | Q4_K_M | 7.4GB | [Download](https://hf-mirror.com/TheBloke/WizardLM-1.0-Uncensored-Llama2-13B-GGUF) |
 | Qwen2.5-14B-Instruct-abliterated | Q4_K_M | 8.4GB | [Download](https://hf-mirror.com/bartowski/Qwen2.5-Coder-14B-Instruct-abliterated-GGUF) |
 
-### Image Caption (Anima反推)
-
-| Model | Quant | Size | Download |
-|-------|-------|------|----------|
-| Huihui-Qwen3-VL-4B-Instruct-abliterated | Q6_K | 3.2GB | [Download](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-4B-Instruct-abliterated-GGUF) |
-| Huihui-Qwen3-VL-8B-Instruct-abliterated | Q6_K | 5.8GB | [Download](https://hf-mirror.com/huihui-ai/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF) |
-
 ### Cloud API Compatible Models
 
-These nodes support any OpenAI-compatible API provider (SiliconFlow, DeepSeek, OpenAI, etc.). Set `API地址` to the provider's base URL, provide an `API密钥`, and specify the `云端模型名`. The `enable_thinking` parameter is automatically omitted for cloud API calls.
+These nodes support any OpenAI-compatible API provider (SiliconFlow, DeepSeek, OpenAI, etc.).
+Set `API地址` to the provider's base URL, provide an `API密钥`, and specify the `云端模型名`.
+The `enable_thinking` parameter is automatically omitted for cloud API calls.
 
 ---
 
@@ -322,7 +339,7 @@ These nodes support any OpenAI-compatible API provider (SiliconFlow, DeepSeek, O
 
 - **Anima tag library** — 2,176 tags extracted from `anima提示词规则.md`, organized into 9 categories
 - **Danbooru categorized tags** — `categorized_tags.txt` (59,575 entries), sourced from [ComfyUI-Raffle](https://github.com/rainlizard/ComfyUI-Raffle)
-- **Raffle tag lists** — 4 tiered taglist files (~100K lines each), same source
+- **Raffle tag lists** — 4 tiered taglist files (~100K lines each, ~215 MB total; run `python download_tags.py` after a `git clone`), same source
 - **Artist index** — `Anima2B_Artist_Index_59k.txt` (~59K artists)
 
 ---
@@ -331,7 +348,7 @@ These nodes support any OpenAI-compatible API provider (SiliconFlow, DeepSeek, O
 
 | Dependency | Purpose | Required |
 |------------|---------|----------|
-| [LM Studio](https://lmstudio.ai/) | Local LLM inference server | NL enhancement / caption mode only |
+| [LM Studio](https://lmstudio.ai/) | Local LLM inference server | NL enhancement only |
 | [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | Prompt Line node (list preview) | **Mandatory** for batch pipelines (install as prerequisite) |
 
 ---

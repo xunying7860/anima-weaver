@@ -48,9 +48,10 @@ C 在宽松查询上反而更慢（6ms vs 0.02ms）。正确做法是**快路径
 条件。无解时明确返回空（不是静默违规）。
 
 倒排索引：CSR 紧凑格式（一个扁平 int32 数组 + 偏移表），
-实测（100000 行）构建 1.06 s / 58653 个唯一 tag / 4419807 条 posting /
-内存 17.7 MB（用 list[list[int]] 则要 140+ MB）。按文件缓存，
-后台线程预热（见 anima_weaver._start_warmup）。
+实测（100000 行）构建 ~0.9 s（P8-3 顺序批量读）/ 58653 个唯一 tag /
+4419807 条 posting / 内存 17.7 MB（用 list[list[int]] 则要 140+ MB）。
+按文件缓存；P8-1 起改惰性构建（_ensure_index）：只有真正用到严格
+过滤的那一次才付构建成本，默认场景启动零负担。
 
 附带：解析 1.90x（整行归一化后一次 split，替代逐 token strip/lower/
 replace），已在 20000 行真实数据上逐行比对，输出完全一致（0 处差异）。
@@ -58,6 +59,7 @@ replace），已在 20000 行真实数据上逐行比对，输出完全一致（
 
 from __future__ import annotations
 
+import os
 import random
 import threading
 from array import array
@@ -121,14 +123,16 @@ class InvertedIndex:
 
     # ── 构建 ─────────────────────────────────────────────────────
     @classmethod
-    def build(cls, read_line, n_lines: int) -> "InvertedIndex":
+    def build(cls, lines, n_lines: int) -> "InvertedIndex":
         """
-        read_line(i) -> str，由 tag_index.TagIndex 提供。
-        构建放在后台线程（build_sync），不要挡住 ComfyUI 启动。
+        lines: 原始文本行的可迭代对象。推荐传 tag_index.iter_lines()
+        （一次 open 顺序读，P8-3: 1.64 s → ~0.9 s，省掉 10 万次
+        open/close）；传 read_line(i) 生成器同样可用。
+        构建放在惰性触发（_ensure_index）里，不要挡住 ComfyUI 启动。
         """
         buckets: dict = {}
-        for i in range(n_lines):
-            for t in fast_parse_line(read_line(i)):
+        for i, line in enumerate(lines):
+            for t in fast_parse_line(line):
                 b = buckets.get(t)
                 if b is None:
                     buckets[t] = array("i", [i])
@@ -207,7 +211,7 @@ def build_sync(tag_index) -> InvertedIndex:
         hit = _inv_cache.get(key)
         if hit is not None:
             return hit
-    idx = InvertedIndex.build(tag_index.read_line, tag_index.count)
+    idx = InvertedIndex.build(tag_index.iter_lines(), tag_index.count)
     with _inv_lock:
         _inv_cache[key] = idx
     return idx
@@ -228,8 +232,66 @@ def warmup(tag_index) -> None:
 
 
 def get_index(tag_index):
-    """取该文件已就绪的倒排索引；未就绪返回 None（调用方走第 3 级兜底）。"""
+    """取该文件已就绪的倒排索引；未就绪返回 None（不触发构建）。"""
     return _inv_cache.get(tag_index.path)
+
+
+# ── P8-1: 惰性构建 ────────────────────────────────────────────────
+# 倒排索引只在 pick_line 第 2 级被用到，而第 2 级仅在「设了必含/排除
+# 且第 1 级拒绝采样失败」时触发。默认场景（不设过滤）根本不碰它 ——
+# 不再为永远用不到的索引付 4×1.64 s CPU + ~92 MB（每次启动）。
+_building: set = set()      # 正在构建的文件，防并发重复触发
+_build_failed: set = set()  # 构建失败过的文件（走 _scan_cached 降级）
+_build_lock = threading.Lock()
+
+
+def _ensure_index(tag_index):
+    """按需取索引；未就绪则同步构建一次（~1-2 s，之后缓存）。
+    返回 None = 本次拿不到（别的线程在建 / 曾构建失败），调用方降级。"""
+    hit = _inv_cache.get(tag_index.path)
+    if hit is not None:
+        return hit
+    if tag_index.path in _build_failed:
+        return None
+    with _build_lock:
+        hit = _inv_cache.get(tag_index.path)
+        if hit is not None:
+            return hit
+        if tag_index.path in _building:
+            return None
+        _building.add(tag_index.path)
+    try:
+        print("[Anima] 首次严格过滤，构建倒排索引（约 1~2 s，之后缓存）: "
+              f"{os.path.basename(tag_index.path)}")
+        return build_sync(tag_index)
+    except Exception as e:
+        _build_failed.add(tag_index.path)
+        print(f"[Anima] 倒排索引构建失败，改用带缓存全量扫描: {e}")
+        return None
+    finally:
+        with _build_lock:
+            _building.discard(tag_index.path)
+
+
+# ── P8-2/D5: 全量扫描只留「带同参数缓存」的降级路径 ──────────────
+# 旧行为（索引未就绪就每种子扫 0.77 s）在批量 256 种子下 = 196 s 假死。
+# 现在：索引惰性构建一定能成（一次性 1-2 s）；真失败才扫描，且同一
+# (文件, must, excl) 参数组合只扫一次。
+_scan_cache: dict = {}
+
+
+def _scan_cached(tag_index, rng, must, excl, ok) -> list:
+    key = (tag_index.path, tuple(sorted(must)), tuple(sorted(excl)))
+    hit = _scan_cache.get(key)
+    if hit is None:
+        hit = _scan(tag_index, random.Random(0), list(must), list(excl), ok)
+        _scan_cache[key] = hit
+        print("[Anima] 倒排索引不可用，已全量扫描 "
+              f"{tag_index.count} 行（结果已缓存）: "
+              f"{os.path.basename(tag_index.path)}")
+    if not hit:
+        return []
+    return hit[rng.randrange(len(hit))]
 
 
 def reset() -> None:
@@ -237,6 +299,9 @@ def reset() -> None:
     with _inv_lock:
         _inv_cache.clear()
     _inv_state["status"] = "idle"
+    _scan_cache.clear()
+    _build_failed.clear()
+    _building.clear()
 
 
 # ═════════════════════════════════════════════════════════════════
@@ -254,11 +319,12 @@ def pick_line(
     """
     抽一行满足条件的 tag 列表。返回 (tags, 来源)。
 
-    三级：
-      "reject"  拒绝采样命中，0.02 ms
-      "index"   倒排索引精确求解，2~7 ms
-      "scan"    全量扫描兜底，~1 s（仅索引未就绪且拒绝采样失败时）
-      "index-empty"  索引确认无解（真实结论，明确返回空列表）
+    三级（P8-1/P8-2 后）：
+      "reject"          拒绝采样命中，0.02 ms
+      "index"           倒排索引精确求解，2~7 ms（索引惰性构建一次 1~2 s）
+      "reject-relaxed"  索引正被别的线程构建，本次放宽过滤（罕见）
+      "scan"/"scan-empty" 索引构建失败后的带缓存降级扫描
+      "index-empty"     索引确认无解（真实结论，明确返回空列表）
 
     「必含/排除」严格满足：返回的非空结果一定包含 must 全部、
     不含 excl 任何一个 —— 0 静默违规。
@@ -296,8 +362,8 @@ def pick_line(
     if not filtered:
         return fallback, "reject"
 
-    # ── 第 2 级：倒排索引精确求解 ────────────────────────────────
-    inv = get_index(tag_index)
+    # ── 第 2 级：倒排索引精确求解（P8-1: 惰性构建，一次性 1~2 s）──
+    inv = _ensure_index(tag_index)
     if inv is not None:
         cand = inv.candidates(must, excl)
         if len(cand):
@@ -305,9 +371,13 @@ def pick_line(
             return fast_parse_line(tag_index.read_line(i)), "index"
         # 索引确认无解 —— 这是真实结论，不是失败
         return [], "index-empty"
-
-    # ── 第 3 级：全量扫描兜底（仅预热未完成时出现）────────────────
-    return _scan(tag_index, rng, must, excl, ok), "scan"
+    if tag_index.path in _build_failed:
+        # ── 第 3 级（降级）：带同参数缓存的全量扫描（P8-2/D5）────
+        got = _scan_cached(tag_index, rng, must, excl, ok)
+        return (got, "scan") if got else ([], "scan-empty")
+    # 别的线程正在构建 → 本次放宽过滤返回，绝不进全量扫描
+    # （旧行为：256 种子 × 0.77 s = 196 s 假死）
+    return fallback, "reject-relaxed"
 
 
 def _scan(tag_index, rng, must: Sequence, excl: Sequence, ok) -> list:
