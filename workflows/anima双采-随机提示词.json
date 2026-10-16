@@ -319,7 +319,7 @@
         "widget_ue_connectable": {}
       },
       "widgets_values": [
-        "qwen_3_06b_base-mxfp8.safetensors",
+        "qwen_3_06b_base.safetensors",
         "stable_diffusion",
         "default"
       ]
