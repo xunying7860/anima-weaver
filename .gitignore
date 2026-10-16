@@ -5,3 +5,7 @@ __pycache__/
 
 # ComfyUI 缓存
 .tracking
+
+# 运行时生成的标签索引缓存（tag_index / tag_extract 自动重建，勿入库）
+tags/*.idx
+tags/*.idx.v2

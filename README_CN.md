@@ -12,15 +12,12 @@
 
 | 节点 | 分类 | 用途 |
 |------|------|------|
-| **Anima随机提示词** | Anima Weaver | 主节点：组装标签 → NL → 完整提示词 |
-| **Anima反推** | Anima Weaver | VL 模型图像反推 / 润色扩写 |
+| **Anima随机提示词** | Anima Weaver | 主节点：组装标签 → NL → 完整提示词（含槽位/过滤/批量分组控件，6 组可折叠） |
+| **Anima反推** | Anima Weaver | VL 模型图像反推 / 润色扩写（可选输出格式：多行/JSON/逗号） |
 | **随机分辨率选择器** | Anima Weaver | 随机生成宽高比/分辨率文本 |
-| **提示词槽位** | Anima Weaver | 手动输入标签槽位 |
-| **底部控制** | Anima Weaver | Raffle标签过滤控制 |
 | **画师Seed** | Anima Weaver / Seed | 画师选择（随机/无/固定） |
-| **批量种子** | Anima Weaver / Seed | 生成 N 个种子（上限 4096） |
-| **同步串行** | Anima Weaver / Batch | 7 路输入合并为 JSON 多行输出 |
-| **串行拆分** | Anima Weaver / Batch | JSON 行拆回 7 路（INT + STRING） |
+| **批量种子** | Anima Weaver / Seed | 生成 N 个种子（上限 4096），供跨节点对齐共用；主节点单独批量可用「批量数量」控件替代 |
+| **Anima批量总线** | Anima Weaver / Batch | 合并/拆分二合一：多路串 ↔ JSON 行（原「同步串行」+「串行拆分」） |
 | **Anima加载图像** | Anima Weaver | 从文件夹加载图片列表 → IMAGE list + 遮罩 + 文件路径 |
 | **Anima列表转多行** | Anima Weaver | 将批次文本项合并为多行 STRING（INPUT_IS_LIST） |
 

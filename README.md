@@ -12,15 +12,12 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 
 | Node | Category | Description |
 |------|----------|-------------|
-| **Anima随机提示词** | Anima Weaver | Core node: assembles tags → NL → complete prompt |
-| **Anima反推** | Anima Weaver | VL model-based image captioning / prompt refinement |
+| **Anima随机提示词** | Anima Weaver | Core node: assembles tags → NL → complete prompt (slot/filter/batch widgets in 6 collapsible groups) |
+| **Anima反推** | Anima Weaver | VL model-based image captioning / prompt refinement (output format: multiline / JSON / comma) |
 | **随机分辨率选择器** | Anima Weaver | Random aspect ratio & resolution generator |
-| **提示词槽位** | Anima Weaver | Manual tag input slots |
-| **底部控制** | Anima Weaver | Raffle tag filtering controls |
 | **画师Seed** | Anima Weaver / Seed | Artist selector (random / none / fixed) |
-| **批量种子** | Anima Weaver / Seed | N-seed generator for batch pipelines |
-| **同步串行** | Anima Weaver / Batch | Merges 7 channels into JSON-per-line output |
-| **串行拆分** | Anima Weaver / Batch | Splits one JSON line back to 7 typed outputs (INT + STRING) |
+| **批量种子** | Anima Weaver / Seed | N-seed generator shared across pipeline nodes; the core node's own batching can use its built-in 批量数量 widget instead |
+| **Anima批量总线** | Anima Weaver / Batch | Merge/split in one node: channels ↔ JSON-per-line (replaces 同步串行 + 串行拆分) |
 | **Anima加载图像** | Anima Weaver | Load images from folder → IMAGE list + MASK + file paths |
 | **Anima列表转多行** | Anima Weaver | Merge batch text items into multiline STRING (INPUT_IS_LIST) |
 

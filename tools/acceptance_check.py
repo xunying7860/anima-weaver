@@ -81,6 +81,14 @@ def check_undefined() -> None:
                                 best = n
                 if best is None:
                     continue
+                # 修复误报：**kwargs 形参（如 describe(self, **kwargs)）本身就是
+                # 合法绑定，旧版只认 Name/Store 会把全部 kwargs.get 判成未定义。
+                params = [
+                    x for x in ast.walk(best)
+                    if isinstance(x, ast.arg) and x.arg == name
+                ]
+                if params:
+                    continue
                 assigns = [
                     x.lineno
                     for x in ast.walk(best)
