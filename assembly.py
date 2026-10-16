@@ -10,9 +10,9 @@ from __future__ import annotations
 from typing import Optional
 
 try:
-    from .rules import check_conflicts, check_detail_overload, CONFLICT_PAIRS
+    from .rules import check_conflicts, check_detail_overload
 except ImportError:
-    from rules import check_conflicts, check_detail_overload, CONFLICT_PAIRS
+    from rules import check_conflicts, check_detail_overload
 
 # ── Slot constants ─────────────────────────────────────────────────
 
