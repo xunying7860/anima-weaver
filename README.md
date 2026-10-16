@@ -69,14 +69,11 @@ A ComfyUI custom node package for structured AI image prompt assembly. Supports 
 
 ### Anima随机提示词
 
-Three operation modes (option values now use the official Chinese labels; the old English
-values `manual`/`random`/`hybrid` are still accepted and mapped automatically):
-
-| Mode | Description |
-|------|-------------|
-| `手动` (manual) | User fills 8 tag slots manually, output ordered by Anima slot specification |
-| `随机` (random) | Randomly samples ~400K Danbooru tag entries, auto-classifies into slots |
-| `混合` (hybrid) | Raffle fills slots + manual tags appended; conflicting manual tags take precedence |
+Fixed behaviour (the 模式 dropdown was removed on 2026-10-16; the three former modes
+collapsed into one): **manual slots + raffle (≈400K Danbooru tag entries) are always
+merged**, conflicting manual tags take precedence. Whether the LLM runs is decided solely
+by “LLM设置 ▸ 自然语言来源” (手动 / LM Studio); with **Tag Ratio = 1.0** the LLM is skipped
+entirely (pure tags).
 
 **Tag Ratio** slider controls the tag-to-NL proportion (0.0 = pure NL ↔ 1.0 = pure tags).
 
@@ -102,7 +99,7 @@ In batch mode a connected `种子串` takes over (the built-in seed steps aside)
 
 ```
 [top-level, always visible]
-  模式 · 标签比例 · 随机种子 (built-in widget, randomize / increment)
+  标签比例 · 随机种子 (built-in widget, randomize / increment)
 ▸ 标签槽位            ← top-level group
     人数/身份 外貌 服装 姿势/动作 表情 镜头 场景/环境 细节/氛围 自然语言描述
 ▸ 过滤控制            ← top-level group
@@ -148,8 +145,7 @@ output** anymore (the old 画师Seed node is removed).
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| 模式 | COMBO | 手动 / 随机 / 混合 (old English values auto-mapped) |
-| 标签比例 | FLOAT | Tag-to-NL ratio (0.0–1.0) |
+| 标签比例 | FLOAT | Tag-to-NL ratio (0.0–1.0; LLM skipped at 1.0) |
 | 随机种子 | INT | Built-in seed: 0=random each run, >0=deterministic; batch mode steps aside for a connected 种子串, or acts as parent seed when only 批量数量 is set |
 | 自然语言来源 | COMBO | 手动 / LM Studio (old English values auto-mapped) |
 | 强制详细自然语言 | BOOLEAN | Force NL to be very detailed (512 tokens) |

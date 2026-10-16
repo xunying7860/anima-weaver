@@ -205,6 +205,11 @@ def migrate(path):
                 if len(out) == 46 and isinstance(out[25], str):
                     out = (out[0:22] + [out[37], out[38], out[39]] + [out[22]]
                            + out[23:33] + [out[33]] + out[34:37] + out[40:46])
+                # 2026-10-16 「模式」控件已删：去掉首位模式值（46→45，其余前移）。
+                # 幂等标记：v[0] 是模式字符串才删；迁移后 v[0]=标签比例(float) 不再触发
+                if len(out) == 46 and isinstance(out[0], str) and out[0] in (
+                        "手动", "随机", "混合", "manual", "random", "hybrid"):
+                    out = out[1:]
                 n["widgets_values"] = out
         # 合并/拆分的 widget 已在 convert_bus 里归一成三窗口参数
 

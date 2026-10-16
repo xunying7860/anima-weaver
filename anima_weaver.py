@@ -204,14 +204,13 @@ class AnimaWeaver:
         return {
             # ══ 一级：常驻，永远可见 ══════════════════════════════════
             "required": {
-                # 官方用语：选项值纯中文（用户反馈：下拉里旧英文值与中文重复）。
-                # 旧英文值由 compose 入口的别名表兼容读取；保存过旧值的工作流
-                # 需跑 tools/migrate_workflows.py 改写，否则服务端 COMBO 校验拒收
-                "模式": (["手动", "随机", "混合"], {"default": "混合",
-                                  "tooltip": "手动=只用槽位；随机=只抽签；混合=抽签+槽位叠加"}),
+                # 2026-10-16 用户修订：删除「模式」下拉 —— 行为固定为原「混合」
+                # （固定标签槽 + 抽签始终合并）；LLM 是否触发只看下方
+                # 「LLM设置 ▸ 自然语言来源」。旧工作流的 widgets_values 由
+                # tools/migrate_workflows.py 去掉首位模式值（46→45 项）。
                 "标签比例": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0,
                                     "step": 0.05,
-                                    "tooltip": "标签与自然语言混合比例：1.0=纯标签，0=纯自然语言"}),
+                                    "tooltip": "标签与自然语言混合比例：1.0=纯标签（不调LLM），0=纯自然语言"}),
                 # 内置随机种子顶替原「场景类型」的 widget 下标（index 2），
                 # 旧工作流 widgets_values 只需重置这一个值即可逐位对齐（方案 §4.1）
                 "随机种子": ("INT", {
@@ -260,7 +259,7 @@ class AnimaWeaver:
                 # ━━ 组3 LLM 设置（「高级」的二级子组）━━━━━━━━━━━━━━━━━━
                 "▸ LLM设置": ("BOOLEAN", {"default": False}),
                 "自然语言来源": (["手动", "LM Studio"], {"default": "手动",
-                                          "tooltip": "手动=用「自然语言描述」槽文本；LM Studio=调本地/云端模型生成"}),
+                                          "tooltip": "是否启用LLM：手动=用「自然语言描述」槽文本；LM Studio=调本地/云端模型生成（标签比例=1.0 时 LLM 结果不会混入）"}),
                 "强制详细自然语言": ("BOOLEAN", {"default": False,
                                           "tooltip": "开启后 NL 描述至少 10 句，非常详细（使用 512 tokens）"}),
                 "模型": (model_list,),
@@ -358,8 +357,8 @@ class AnimaWeaver:
         Main node workflow. Returns (prompt, debug)；批量模式把各条提示词
         拼成多行串放进第一个输出槽（画师/反推不再单独成串）。
         """
-        # 官方用语归一化：新值为中文，旧工作流保存的英文值自动映射
-        mode = _norm_mode(kwargs.get("模式", "混合"))
+        # 2026-10-16：模式控件已删 —— 固定按原「混合」执行（槽位+抽签始终合并）
+        mode = "混合"
         kwargs["模式"] = mode
         tag_ratio = float(kwargs.get("标签比例", 0.6))
         nl_source = _norm_nl_source(kwargs.get("自然语言来源", "手动"))
@@ -562,7 +561,11 @@ class AnimaWeaver:
 
         # ── Preload model once before parallel NL generation ──
         _model_preloaded = False
-        if nl_source == "LM Studio" and not kwargs.get("API密钥", ""):
+        try:
+            _ratio_ok = float(kwargs.get("标签比例", 0.6)) < 1.0
+        except (TypeError, ValueError):
+            _ratio_ok = True
+        if nl_source == "LM Studio" and not kwargs.get("API密钥", "") and _ratio_ok:
             lm_model_name = str(kwargs.get("模型", ""))
             if lm_model_name and lm_model_name not in ("(no models found)", "(检测中…)"):
                 try:
@@ -841,10 +844,19 @@ class AnimaWeaver:
         """
         Obtain the natural-language portion of the prompt.
 
-        If ``nl_source == "lm_studio"`` and a model is configured, try
+        If ``nl_source == "LM Studio"`` and a model is configured, try
         to generate text via the LM Studio HTTP API (local or cloud).
         Otherwise return the manual NL text.
+
+        2026-10-16 用户修订：模式控件已删——是否调 LLM 只看
+        「自然语言来源」：LM Studio=调模型生成；手动=只取「自然语言描述」
+        槽文本。「标签比例=1.0」= 纯标签，直接跳过 LLM（连推理都不发）。
         """
+        try:
+            if float(kwargs.get("标签比例", 0.6)) >= 1.0:
+                return ""
+        except (TypeError, ValueError):
+            pass
         if nl_source == "LM Studio" and tag_prompt.strip():
             lm_model = kwargs.get("模型", "")
             if lm_model and lm_model not in ("(no models found)", "(检测中…)"):
