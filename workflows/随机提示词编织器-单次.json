@@ -60,97 +60,6 @@
       ]
     },
     {
-      "id": 118,
-      "type": "BottomControls",
-      "pos": [
-        -246.26231559175122,
-        6128.937056460623
-      ],
-      "size": [
-        400,
-        346
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "底部数据",
-          "type": "STRING",
-          "links": [
-            268
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "xunying7860/anima-weaver",
-        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "BottomControls",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "",
-        "1girl",
-        "",
-        "",
-        true,
-        false,
-        false,
-        false
-      ]
-    },
-    {
-      "id": 119,
-      "type": "PromptSlots",
-      "pos": [
-        180.2176681236604,
-        6110.920134106362
-      ],
-      "size": [
-        400,
-        520.0000000000001
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "槽位数据",
-          "type": "STRING",
-          "links": [
-            267
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "xunying7860/anima-weaver",
-        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "PromptSlots",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "1boy, solo,",
-        "green eyes,",
-        "",
-        "",
-        "shy,",
-        "from below,",
-        "class room,",
-        "",
-        ""
-      ]
-    },
-    {
       "id": 133,
       "type": "easy seed",
       "pos": [
@@ -227,13 +136,13 @@
           "name": "槽位数据",
           "shape": 7,
           "type": "STRING",
-          "link": 267
+          "link": null
         },
         {
           "name": "底部数据",
           "shape": 7,
           "type": "STRING",
-          "link": 268
+          "link": null
         },
         {
           "name": "分辨率",
@@ -322,17 +231,46 @@
         "hybrid",
         0.6,
         "solo_display",
-        "lm_studio",
-        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        false,
+        "1boy, solo,",
+        "green eyes,",
+        "",
+        "",
+        "shy,",
+        "from below,",
+        "class room,",
+        "",
+        "",
+        false,
+        "",
+        "1girl",
+        "",
+        "",
         true,
+        false,
+        false,
+        false,
+        false,
+        "lm_studio",
+        true,
+        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        "http://localhost:1234/v1",
         "",
         "deepseek-chat",
         4096,
-        "http://localhost:1234/v1",
         false,
         0,
+        false,
+        false,
         0,
-        true
+        4,
+        4,
+        false,
+        0,
+        true,
+        false,
+        false,
+        false
       ]
     },
     {
@@ -459,22 +397,6 @@
     }
   ],
   "links": [
-    [
-      267,
-      119,
-      0,
-      120,
-      1,
-      "STRING"
-    ],
-    [
-      268,
-      118,
-      0,
-      120,
-      2,
-      "STRING"
-    ],
     [
       271,
       113,

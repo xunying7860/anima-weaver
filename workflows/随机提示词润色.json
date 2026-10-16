@@ -536,26 +536,74 @@
     },
     {
       "id": 124,
-      "type": "PassthroughSplit",
+      "type": "AnimaBatchBus",
       "pos": [
         3058.971560973215,
         5715.863522705728
       ],
       "size": [
-        140,
-        146
+        300.0,
+        300.0
       ],
       "flags": {},
       "order": 9,
       "mode": 0,
       "inputs": [
         {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "宽度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "高度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
           "name": "JSON行",
           "type": "STRING",
-          "link": 278
+          "link": 278,
+          "shape": 7
         }
       ],
       "outputs": [
+        {
+          "name": "合并输出",
+          "type": "STRING",
+          "links": null
+        },
         {
           "name": "种子",
           "type": "INT",
@@ -574,17 +622,17 @@
           "links": []
         },
         {
-          "name": "分辨率",
-          "type": "STRING",
-          "links": [
-            288
-          ]
-        },
-        {
           "name": "反推",
           "type": "STRING",
           "links": [
             299
+          ]
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": [
+            288
           ]
         },
         {
@@ -605,14 +653,19 @@
       "properties": {
         "aux_id": "xunying7860/anima-weaver",
         "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "PassthroughSplit",
+        "Node name for S&R": "AnimaBatchBus",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
         }
       },
-      "widgets_values": []
+      "widgets_values": [
+        "拆分",
+        0,
+        1000,
+        true
+      ]
     },
     {
       "id": 128,
@@ -663,14 +716,14 @@
     },
     {
       "id": 112,
-      "type": "SyncPassthrough",
+      "type": "AnimaBatchBus",
       "pos": [
         1321.309736128119,
         5678.999770234797
       ],
       "size": [
-        278.685546875,
-        226
+        300.0,
+        300.0
       ],
       "flags": {},
       "order": 5,
@@ -717,6 +770,12 @@
           "shape": 7,
           "type": "STRING",
           "link": 257
+        },
+        {
+          "name": "JSON行",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
         }
       ],
       "outputs": [
@@ -727,12 +786,47 @@
             273,
             276
           ]
+        },
+        {
+          "name": "种子",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "提示词",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "画师",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "反推",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": null
         }
       ],
       "properties": {
         "aux_id": "xunying7860/anima-weaver",
         "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "SyncPassthrough",
+        "Node name for S&R": "AnimaBatchBus",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
@@ -740,6 +834,7 @@
         }
       },
       "widgets_values": [
+        "合并",
         0,
         1000,
         true
@@ -1006,13 +1101,13 @@
       121,
       0,
       124,
-      0,
+      7,
       "STRING"
     ],
     [
       285,
       124,
-      0,
+      1,
       125,
       0,
       "INT"
@@ -1020,7 +1115,7 @@
     [
       288,
       124,
-      3,
+      5,
       128,
       0,
       "STRING"
@@ -1028,7 +1123,7 @@
     [
       289,
       124,
-      5,
+      6,
       129,
       0,
       "INT"
@@ -1036,7 +1131,7 @@
     [
       290,
       124,
-      6,
+      7,
       130,
       0,
       "INT"

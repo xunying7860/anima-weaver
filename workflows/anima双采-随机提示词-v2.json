@@ -1306,14 +1306,14 @@
     },
     {
       "id": 304,
-      "type": "SyncPassthrough",
+      "type": "AnimaBatchBus",
       "pos": [
         486.3449037335791,
         5427.786613596031
       ],
       "size": [
-        278.685546875,
-        226
+        300.0,
+        300.0
       ],
       "flags": {},
       "order": 22,
@@ -1360,6 +1360,12 @@
           "shape": 7,
           "type": "STRING",
           "link": 422
+        },
+        {
+          "name": "JSON行",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
         }
       ],
       "outputs": [
@@ -1370,12 +1376,47 @@
             423,
             433
           ]
+        },
+        {
+          "name": "种子",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "提示词",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "画师",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "反推",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "分辨率",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "宽度",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "高度",
+          "type": "INT",
+          "links": null
         }
       ],
       "properties": {
         "aux_id": "xunying7860/anima-weaver",
         "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "SyncPassthrough",
+        "Node name for S&R": "AnimaBatchBus",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
@@ -1383,6 +1424,7 @@
         }
       },
       "widgets_values": [
+        "合并",
         0,
         1000,
         true
@@ -1642,97 +1684,6 @@
       ]
     },
     {
-      "id": 311,
-      "type": "BottomControls",
-      "pos": [
-        -748.8120882985028,
-        5951.1857914655675
-      ],
-      "size": [
-        400,
-        346
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "底部数据",
-          "type": "STRING",
-          "links": [
-            429
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "xunying7860/anima-weaver",
-        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "BottomControls",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "",
-        "1girl",
-        "",
-        "",
-        true,
-        false,
-        false,
-        false
-      ]
-    },
-    {
-      "id": 312,
-      "type": "PromptSlots",
-      "pos": [
-        -322.3321045830911,
-        5933.168869111306
-      ],
-      "size": [
-        400,
-        520.0000000000001
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "槽位数据",
-          "type": "STRING",
-          "links": [
-            428
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "xunying7860/anima-weaver",
-        "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "PromptSlots",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "1boy, solo,",
-        "green eyes,",
-        "",
-        "",
-        "shy,",
-        "from below,",
-        "class room,",
-        "",
-        ""
-      ]
-    },
-    {
       "id": 313,
       "type": "AnimaWeaver",
       "pos": [
@@ -1757,13 +1708,13 @@
           "name": "槽位数据",
           "shape": 7,
           "type": "STRING",
-          "link": 428
+          "link": null
         },
         {
           "name": "底部数据",
           "shape": 7,
           "type": "STRING",
-          "link": 429
+          "link": null
         },
         {
           "name": "分辨率",
@@ -1846,17 +1797,46 @@
         "hybrid",
         0.6,
         "solo_display",
-        "lm_studio",
-        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        false,
+        "1boy, solo,",
+        "green eyes,",
+        "",
+        "",
+        "shy,",
+        "from below,",
+        "class room,",
+        "",
+        "",
+        false,
+        "",
+        "1girl",
+        "",
+        "",
         true,
+        false,
+        false,
+        false,
+        false,
+        "lm_studio",
+        true,
+        "l3.2-rogue-creative-instruct-uncensored-abliterated-7b",
+        "http://localhost:1234/v1",
         "",
         "deepseek-chat",
         4096,
-        "http://localhost:1234/v1",
         false,
         0,
+        false,
+        false,
         0,
-        true
+        4,
+        4,
+        false,
+        0,
+        true,
+        false,
+        false,
+        false
       ]
     },
     {
@@ -2521,26 +2501,74 @@
     },
     {
       "id": 307,
-      "type": "PassthroughSplit",
+      "type": "AnimaBatchBus",
       "pos": [
         1715.47345632335,
         5290.6613131624135
       ],
       "size": [
-        140,
-        146
+        300.0,
+        300.0
       ],
       "flags": {},
       "order": 26,
       "mode": 0,
       "inputs": [
         {
+          "name": "种子串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "提示词串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "画师串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "分辨率串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "反推串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "宽度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "高度串",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
           "name": "JSON行",
           "type": "STRING",
-          "link": 425
+          "link": 425,
+          "shape": 7
         }
       ],
       "outputs": [
+        {
+          "name": "合并输出",
+          "type": "STRING",
+          "links": null
+        },
         {
           "name": "种子",
           "type": "INT",
@@ -2565,16 +2593,16 @@
           ]
         },
         {
+          "name": "反推",
+          "type": "STRING",
+          "links": null
+        },
+        {
           "name": "分辨率",
           "type": "STRING",
           "links": [
             413
           ]
-        },
-        {
-          "name": "反推",
-          "type": "STRING",
-          "links": null
         },
         {
           "name": "宽度",
@@ -2596,14 +2624,19 @@
       "properties": {
         "aux_id": "xunying7860/anima-weaver",
         "ver": "3e0da17aefa337a27948fd45a923b59b580acc15",
-        "Node name for S&R": "PassthroughSplit",
+        "Node name for S&R": "AnimaBatchBus",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
         }
       },
-      "widgets_values": []
+      "widgets_values": [
+        "拆分",
+        0,
+        1000,
+        true
+      ]
     }
   ],
   "links": [
@@ -2810,7 +2843,7 @@
     [
       411,
       307,
-      1,
+      2,
       298,
       0,
       "STRING"
@@ -2818,7 +2851,7 @@
     [
       412,
       307,
-      2,
+      3,
       299,
       0,
       "STRING"
@@ -2826,7 +2859,7 @@
     [
       413,
       307,
-      3,
+      5,
       300,
       0,
       "STRING"
@@ -2834,7 +2867,7 @@
     [
       414,
       307,
-      5,
+      6,
       301,
       0,
       "INT"
@@ -2842,7 +2875,7 @@
     [
       415,
       307,
-      6,
+      7,
       302,
       0,
       "INT"
@@ -2924,13 +2957,13 @@
       305,
       0,
       307,
-      0,
+      7,
       "STRING"
     ],
     [
       426,
       307,
-      0,
+      1,
       308,
       0,
       "INT"
@@ -2941,22 +2974,6 @@
       0,
       310,
       1,
-      "STRING"
-    ],
-    [
-      428,
-      312,
-      0,
-      313,
-      1,
-      "STRING"
-    ],
-    [
-      429,
-      311,
-      0,
-      313,
-      2,
       "STRING"
     ],
     [
@@ -2994,7 +3011,7 @@
     [
       434,
       307,
-      0,
+      1,
       248,
       5,
       "INT"
@@ -3002,7 +3019,7 @@
     [
       437,
       307,
-      5,
+      6,
       36,
       0,
       "INT"
@@ -3010,7 +3027,7 @@
     [
       438,
       307,
-      6,
+      7,
       36,
       1,
       "INT"
@@ -3018,7 +3035,7 @@
     [
       439,
       307,
-      1,
+      2,
       280,
       1,
       "STRING"
