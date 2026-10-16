@@ -314,6 +314,11 @@ Workflow files are located in the `workflows/` directory (6 → 2 in this releas
 The old `随机提示词润色.json` / `图片反推（自然语言）.json` / `随机提示词编织器-单次.json` /
 `anima批量自动打标.json` are removed — recover them from the `pre-4node-20261016` tag if needed.
 
+> Dependency note: the decorative helper nodes in `anima双采-随机提示词.json` come from
+> common third-party packs (ComfyUI-Custom-Scripts: Text Multiline / Int / ShowText;
+> ComfyRoll: CR Text). Missing packs only red-mark those nodes — the four Anima nodes
+> themselves have zero third-party dependencies.
+
 ---
 
 ## Recommended Models

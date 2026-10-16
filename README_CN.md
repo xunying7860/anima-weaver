@@ -289,6 +289,10 @@ Anima批量总线(合并) ──JSON行──→ 提示词行(easy-use) ──�
 旧版 `随机提示词润色.json` / `图片反推（自然语言）.json` / `随机提示词编织器-单次.json` /
 `anima批量自动打标.json` 已移除，如需可在 `pre-4node-20261016` tag 找回。
 
+> 依赖提示：`anima双采-随机提示词.json` 的辅助装饰节点用到 ComfyUI-Custom-Scripts
+> （Text Multiline / Int / ShowText）、ComfyRoll（CR Text）等常见第三方包；缺包时这些
+> 节点报红但不影响 Anima 四节点链路（Anima 节点本身零第三方依赖）。
+
 ## 推荐模型
 
 ### NL 增强（Anima随机提示词）
