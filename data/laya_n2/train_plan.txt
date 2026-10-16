@@ -1,0 +1,32 @@
+
+# 1. 装 SDK
+pip install laya          # 官方有 Kaggle 2xT4 免费 notebook，约 4~5 小时
+
+# 2. 生成数据（本模块）
+train, val = build_dataset(idx, cat_map, slot_map, n_pairs=8000)
+# ⚠ 必须先用 META_TAGS 黑名单过滤，否则训练数据是脏的
+
+# 3. 微调（RLCD，严格评分规则）
+#    官方 notebook 的流程：load base -> 喂 typed questions -> 拟合温度
+#    温度必须按 (题型 × 选项数) 各自拟合，clamp [0.5, 5.0]
+
+# 4. 验证 —— 两个验证集都要看
+#    验证A: 同分布 held-out（看有没有拟合）
+#    验证B: 组合式抽样真实产出 + 未参与训练的真实行（看是不是在记忆）
+#
+#    A 高 B 低 = 在记忆，白训了，回去改负例构造
+
+# 5. 拟合温度后再定阈值（原始 ECE 0.466，校准后 0.081）
+#    不校准就定阈值 = 瞎猜
+
+
+上线前逐条确认：
+
+[ ] 垃圾标签黑名单已跑（5.3%），训练数据里没有 commentary/absurdres
+[ ] 标签上限已应用（中位 45 → cap 60），否则 512 token 塞不下
+[ ] 负例用的是 N2 温和扰动，不是 N1 跨行混拼
+[ ] 验证B（新组合）上的表现达标，不只是验证A
+[ ] 温度已按题型拟合，不是用默认 ECE 0.466 的概率
+[ ] 门控用 confidence，不是 action.act_probability（后者 AUROC 0.30）
+[ ] 连续 N 次不合格有兜底（退回整行抽取），不会让节点出不来结果
+
