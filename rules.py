@@ -84,29 +84,6 @@ CLOTHING_KEYWORDS = frozenset(
     ]
 )
 
-# ── Body-part grouping for detail overload ─────────────────────────
-
-BODY_PART_TAGS = {
-    "eyes": ["eyes", "pupils", "iris", "eyelashes", "eyebrow", "eyelid",
-             "heart-shaped pupils", "rolling eyes", "closed eyes",
-             "looking at viewer", "looking away", "looking to side",
-             "looking down", "looking up", "ahegao"],
-    "mouth": ["mouth", "lips", "teeth", "tongue", "open mouth",
-              "closed mouth", "smile", "grin", "frown", "pout",
-              "clenched teeth", "tongue out", "drool", "saliva",
-              "open mouth", "clenched teeth"],
-    "hands": ["hands", "fingers", "palm", "fist", "spread fingers",
-              "clenched fist", "pointing", "hand on cheek",
-              "hand on hip", "hand on head", "hand in hair",
-              "hand under chin", "holding hands"],
-    "feet": ["feet", "toes", "soles", "barefoot", "spread toes",
-             "toe scrunch", "arched foot", "foot focus"],
-    "legs": ["legs", "thighs", "knees", "spread legs", "legs together",
-             "crossed legs", "one leg up", "leg lift", "thigh gap",
-             "wide spread legs", "legs up"],
-    "chest": ["breasts", "chest", "bouncing breasts", "breasts squeeze together",
-              "cleavage", "nipples", "areolae", "pecs"],
-}
 
 # ═════════════════════════════════════════════════════════════════
 # P6 分层冲突模型
@@ -402,44 +379,3 @@ def check_conflicts(tags: list, manual_tags: set = None,
 
     return conflicts
 
-
-# ── Detail-overload checking ───────────────────────────────────────
-
-def check_detail_overload(tags: list, max_per_body_part: int = 2) -> list:
-    """
-    Check whether the same body part has too many detail tags.
-
-    Parameters
-    ----------
-    tags : list[str]
-        Raw tag strings.
-    max_per_body_part : int
-        Maximum number of tags allowed per body-part group.
-
-    Returns
-    -------
-    list[str]
-        Warning messages (e.g. "eyes: 3 tags (>2)").
-    """
-    if not tags:
-        return []
-
-    norm_tags = _normalise_list(tags)
-    warnings: list = []
-
-    for part, part_keywords in BODY_PART_TAGS.items():
-        part_norm_keywords = _normalise_list(part_keywords)
-        count = 0
-        found: list = []
-
-        for norm_t in norm_tags:
-            if norm_t in part_norm_keywords:
-                count += 1
-                found.append(norm_t)
-
-        if count > max_per_body_part:
-            warnings.append(
-                f"{part}: {count} tags (>{max_per_body_part}): {', '.join(found)}"
-            )
-
-    return warnings
