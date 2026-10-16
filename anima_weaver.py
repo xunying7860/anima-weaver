@@ -248,7 +248,16 @@ class AnimaWeaver:
                 "敏感标签": ("BOOLEAN", {"default": True}),
                 "露骨标签": ("BOOLEAN", {"default": True}),
 
-                # ━━ 组3 LLM 设置 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                # ━━ 组5 高级（一级组；LLM设置/批量/laya判定/系统提示词 是它的
+                # 二级子组 —— dict 顺序=前端显示顺序，子组必须排在「▸ 高级」之后，
+                # 展开高级后它们才出现在高级的分类下面）━━━━━━━━━━━━━━━━━━
+                "▸ 高级": ("BOOLEAN", {"default": False}),
+                "画师种子": ("INT", {"default": 0, "min": -1, "max": 0x7FFFFFFF,
+                                  "tooltip": "-1=随机画师（按种子派生可复现）；0=无画师；n=第 n 号画师。画师名直接拼进提示词末尾"}),
+                "冲突检查": ("BOOLEAN", {"default": True,
+                                    "tooltip": "开启后自动删除互相矛盾的标签（手动槽位与必含标签受保护）"}),
+
+                # ━━ 组3 LLM 设置（「高级」的二级子组）━━━━━━━━━━━━━━━━━━
                 "▸ LLM设置": ("BOOLEAN", {"default": False}),
                 "自然语言来源": (["手动", "LM Studio"], {"default": "手动",
                                           "tooltip": "手动=用「自然语言描述」槽文本；LM Studio=调本地/云端模型生成"}),
@@ -268,7 +277,7 @@ class AnimaWeaver:
                                      "tooltip": "0=自动（普通256/详细512），256~1080=手动设置最大 token 数"}),
                 "生成后卸载": ("BOOLEAN", {"default": False}),
 
-                # ━━ 组4 批量（吸收「批量种子」节点的主节点内部等价）━━━━━
+                # ━━ 组4 批量（「高级」的二级子组）━━━━━━━━━━━━━━━━━━━━━━
                 "▸ 批量": ("BOOLEAN", {"default": False}),
                 "批量数量": ("INT", {"default": 0, "min": 0, "max": 4096, "step": 1,
                                   "tooltip": ">0 且未接「种子串」时，由内置「随机种子」作父种子派生 N 个子种子进入批量模式（整批可复现）"}),
@@ -279,13 +288,6 @@ class AnimaWeaver:
                 "种子串": ("STRING", {"forceInput": True, "multiline": True,
                                    "tooltip": "接入批量种子串（每行一个种子），开启批量模式；非空时内置「随机种子」让位"}),
 
-                # ━━ 组5 高级 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                "▸ 高级": ("BOOLEAN", {"default": False}),
-                "画师种子": ("INT", {"default": 0, "min": -1, "max": 0x7FFFFFFF,
-                                  "tooltip": "-1=随机画师（按种子派生可复现）；0=无画师；n=第 n 号画师。画师名直接拼进提示词末尾"}),
-                "冲突检查": ("BOOLEAN", {"default": True,
-                                    "tooltip": "开启后自动删除互相矛盾的标签（手动槽位与必含标签受保护）"}),
-
                 # ━━ 组6 laya 判定（质量门，默认关）━━━━━━━━━━━━━━━━━━━━
                 "▸ laya判定": ("BOOLEAN", {"default": False}),
                 "启用laya门控": ("BOOLEAN", {"default": False,
@@ -293,8 +295,9 @@ class AnimaWeaver:
                 "过滤质量标签": ("BOOLEAN", {"default": False,
                                         "tooltip": "剔除 masterpiece/highres 等质量标签（有人刻意保留这类标签，故默认关）"}),
 
-                # ━━ 组7 系统提示词（原 forceInput 端口 → 可手填槽位；追加在
-                # 序列末尾，保证旧 widgets_values 前 43 项逐位不动，方案 §4.1）━━
+                # ━━ 组7 系统提示词（「高级」的二级子组；原 forceInput 端口
+                # → 可手填槽位。2026-10-16 起子组挪到「▸ 高级」之后显示，
+                # 旧 widgets_values 由 tools/migrate_workflows.py 按标记置换）━━
                 "▸ 系统提示词": ("BOOLEAN", {"default": False,
                                         "tooltip": "组开关：展开系统提示词编辑框"}),
                 "系统提示词": ("STRING", {"multiline": True, "default": "",

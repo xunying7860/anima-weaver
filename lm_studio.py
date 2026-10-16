@@ -240,57 +240,61 @@ _MODEL_PLACEHOLDER = "(检测中…)"
 
 def get_models() -> list[str]:
     """
-    非阻塞版模型列表查询（03 补丁）。函数签名与返回类型 ``list[str]`` 保持不变，
-    因此 anima_weaver.py:79 / caption.py 无需改动即可受益。
+    模型列表查询（2026-10-16 二次修复：首取改同步）。
 
-    - 命中缓存（5 分钟内）：直接返回缓存
-    - 未命中 / 已过期：立刻返回占位符（或上次的结果），后台线程去刷新
-    任何情况下都不会阻塞调用方。
+    教训：纯非阻塞首取会翻车 —— 前端只在加载页面那一刻拉一次
+    object_info，彼时后台刷新尚未完成，占位符就被前端节点定义缓存
+    吃死，用户不刷新页面永远看到 (检测中…)。
+
+    现策略：
+      - 有缓存且未过期（5 分钟）→ 直接回缓存
+      - 无缓存（首取）→ 同步查询一次：HTTP /v1/models 优先（LM Studio
+        在本机时通常 <0.1 s），最坏 HTTP 3 s + lms CLI 5 s 封顶；
+        ComfyUI 启动就会调一次 INPUT_TYPES，浏览器连上时已是真列表
+      - 有缓存但已过期 → 先回旧缓存不卡 object_info，后台线程刷新
     """
-    # 只在此函数里给 _MODEL_REFRESHING 赋值；_MODEL_CACHE/_MODEL_TS 仅读取（写入在 _worker 内）
-    global _MODEL_REFRESHING
+    global _MODEL_CACHE, _MODEL_TS, _MODEL_REFRESHING
 
     now = time.monotonic()
     with _MODEL_LOCK:
         if _MODEL_CACHE is not None and (now - _MODEL_TS) < _MODEL_TTL:
             return list(_MODEL_CACHE)
-        # 已有后台线程在刷新 → 不重复起线程，返回现有内容或占位
         if _MODEL_REFRESHING:
             return list(_MODEL_CACHE) if _MODEL_CACHE else [_MODEL_PLACEHOLDER]
         _MODEL_REFRESHING = True
+        first_fetch = _MODEL_CACHE is None
 
-    def _worker():
-        global _MODEL_CACHE, _MODEL_TS, _MODEL_REFRESHING
-        try:
-            models = _query_models()
-            with _MODEL_LOCK:
-                if models:
-                    _MODEL_CACHE = models
-                _MODEL_TS = time.monotonic()
-        except Exception:
-            # 失败也记时间，避免疯狂重试
-            with _MODEL_LOCK:
-                _MODEL_TS = time.monotonic()
-        finally:
-            with _MODEL_LOCK:
-                _MODEL_REFRESHING = False
+    if not first_fetch:
+        def _worker():
+            global _MODEL_CACHE, _MODEL_TS, _MODEL_REFRESHING
+            try:
+                models = _query_models()
+                with _MODEL_LOCK:
+                    if models:
+                        _MODEL_CACHE = models
+                    _MODEL_TS = time.monotonic()
+            except Exception:
+                with _MODEL_LOCK:
+                    _MODEL_TS = time.monotonic()
+            finally:
+                with _MODEL_LOCK:
+                    _MODEL_REFRESHING = False
 
-    threading.Thread(target=_worker, name="anima-lms-ls", daemon=True).start()
+        threading.Thread(target=_worker, name="anima-lms-ls", daemon=True).start()
+        with _MODEL_LOCK:
+            return list(_MODEL_CACHE)
 
+    # 首取：同步查询（见 docstring 教训）
+    try:
+        models = _query_models()
+    except Exception:
+        models = []
     with _MODEL_LOCK:
+        if models:
+            _MODEL_CACHE = models
+        _MODEL_TS = time.monotonic()
+        _MODEL_REFRESHING = False
         return list(_MODEL_CACHE) if _MODEL_CACHE else [_MODEL_PLACEHOLDER]
-
-
-def get_models_cached() -> list[str]:
-    """兼容别名（03 补丁命名）：等价于 get_models()。"""
-    return get_models()
-
-
-def invalidate_model_cache() -> None:
-    """用户点「刷新模型列表」时调用：把时间戳清零，下次调用即触发后台刷新。"""
-    global _MODEL_TS
-    with _MODEL_LOCK:
-        _MODEL_TS = 0.0
 
 
 def load_model(

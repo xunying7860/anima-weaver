@@ -200,6 +200,11 @@ def migrate(path):
                 for idx, mp in MODE_MAP.items():
                     if isinstance(out[idx], str) and out[idx] in mp:
                         out[idx] = mp[out[idx]]
+                # 2026-10-16 二级子组挪到「▸ 高级」之后显示：46 项就地置换。
+                # 幂等标记：旧序 v[25]=「模型」(str)；新序 v[25]=「▸ LLM设置」(bool)
+                if len(out) == 46 and isinstance(out[25], str):
+                    out = (out[0:22] + [out[37], out[38], out[39]] + [out[22]]
+                           + out[23:33] + [out[33]] + out[34:37] + out[40:46])
                 n["widgets_values"] = out
         # 合并/拆分的 widget 已在 convert_bus 里归一成三窗口参数
 
